@@ -1,9 +1,33 @@
 version: 2.1
+commands:
+  dockerhub-login:
+    description: "Connect to DockerHub"
+    steps:
+      - run:
+          name: Login to DockerHub
+          command: |
+            if [ -n "${DOCKERHUB_LOGIN}" ]; then
+              docker login -u ${DOCKERHUB_LOGIN} -p ${DOCKERHUB_PASS}
+            else
+              echo "WARNING: dockerhub login not found. Assuming this is a PR or other external branch build."
+            fi
 jobs:
   build:
     docker:
-      - image: circleci/golang:1.16
+      - image: circleci/golang:1.17
     steps:
       - checkout
-      - run: echo "Hello world!"
+      - setup_remote_docker:
+          docker_layer_caching: true
+      - run:
+          name: Docker build
+          command: |
+            docker build -t opennms/operator:latest -t opennms/operator:test-build .
+      - dockerhub-login
+      - run:
+          name: Docker push
+          command: |
+            docker push opennms/operator:latest
+            docker push opennms/operator:test-build
+
 
