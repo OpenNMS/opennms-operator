@@ -11,5 +11,5 @@ integration-test:
 validate-build:
 	circleci config validate .circleci/config.yml
 
-build: test
+build:
 	echo "Hello world!"
