@@ -86,8 +86,6 @@ workflows:
 
       - unit-tests
 
-      -
-
       - build-image:
           requires: [ unit-tests, setup-dct ]
 
