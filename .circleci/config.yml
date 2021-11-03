@@ -15,10 +15,9 @@ commands:
 jobs:
 
   setup-dct:
-    name: Setup Docker Content Trust
+    description: Setup Docker Content Trust
     docker:
       - image: circleci/golang:1.17
-    context: docker-content-trust
     steps:
       - run:
           command: |
@@ -26,13 +25,12 @@ jobs:
             echo "export DOCKER_CONTENT_TRUST_REPOSITORY_PASSPHRASE=\"$DCT_REPO_OPERATOR_KEY_PASSPHRASE\"" >> $BASH_ENV
 
   sign-image:
-    name: Sign Docker Image
+    description: Sign Docker Image
     docker:
       - image: circleci/golang:1.17
     parameters:
       image-tag:
         type: string
-    context: docker-content-trust
     steps:
       - run:
           command: |
@@ -43,49 +41,56 @@ jobs:
             docker trust key load $KEY_FOLDER/$DCT_REPO_OPERATOR_KEY_NAME.key
             docker trust sign docker push opennms/operator:<< parameters.image-tag >>
 
+  unit-tests:
+    description: Unit Tests
+    docker:
+      - image: circleci/golang:1.17
+    steps:
+      - run:
+         command: make unit-test
+
+  build-image:
+    description: Build Docker Image
+    docker:
+      - image: circleci/golang:1.17
+    steps:
+      - checkout
+      - run:
+          name: Docker build
+          command: |
+            docker build -t opennms/operator:${CIRCLE_SHA1} .
+
+  push-image:
+    description: Push Docker Image
+    docker:
+      - image: circleci/golang:1.17
+    steps:
+      - dockerhub-login
+      - run:
+          name: Docker push
+          command: |
+            docker tag opennms/operator:${CIRCLE_SHA1} opennms/operator:${CIRCLE_TAG}
+            docker push opennms/operator:latest
+            docker push opennms/operator:${CIRCLE_TAG}
+
 workflows:
   build:
     jobs:
-      - setup-dct
+      - setup-dct:
+          context: docker-content-trust
 
-      - unit-tests:
-          name: Unit Tests
-          docker:
-            - image: circleci/golang:1.17
-          steps:
-            - run:
-                command: make unit-test
+      - unit-tests
 
       - build-image:
-          name: Build Docker Image
-          requires: [ unit-tests ]
-          docker:
-            - image: circleci/golang:1.17
-          steps:
-            - checkout
-            - run:
-                name: Docker build
-                command: |
-                  docker build -t opennms/operator:${CIRCLE_SHA1} .
+          requires: [ unit-tests, setup-dct ]
 
       - sign-image:
+          requires: [ build-image ]
           image-tag: ${CIRCLE_SHA1}
+          context: docker-content-trust
 
       - push-image:
-          name: Push Docker Image
           requires: [ sign-image ]
-          docker:
-            - image: circleci/golang:1.17
           filters:
-            branches: { only: master }
-            tags: { only: /(v[0-9].[0-9].[0-9])(-[a-zA-Z]+)?/ }
-          steps:
-            - dockerhub-login
-            - run:
-                name: Docker push
-                command: |
-                  docker tag opennms/operator:${CIRCLE_SHA1} opennms/operator:${CIRCLE_TAG}
-                  docker push opennms/operator:latest
-                  docker push opennms/operator:${CIRCLE_TAG}
-
-
+            branches: { only: "master" }
+            tags: { only: "/(v[0-9].[0-9].[0-9])(-[a-zA-Z]+)?/" }
