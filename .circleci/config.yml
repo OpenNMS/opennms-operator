@@ -14,16 +14,6 @@ commands:
 
 jobs:
 
-  setup-dct:
-    description: Setup Docker Content Trust
-    docker:
-      - image: circleci/golang:1.17
-    steps:
-      - run:
-          command: |
-            echo "export DOCKER_CONTENT_TRUST=1" >> $BASH_ENV
-            echo "export DOCKER_CONTENT_TRUST_REPOSITORY_PASSPHRASE=\"$DCT_REPO_OPERATOR_KEY_PASSPHRASE\"" >> $BASH_ENV
-
   sign-image:
     description: Sign Docker Image
     docker:
@@ -32,8 +22,13 @@ jobs:
       image-tag:
         type: string
     steps:
+      - setup_remote_docker:
+          docker_layer_caching: true
       - run:
+          name: Sign Image
           command: |
+            echo "export DOCKER_CONTENT_TRUST=1" >> $BASH_ENV
+            echo "export DOCKER_CONTENT_TRUST_REPOSITORY_PASSPHRASE=\"$DCT_REPO_OPERATOR_KEY_PASSPHRASE\"" >> $BASH_ENV
             KEY_FOLDER=~/.docker/trust/private
             mkdir -p $KEY_FOLDER
             echo "$DCT_REPO_OPERATOR_KEY" | base64 -d > $KEY_FOLDER/$DCT_REPO_OPERATOR_KEY_NAME.key
@@ -54,6 +49,8 @@ jobs:
     description: Build Docker Image
     docker:
       - image: circleci/golang:1.17
+    environment:
+      DOCKER_CONTENT_TRUST: 1
     steps:
       - checkout
       - setup_remote_docker:
@@ -81,13 +78,10 @@ jobs:
 workflows:
   build:
     jobs:
-      - setup-dct:
-          context: docker-content-trust
-
       - unit-tests
 
       - build-image:
-          requires: [ unit-tests, setup-dct ]
+          requires: [ unit-tests ]
 
       - sign-image:
           requires: [ build-image ]
