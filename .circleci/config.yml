@@ -46,6 +46,7 @@ jobs:
     docker:
       - image: circleci/golang:1.17
     steps:
+      - checkout
       - run:
          command: make unit-test
 
