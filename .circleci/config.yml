@@ -56,6 +56,8 @@ jobs:
       - image: circleci/golang:1.17
     steps:
       - checkout
+      - setup_remote_docker:
+          docker_layer_caching: true
       - run:
           name: Docker build
           command: |
@@ -66,6 +68,8 @@ jobs:
     docker:
       - image: circleci/golang:1.17
     steps:
+      - setup_remote_docker:
+          docker_layer_caching: true
       - dockerhub-login
       - run:
           name: Docker push
@@ -81,6 +85,8 @@ workflows:
           context: docker-content-trust
 
       - unit-tests
+
+      -
 
       - build-image:
           requires: [ unit-tests, setup-dct ]
