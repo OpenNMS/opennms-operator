@@ -49,8 +49,6 @@ jobs:
     description: Build Docker Image
     docker:
       - image: circleci/golang:1.17
-    environment:
-      DOCKER_CONTENT_TRUST: 1
     steps:
       - checkout
       - setup_remote_docker:
