@@ -31,7 +31,7 @@ jobs:
             echo "$DCT_REPO_OPERATOR_KEY" | base64 -d > $KEY_FOLDER/$DCT_REPO_OPERATOR_KEY_NAME.key
             chmod 600 $KEY_FOLDER/*
             docker trust key load $KEY_FOLDER/$DCT_REPO_OPERATOR_KEY_NAME.key
-            docker trust sign opennms/operator:${CIRCLE_SHA}
+            docker trust sign opennms/operator:$CIRCLE_SHA1
 
   unit-tests:
     description: Unit Tests
