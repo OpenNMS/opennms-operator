@@ -70,26 +70,6 @@ jobs:
             rm -rf opennms-operator
       - save-image
 
-  sign-image:
-    description: Sign Docker Image
-    executor: build-executor
-    steps:
-      - setup_remote_docker:
-          docker_layer_caching: true
-      - load-image
-      - run:
-          name: Sign Image
-          command: |
-            export DOCKER_CONTENT_TRUST=1
-            export DOCKER_CONTENT_TRUST_REPOSITORY_PASSPHRASE="$DCT_REPO_OPERATOR_KEY_PASSPHRASE"
-            KEY_FOLDER=$HOME/.docker/trust/private
-            mkdir -p $KEY_FOLDER
-            echo "$DCT_REPO_OPERATOR_KEY" | base64 -d > $KEY_FOLDER/$DCT_REPO_OPERATOR_KEY_NAME.key
-            chmod 600 $KEY_FOLDER/*
-            docker trust key load $KEY_FOLDER/$DCT_REPO_OPERATOR_KEY_NAME.key
-            docker trust sign opennms/operator:$CIRCLE_SHA1
-      - save-image
-
   push-image:
     description: Push Docker Image
     executor: build-executor
@@ -105,6 +85,27 @@ jobs:
             docker push opennms/operator:latest
             docker push opennms/operator:${CIRCLE_TAG}
 
+  sign-image:
+    description: Sign Docker Image
+    executor: build-executor
+    steps:
+      - setup_remote_docker:
+          docker_layer_caching: true
+      - load-image
+      - dockerhub-login
+      - run:
+          name: Sign Image
+          command: |
+            export DOCKER_CONTENT_TRUST=1
+            export DOCKER_CONTENT_TRUST_REPOSITORY_PASSPHRASE="$DCT_REPO_OPERATOR_KEY_PASSPHRASE"
+            KEY_FOLDER=$HOME/.docker/trust/private
+            mkdir -p $KEY_FOLDER
+            echo "$DCT_REPO_OPERATOR_KEY" | base64 -d > $KEY_FOLDER/$DCT_REPO_OPERATOR_KEY_NAME.key
+            chmod 600 $KEY_FOLDER/*
+            docker trust key load $KEY_FOLDER/$DCT_REPO_OPERATOR_KEY_NAME.key
+            docker trust sign opennms/operator:latest
+            docker trust sign opennms/operator:${CIRCLE_TAG}
+
 workflows:
   build:
     jobs:
@@ -115,12 +116,15 @@ workflows:
       - build-image:
           requires: [ create-workspace, unit-tests ]
 
-      - sign-image:
-          requires: [ build-image ]
-          context: docker-content-trust
-
       - push-image:
           requires: [ sign-image ]
           filters:
             branches: { only: "master" }
             tags: { only: "/(v[0-9].[0-9].[0-9])(-[a-zA-Z]+)?/" }
+
+      - sign-image:
+          requires: [ push-image ]
+          filters:
+            branches: { only: "master" }
+            tags: { only: "/(v[0-9].[0-9].[0-9])(-[a-zA-Z]+)?/" }
+          context: docker-content-trust
