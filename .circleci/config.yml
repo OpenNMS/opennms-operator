@@ -26,10 +26,11 @@ jobs:
           docker_layer_caching: true
       - run:
           name: Sign Image
+          environment:
+            DOCKER_CONTENT_TRUST: 1
+            DOCKER_CONTENT_TRUST_REPOSITORY_PASSPHRASE: "$DCT_REPO_OPERATOR_KEY_PASSPHRASE"
+            KEY_FOLDER: "~/.docker/trust/private"
           command: |
-            echo "export DOCKER_CONTENT_TRUST=1" >> $BASH_ENV
-            echo "export DOCKER_CONTENT_TRUST_REPOSITORY_PASSPHRASE=\"$DCT_REPO_OPERATOR_KEY_PASSPHRASE\"" >> $BASH_ENV
-            KEY_FOLDER=~/.docker/trust/private
             mkdir -p $KEY_FOLDER
             echo "$DCT_REPO_OPERATOR_KEY" | base64 -d > $KEY_FOLDER/$DCT_REPO_OPERATOR_KEY_NAME.key
             chmod 600 $KEY_FOLDER/*
