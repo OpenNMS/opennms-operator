@@ -35,7 +35,7 @@ jobs:
             echo "$DCT_REPO_OPERATOR_KEY" > $KEY_FOLDER/$DCT_REPO_OPERATOR_KEY_NAME.key
             chmod 600 $KEY_FOLDER/*
             docker trust key load $KEY_FOLDER/$DCT_REPO_OPERATOR_KEY_NAME.key
-            docker trust sign docker push opennms/operator:<< parameters.image-tag >>
+            docker trust sign opennms/operator:<< parameters.image-tag >>
 
   unit-tests:
     description: Unit Tests
