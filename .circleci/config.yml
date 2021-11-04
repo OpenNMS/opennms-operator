@@ -106,7 +106,7 @@ workflows:
     jobs:
       - create-workspace
 
-      - unit-test
+      - unit-tests
 
       - build-image:
           requires: [ create-workspace, unit-tests ]
