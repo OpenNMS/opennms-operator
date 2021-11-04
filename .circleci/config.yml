@@ -1,4 +1,10 @@
 version: 2.1
+executors:
+  build-executor:
+    docker:
+      - image: cimg/go:1.17
+    working_directory: /build
+
 commands:
   dockerhub-login:
     description: "Connect to DockerHub"
@@ -12,15 +18,56 @@ commands:
               echo "WARNING: dockerhub login not found. Assuming this is a PR or other external branch build."
             fi
 
+  save-image:
+    description: "Save Docker Image to Workspace"
+    steps:
+      - run:
+          command: |
+            docker save -o /build/${CIRCLE_SHA1}-operator/operator.tar opennms/operator:$CIRCLE_SHA1
+      - persist_to_workspace:
+          root: ${CIRCLE_SHA1}-operator
+          paths:
+            - operator.tar
+
+  load-image:
+    description: "Load Docker Image from Workspace"
+    steps:
+      - attach_workspace:
+          at: /build/${CIRCLE_SHA1}-operator
+      - run:
+          command: |
+            docker load -i /build/${CIRCLE_SHA1}-operator/operator.tar
+
 jobs:
+
+  unit-tests:
+    description: Unit Tests
+    executor: build-executor
+    steps:
+      - checkout
+      - run:
+         command: make unit-test
+
+  build-image:
+    description: Build Docker Image
+    executor: build-executor
+    steps:
+      - checkout
+      - setup_remote_docker:
+          docker_layer_caching: true
+      - run:
+          name: Docker build
+          command: |
+            docker build -t opennms/operator:${CIRCLE_SHA1} .
+      - save-image
 
   sign-image:
     description: Sign Docker Image
-    docker:
-      - image: circleci/golang:1.17
+    executor: build-executor
     steps:
       - setup_remote_docker:
           docker_layer_caching: true
+      - load-image
       - run:
           name: Sign Image
           command: |
@@ -32,36 +79,15 @@ jobs:
             chmod 600 $KEY_FOLDER/*
             docker trust key load $KEY_FOLDER/$DCT_REPO_OPERATOR_KEY_NAME.key
             docker trust sign opennms/operator:$CIRCLE_SHA1
-
-  unit-tests:
-    description: Unit Tests
-    docker:
-      - image: circleci/golang:1.17
-    steps:
-      - checkout
-      - run:
-         command: make unit-test
-
-  build-image:
-    description: Build Docker Image
-    docker:
-      - image: circleci/golang:1.17
-    steps:
-      - checkout
-      - setup_remote_docker:
-          docker_layer_caching: true
-      - run:
-          name: Docker build
-          command: |
-            docker build -t opennms/operator:${CIRCLE_SHA1} .
+      - save-image
 
   push-image:
     description: Push Docker Image
-    docker:
-      - image: circleci/golang:1.17
+    executor: build-executor
     steps:
       - setup_remote_docker:
           docker_layer_caching: true
+      - load-image
       - dockerhub-login
       - run:
           name: Docker push
