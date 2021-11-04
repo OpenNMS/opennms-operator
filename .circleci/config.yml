@@ -3,7 +3,7 @@ executors:
   build-executor:
     docker:
       - image: cimg/go:1.17
-    working_directory: /build
+    working_directory: /tmp
 
 commands:
   dockerhub-login:
@@ -23,7 +23,7 @@ commands:
     steps:
       - run:
           command: |
-            docker save -o /build/${CIRCLE_SHA1}-operator/operator.tar opennms/operator:$CIRCLE_SHA1
+            docker save -o /tmp/${CIRCLE_SHA1}-operator/operator.tar opennms/operator:$CIRCLE_SHA1
       - persist_to_workspace:
           root: ${CIRCLE_SHA1}-operator
           paths:
@@ -33,12 +33,16 @@ commands:
     description: "Load Docker Image from Workspace"
     steps:
       - attach_workspace:
-          at: /build/${CIRCLE_SHA1}-operator
+          at: /tmp/${CIRCLE_SHA1}-operator
       - run:
           command: |
-            docker load -i /build/${CIRCLE_SHA1}-operator/operator.tar
+            docker load -i /tmp/${CIRCLE_SHA1}-operator/operator.tar
 
 jobs:
+  create-workspace:
+    executor: build-executor
+    steps:
+      - run: mkdir -p ${CIRCLE_SHA1}-operator
 
   unit-tests:
     description: Unit Tests
@@ -99,6 +103,8 @@ jobs:
 workflows:
   build:
     jobs:
+      - create-workspace
+      
       - unit-tests
 
       - build-image:
