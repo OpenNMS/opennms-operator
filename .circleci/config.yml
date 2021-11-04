@@ -23,9 +23,9 @@ commands:
     steps:
       - run:
           command: |
-            docker save -o /tmp/${CIRCLE_SHA1}-operator/operator.tar opennms/operator:$CIRCLE_SHA1
+            docker save -o /tmp/operator-build/operator.tar opennms/operator:$CIRCLE_SHA1
       - persist_to_workspace:
-          root: ${CIRCLE_SHA1}-operator
+          root: operator-build
           paths:
             - operator.tar
 
@@ -33,16 +33,16 @@ commands:
     description: "Load Docker Image from Workspace"
     steps:
       - attach_workspace:
-          at: /tmp/${CIRCLE_SHA1}-operator
+          at: /tmp/operator-build
       - run:
           command: |
-            docker load -i /tmp/${CIRCLE_SHA1}-operator/operator.tar
+            docker load -i /tmp/operator-build/operator.tar
 
 jobs:
   create-workspace:
     executor: build-executor
     steps:
-      - run: mkdir -p ${CIRCLE_SHA1}-operator
+      - run: mkdir -p operator-build
 
   unit-tests:
     description: Unit Tests
@@ -58,13 +58,13 @@ jobs:
     executor: build-executor
     steps:
       - checkout:
-          path: ${CIRCLE_SHA1}-operator/opennms-operator
+          path: operator-build/opennms-operator
       - setup_remote_docker:
           docker_layer_caching: true
       - run:
           name: Docker build
           command: |
-            cd ${CIRCLE_SHA1}-operator/opennms-operator
+            cd operator-build/opennms-operator
             docker build -t opennms/operator:${CIRCLE_SHA1} .
             cd ..
             rm -rf opennms-operator
