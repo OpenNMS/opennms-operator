@@ -46,7 +46,8 @@ jobs:
 
   unit-tests:
     description: Unit Tests
-    executor: build-executor
+    docker:
+      - image: cimg/go:1.17
     steps:
       - checkout
       - run:
@@ -105,11 +106,10 @@ workflows:
     jobs:
       - create-workspace
 
-      - unit-tests:
-          requires: [ create-workspace ]
+      - unit-test
 
       - build-image:
-          requires: [ unit-tests ]
+          requires: [ create-workspace, unit-tests ]
 
       - sign-image:
           requires: [ build-image ]
