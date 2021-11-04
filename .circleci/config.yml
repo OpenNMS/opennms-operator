@@ -57,13 +57,17 @@ jobs:
     description: Build Docker Image
     executor: build-executor
     steps:
-      - checkout
+      - checkout:
+          path: ${CIRCLE_SHA1}-operator/opennms-operator
       - setup_remote_docker:
           docker_layer_caching: true
       - run:
           name: Docker build
           command: |
+            cd ${CIRCLE_SHA1}-operator/opennms-operator
             docker build -t opennms/operator:${CIRCLE_SHA1} .
+            cd ..
+            rm -rf opennms-operator
       - save-image
 
   sign-image:
