@@ -1,4 +1,10 @@
 version: 2.1
+executors:
+  build-executor:
+    docker:
+      - image: cimg/go:1.17
+    working_directory: /tmp
+
 commands:
   dockerhub-login:
     description: "Connect to DockerHub"
@@ -11,23 +17,114 @@ commands:
             else
               echo "WARNING: dockerhub login not found. Assuming this is a PR or other external branch build."
             fi
+
+  save-image:
+    description: "Save Docker Image to Workspace"
+    steps:
+      - run:
+          command: |
+            docker save -o /tmp/operator-build/operator.tar opennms/operator:$CIRCLE_SHA1
+      - persist_to_workspace:
+          root: operator-build
+          paths:
+            - operator.tar
+
+  load-image:
+    description: "Load Docker Image from Workspace"
+    steps:
+      - attach_workspace:
+          at: /tmp/operator-build
+      - run:
+          command: |
+            docker load -i /tmp/operator-build/operator.tar
+
 jobs:
-  build:
+  create-workspace:
+    executor: build-executor
+    steps:
+      - run: mkdir -p operator-build
+
+  unit-tests:
+    description: Unit Tests
     docker:
-      - image: circleci/golang:1.17
+      - image: cimg/go:1.17
     steps:
       - checkout
+      - run:
+         command: make unit-test
+
+  build-image:
+    description: Build Docker Image
+    executor: build-executor
+    steps:
+      - checkout:
+          path: operator-build/opennms-operator
       - setup_remote_docker:
           docker_layer_caching: true
       - run:
           name: Docker build
           command: |
-            docker build -t opennms/operator:latest -t opennms/operator:test-build .
+            cd operator-build/opennms-operator
+            docker build -t opennms/operator:${CIRCLE_SHA1} .
+            cd ..
+            rm -rf opennms-operator
+      - save-image
+
+  push-image:
+    description: Push Docker Image
+    executor: build-executor
+    steps:
+      - setup_remote_docker:
+          docker_layer_caching: true
+      - load-image
       - dockerhub-login
       - run:
           name: Docker push
           command: |
+            docker tag opennms/operator:${CIRCLE_SHA1} opennms/operator:${CIRCLE_TAG}
             docker push opennms/operator:latest
-            docker push opennms/operator:test-build
+            docker push opennms/operator:${CIRCLE_TAG}
 
+  sign-image:
+    description: Sign Docker Image
+    executor: build-executor
+    steps:
+      - setup_remote_docker:
+          docker_layer_caching: true
+      - load-image
+      - dockerhub-login
+      - run:
+          name: Sign Image
+          command: |
+            export DOCKER_CONTENT_TRUST=1
+            export DOCKER_CONTENT_TRUST_REPOSITORY_PASSPHRASE="$DCT_REPO_OPERATOR_KEY_PASSPHRASE"
+            KEY_FOLDER=$HOME/.docker/trust/private
+            mkdir -p $KEY_FOLDER
+            echo "$DCT_REPO_OPERATOR_KEY" | base64 -d > $KEY_FOLDER/$DCT_REPO_OPERATOR_KEY_NAME.key
+            chmod 600 $KEY_FOLDER/*
+            docker trust key load $KEY_FOLDER/$DCT_REPO_OPERATOR_KEY_NAME.key
+            docker trust sign opennms/operator:latest
+            docker trust sign opennms/operator:${CIRCLE_TAG}
 
+workflows:
+  build:
+    jobs:
+      - create-workspace
+
+      - unit-tests
+
+      - build-image:
+          requires: [ create-workspace, unit-tests ]
+
+      - push-image:
+          requires: [ build-image ]
+          filters:
+            branches: { only: "master" }
+            tags: { only: "/(v[0-9].[0-9].[0-9])(-[a-zA-Z]+)?/" }
+
+      - sign-image:
+          requires: [ push-image ]
+          filters:
+            branches: { only: "master" }
+            tags: { only: "/(v[0-9].[0-9].[0-9])(-[a-zA-Z]+)?/" }
+          context: docker-content-trust
