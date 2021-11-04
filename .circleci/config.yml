@@ -119,12 +119,10 @@ workflows:
       - push-image:
           requires: [ build-image ]
           filters:
-            branches: { only: "master" }
             tags: { only: "/(v[0-9].[0-9].[0-9])(-[a-zA-Z]+)?/" }
 
       - sign-image:
           requires: [ push-image ]
           filters:
-            branches: { only: "master" }
             tags: { only: "/(v[0-9].[0-9].[0-9])(-[a-zA-Z]+)?/" }
           context: docker-content-trust
