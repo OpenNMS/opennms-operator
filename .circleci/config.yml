@@ -32,7 +32,7 @@ jobs:
             KEY_FOLDER: "~/.docker/trust/private"
           command: |
             mkdir -p $KEY_FOLDER
-            echo "$DCT_REPO_OPERATOR_KEY" | base64 -d > $KEY_FOLDER/$DCT_REPO_OPERATOR_KEY_NAME.key
+            echo "$DCT_REPO_OPERATOR_KEY" > $KEY_FOLDER/$DCT_REPO_OPERATOR_KEY_NAME.key
             chmod 600 $KEY_FOLDER/*
             docker trust key load $KEY_FOLDER/$DCT_REPO_OPERATOR_KEY_NAME.key
             docker trust sign docker push opennms/operator:<< parameters.image-tag >>
