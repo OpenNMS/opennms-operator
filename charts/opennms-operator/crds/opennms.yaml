@@ -18,14 +18,16 @@ spec:
       storage: true
       schema:
         openAPIV3Schema:
-          description: OpenNMS is the Schema for the opennms API
+          description: An OpenNMS instance
           type: object
           properties:
             spec:
               description: OpenNMSSpec defines the desired state of OpenNMS
+              type: object
               properties:
                 core:
                   description: Defines cpu,mem and disk size for core
+                  type: object
                   properties:
                     cpu:
                       type: integer
@@ -33,26 +35,15 @@ spec:
                       type: string
                     mem:
                       type: string
-                  type: object
                 host:
-                  description: Domain name used in ingress rule
+                  description: Domain name used for ingress into the instance
                   type: string
                 namespace:
                   description: k8s namespace to host resources
                   type: string
-                image:
-                  description: Defines the logic on onms image update
-                  properties:
-                    frequency:
-                      description: represents number of minutes for recurrent checks of
-                        a new image
-                      type: integer
-                    update:
-                      description: can have values of now/autoupdate/none
-                      type: string
-                  type: object
                 postgres:
-                  description: Defines cpu,mem and disk size for postgres
+                  description: Resource definitions for Postgres
+                  type: object
                   properties:
                     cpu:
                       type: integer
@@ -60,9 +51,9 @@ spec:
                       type: string
                     mem:
                       type: string
-                  type: object
                 timeseries:
                   description: Defines what plugin for timeseries to use
+                  type: object
                   properties:
                     api-key:
                       type: string
@@ -72,22 +63,40 @@ spec:
                       type: string
                     port:
                       type: integer
-                  type: object
                 allowedUsers:
                   description: Users allowed automatic login via tokens
                   type: array
                   items:
                     type: string
+                image_update:
+                  description: Configuration for automatic image updating
+                  type: object
+                  properties:
+                    frequency:
+                      description: Number of minutes between checks for a new image
+                      type: integer
+                    update:
+                      description: Strategy for updating the running image
+                      type: string
+                      enum: [ NOW, AUTO, NONE ]
                 version:
-                  description: Version of OpenNMS.
-                  type: string
-              type: object
+                  description: Version of OpenNMS to be deployed
+                  type: object
+                  properties:
+                    distribution:
+                      type: string
+                      default: Horizon
+                      enum: [ Horizon, Meridian ]
+                    tag:
+                      type: string
             status:
               description: OpenNMSStatus defines the observed state of OpenNMS
+              type: object
               properties:
                 image:
                   description: Image defines current status of used image for OpenNMS
                     container
+                  type: object
                   properties:
                     checkedAt:
                       description: timestamp of a last image check in DockerHub
@@ -100,21 +109,38 @@ spec:
                       type: string
                   required:
                     - isLatest
-                  type: object
                 nodes:
+                  type: array
                   items:
                     type: string
-                  type: array
-                ready:
-                  description: 'INSERT ADDITIONAL STATUS FIELD - define observed state
-                    of cluster Important: Run "make" to regenerate code after modifying
-                    this file'
-                  type: boolean
-                reason:
-                  type: string
+                readiness:
+                  type: object
+                  properties:
+                    ready:
+                      description: The instance's ready state
+                      type: boolean
+                    reason:
+                      description: Reason for the instance's ready state
+                      type: string
+                    timestamp:
+                      description: Timestamp when the instance's ready state was last determined
+                      type: string
+                    services:
+                      description: The ready state of each of the instance's constiuent services
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          ready:
+                            description: The service's readiness
+                            type: boolean
+                          reason:
+                            description: Reason for the services's readiness/state
+                            type: string
+                          timestamp:
+                            description: Timestamp when the service's readiness was last determined
+                            type: string
               required:
                 - image
                 - nodes
-                - ready
-                - reason
-              type: object
+                - readiness
