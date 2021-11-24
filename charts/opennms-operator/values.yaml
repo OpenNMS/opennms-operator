@@ -1,0 +1,11 @@
+operator:
+  namespace: opennms
+  serviceName: opennms-operator
+  image: opennms-operator:stable
+  resources:
+    limits:
+      cpu: 100m
+      memory: 100Mi
+    requests:
+      cpu: 100m
+      memory: 50Mi

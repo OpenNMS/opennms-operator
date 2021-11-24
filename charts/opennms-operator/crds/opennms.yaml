@@ -1,0 +1,120 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: opennms.opennms.k8s.opennms.com
+spec:
+  group: opennms.k8s.opennms.com
+  names:
+    kind: OpenNMS
+    listKind: OpenNMSList
+    plural: opennms
+    singular: opennms
+    shortNames:
+    - onms
+  scope: Cluster
+  versions:
+    - name: v1alpha1
+      served: true
+      storage: true
+      schema:
+        openAPIV3Schema:
+          description: OpenNMS is the Schema for the opennms API
+          type: object
+          properties:
+            spec:
+              description: OpenNMSSpec defines the desired state of OpenNMS
+              properties:
+                core:
+                  description: Defines cpu,mem and disk size for core
+                  properties:
+                    cpu:
+                      type: integer
+                    disk:
+                      type: string
+                    mem:
+                      type: string
+                  type: object
+                host:
+                  description: Domain name used in ingress rule
+                  type: string
+                namespace:
+                  description: k8s namespace to host resources
+                  type: string
+                image:
+                  description: Defines the logic on onms image update
+                  properties:
+                    frequency:
+                      description: represents number of minutes for recurrent checks of
+                        a new image
+                      type: integer
+                    update:
+                      description: can have values of now/autoupdate/none
+                      type: string
+                  type: object
+                postgres:
+                  description: Defines cpu,mem and disk size for postgres
+                  properties:
+                    cpu:
+                      type: integer
+                    disk:
+                      type: string
+                    mem:
+                      type: string
+                  type: object
+                timeseries:
+                  description: Defines what plugin for timeseries to use
+                  properties:
+                    api-key:
+                      type: string
+                    host:
+                      type: string
+                    mode:
+                      type: string
+                    port:
+                      type: integer
+                  type: object
+                allowedUsers:
+                  description: Users allowed automatic login via tokens
+                  type: array
+                  items:
+                    type: string
+                version:
+                  description: Version of OpenNMS.
+                  type: string
+              type: object
+            status:
+              description: OpenNMSStatus defines the observed state of OpenNMS
+              properties:
+                image:
+                  description: Image defines current status of used image for OpenNMS
+                    container
+                  properties:
+                    checkedAt:
+                      description: timestamp of a last image check in DockerHub
+                      type: string
+                    isLatest:
+                      description: true if latest image used, false otherwise
+                      type: boolean
+                    message:
+                      description: readable message about image status
+                      type: string
+                  required:
+                    - isLatest
+                  type: object
+                nodes:
+                  items:
+                    type: string
+                  type: array
+                ready:
+                  description: 'INSERT ADDITIONAL STATUS FIELD - define observed state
+                    of cluster Important: Run "make" to regenerate code after modifying
+                    this file'
+                  type: boolean
+                reason:
+                  type: string
+              required:
+                - image
+                - nodes
+                - ready
+                - reason
+              type: object
