@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.operator.serviceName }}
+  namespace: {{ .Values.operator.namespace }}
+spec:
+  selector:
+    matchLabels:
+      name: {{ .Values.operator.serviceName }}
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: {{ .Values.operator.serviceName }}
+    spec:
+      serviceAccountName: {{ .Values.operator.serviceName }}
+      containers:
+        - command:
+            - /manager
+          image:  {{ .Values.operator.image }}
+          name: {{ .Values.operator.serviceName }}
+          imagePullPolicy: Always
+          resources:
+            limits:
+              cpu: {{ .Values.operator.resources.limits.cpu }}
+              memory: {{ .Values.operator.resources.limits.memory }}
+            requests:
+              cpu: {{ .Values.operator.resources.requests.cpu }}
+              memory: {{ .Values.operator.resources.requests.memory }}
+      terminationGracePeriodSeconds: 10

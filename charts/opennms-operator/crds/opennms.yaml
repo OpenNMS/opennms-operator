@@ -1,0 +1,146 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: opennms.opennms.k8s.opennms.com
+spec:
+  group: opennms.k8s.opennms.com
+  names:
+    kind: OpenNMS
+    listKind: OpenNMSList
+    plural: opennms
+    singular: opennms
+    shortNames:
+    - onms
+  scope: Cluster
+  versions:
+    - name: v1alpha1
+      served: true
+      storage: true
+      schema:
+        openAPIV3Schema:
+          description: An OpenNMS instance
+          type: object
+          properties:
+            spec:
+              description: OpenNMSSpec defines the desired state of OpenNMS
+              type: object
+              properties:
+                core:
+                  description: Defines cpu,mem and disk size for core
+                  type: object
+                  properties:
+                    cpu:
+                      type: integer
+                    disk:
+                      type: string
+                    mem:
+                      type: string
+                host:
+                  description: Domain name used for ingress into the instance
+                  type: string
+                namespace:
+                  description: k8s namespace to host resources
+                  type: string
+                postgres:
+                  description: Resource definitions for Postgres
+                  type: object
+                  properties:
+                    cpu:
+                      type: integer
+                    disk:
+                      type: string
+                    mem:
+                      type: string
+                timeseries:
+                  description: Defines what plugin for timeseries to use
+                  type: object
+                  properties:
+                    api-key:
+                      type: string
+                    host:
+                      type: string
+                    mode:
+                      type: string
+                    port:
+                      type: integer
+                allowedUsers:
+                  description: Users allowed automatic login via tokens
+                  type: array
+                  items:
+                    type: string
+                image_update:
+                  description: Configuration for automatic image updating
+                  type: object
+                  properties:
+                    frequency:
+                      description: Number of minutes between checks for a new image
+                      type: integer
+                    update:
+                      description: Strategy for updating the running image
+                      type: string
+                      enum: [ NOW, AUTO, NONE ]
+                version:
+                  description: Version of OpenNMS to be deployed
+                  type: object
+                  properties:
+                    distribution:
+                      type: string
+                      default: Horizon
+                      enum: [ Horizon, Meridian ]
+                    tag:
+                      type: string
+            status:
+              description: OpenNMSStatus defines the observed state of OpenNMS
+              type: object
+              properties:
+                image:
+                  description: Image defines current status of used image for OpenNMS
+                    container
+                  type: object
+                  properties:
+                    checkedAt:
+                      description: timestamp of a last image check in DockerHub
+                      type: string
+                    isLatest:
+                      description: true if latest image used, false otherwise
+                      type: boolean
+                    message:
+                      description: readable message about image status
+                      type: string
+                  required:
+                    - isLatest
+                nodes:
+                  type: array
+                  items:
+                    type: string
+                readiness:
+                  type: object
+                  properties:
+                    ready:
+                      description: The instance's ready state
+                      type: boolean
+                    reason:
+                      description: Reason for the instance's ready state
+                      type: string
+                    timestamp:
+                      description: Timestamp when the instance's ready state was last determined
+                      type: string
+                    services:
+                      description: The ready state of each of the instance's constiuent services
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          ready:
+                            description: The service's readiness
+                            type: boolean
+                          reason:
+                            description: Reason for the services's readiness/state
+                            type: string
+                          timestamp:
+                            description: Timestamp when the service's readiness was last determined
+                            type: string
+              required:
+                - image
+                - nodes
+                - readiness
