@@ -1,0 +1,20 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: nginx-{{ .Values.namespace }}
+    nginx.ingress.kubernetes.io/server-snippet: | 
+      ssl_reject_handshake "on";
+  name: rejectipssl-ingress-{{ .Values.namespace }}
+  namespace: {{ .Values.namespace }}
+spec:
+  rules:
+  -  http:
+      paths:
+      - backend:
+          service:
+            name: opennms
+            port:
+              number: 8980
+        path: /
+        pathType: Prefix

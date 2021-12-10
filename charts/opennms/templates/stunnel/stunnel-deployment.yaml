@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stunnel
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: stunnel
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: stunnel
+  template:
+    metadata:
+      labels:
+        app: stunnel
+    spec:
+      containers:
+      - name: stunnel
+        image: dweomer/stunnel:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 61616
+        env:
+          - name: STUNNEL_SERVICE
+            value: "activemq"
+          - name: STUNNEL_ACCEPT
+            value: "61616"
+          - name: STUNNEL_CONNECT
+            value: "opennms:61616"
+          - name: STUNNEL_KEY
+            value: "/certificate/tls.key"
+          - name: STUNNEL_CRT
+            value: "/certificate/tls.crt"
+        command: ['/bin/sh', '/runtime/entry.sh']
+        resources:
+          requests:
+            cpu: "10m"
+            memory: "20Mi"
+          limits:
+            cpu: "1000m"
+            memory: "512Mi"
+        volumeMounts:
+{{/*        - name: certificate*/}}
+{{/*          mountPath: /certificate*/}}
+        - name: runtime
+          mountPath: /runtime
+# figure this out with the SSL ticket
+      volumes:
+{{/*        - name: certificate*/}}
+{{/*          secret:*/}}
+{{/*            secretName: wildcard*/}}
+        - name: runtime
+          configMap:
+            name: stunnel-runtime
+

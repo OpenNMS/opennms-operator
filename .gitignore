@@ -1,3 +1,5 @@
 # IDEs and Text Editors
-
 .idea
+
+# Local test files
+local.yaml

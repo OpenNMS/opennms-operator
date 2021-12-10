@@ -1,0 +1,54 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tcp-services
+  namespace: {{ .Values.namespace }}
+data:
+  "61616": {{ .Values.namespace }}/stunnel:61616
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: init-scripts
+  namespace: {{ .Values.namespace }}
+data:
+  onms-core-init.sh: |
+    #!/bin/bash
+    umask 002
+    command -v rsync >/dev/null 2>&1 || { echo >&2 "rsync is required but it's not installed. Aborting."; exit 1; }
+
+    CONFIG_DIR=/opennms-etc
+    BACKUP_ETC=/opt/opennms/etc
+
+    # Show permissions (debug purposes)
+    ls -ld ${CONFIG_DIR}
+
+    # Initialize configuration directory
+    if [ ! -f ${CONFIG_DIR}/configured ]; then
+      echo "Initializing configuration directory for the first time ..."
+      rsync -arO --no-perms ${BACKUP_ETC}/ ${CONFIG_DIR}/
+
+      echo "Disabling data choices"
+      cat <<EOF > ${CONFIG_DIR}/org.opennms.features.datachoices.cfg
+    enabled=false
+    acknowledged-by=admin
+    acknowledged-at=Mon Jan 01 00\:00\:00 EDT 2018
+    EOF
+    echo 'opennms.web.base-url = https://%x%c/' > ${CONFIG_DIR}/opennms.properties.d/ssl.properties
+    else
+      echo "Previous configuration found. Synchronizing only new files..."
+      rsync -aruO --no-perms ${BACKUP_ETC}/ ${CONFIG_DIR}/
+    fi
+
+    # Enable activemq
+    sed -E '/0.0.0.0:61616/s/<!--//' ${CONFIG_DIR}/opennms-activemq.xml | sed -E '/0.0.0.0:61616/s/-->//' > /tmp/opennms-activemq.xml
+    cp /tmp/opennms-activemq.xml ${CONFIG_DIR}/opennms-activemq.xml
+
+    # Force to execute runjava and the install script
+    touch ${CONFIG_DIR}/do-upgrade
+
+    # Fix permissions when executing the script as root
+    if [[ "$(id -u)" == "0" ]]; then
+      chown -R opennms:opennms ${CONFIG_DIR}
+    fi
+    ls /opt/opennms/system/org/opennms/integration/api/api/ | awk -F '-' '{print $1}' > /metadata/OIA
