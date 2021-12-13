@@ -9,3 +9,6 @@ operator:
     requests:
       cpu: 100m
       memory: 50Mi
+customErrors:
+  image: <<Custom Error Backend Image>>
+  debug: true

@@ -1,0 +1,47 @@
+{{ if .Values.auth.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: onms-auth
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: onms-auth
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: onms-auth
+  template:
+    metadata:
+      labels:
+        app: onms-auth
+    spec:
+      containers:
+      - name: onms-auth
+        image: {{ .Values.auth.image }}
+        imagePullPolicy: Always
+        ports:
+        - containerPort: {{ .Values.auth.port }}
+        env:
+          - name: ADMIN_PASS
+            valueFrom:
+              secretKeyRef:
+                name: onms-initial-creds
+                key: admin
+          - name: ALLOWED_USERS
+            valueFrom:
+              secretKeyRef:
+                name: onms-allowed-users
+                key: users
+          - name: OPENNMS_HOST
+            value: opennms
+          - name: OPENNMS_PORT
+            value: "8980"
+        resources:
+          requests:
+            cpu: 10m
+            memory: 50Mi
+          limits:
+            cpu: 100m
+            memory: 256Mi
+{{ end }}

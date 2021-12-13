@@ -1,0 +1,187 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: opennms-core
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: onms
+spec:
+  replicas: 1
+  serviceName: opennms-core
+  selector:
+    matchLabels:
+      app: onms
+  template:
+    metadata:
+      labels:
+        app: onms
+    spec:
+      terminationGracePeriodSeconds: 120
+      initContainers:
+        - name: init-config
+          image: {{ .Values.opennms.image }}
+          imagePullPolicy: Always
+          command: [ "bash", "/init.sh" ]
+          env:
+            - name: TZ
+              value: UTC
+          volumeMounts:
+          - mountPath: /opennms-etc
+            name: etc
+          - mountPath: /opt/opennms-etc-overlay
+            name: etc-overlay
+          - mountPath: /metadata
+            name: opennms-metadata
+          - mountPath: /init.sh
+            name: init-scripts
+            subPath: onms-core-init.sh
+        - name: setup-timeseries
+          image: {{ .Values.opennms.initContainerImage }}
+          imagePullPolicy: IfNotPresent
+          command: ["sh", "-c", "/userconfig/setupTss.sh {{ .Values.opennms.timeseries.mode }}"]
+          env:
+            - name: TIMESERIESHOST
+              value: {{ .Values.opennms.timeseries.host }}
+            - name: TIMESERIESPORT
+              value: "{{ .Values.opennms.timeseries.port }}"
+            - name: TIMESERIESAPIKEY
+              value: {{ .Values.opennms.timeseries.apiKey }}
+            - name: TIMESERIESORGANIZATIONID
+              value: {{ .Values.namespace }}
+          volumeMounts:
+          - mountPath: /opennms-deploy
+            name: deploy
+          - mountPath: /opennms-etc
+            name: etc
+          - mountPath: /metadata
+            name: opennms-metadata
+          - mountPath: /creds
+            name: creds
+        - name: install-user-overlay
+          image: {{ .Values.opennms.initContainerImage }}
+          imagePullPolicy: IfNotPresent
+          command: [ "sh", "-c", "/userconfig/createUsersFile.sh /opt/opennms-etc-overlay" ]
+          volumeMounts:
+            - mountPath: /opt/opennms-etc-overlay
+              name: etc-overlay
+            - mountPath: /creds
+              name: creds
+        - name: dependencies
+          image: waisbrot/wait
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: TARGETS
+              value: postgresql:5432
+            - name: TIMEOUT
+              value: "600"
+      containers:
+        - name: opennms
+          image: {{ .Values.opennms.image }}
+          imagePullPolicy: Always
+          args:
+          - -s
+          env:
+            - name: TZ
+              value: UTC
+            - name: JMX_PORT
+              value: "18980"
+            - name: POSTGRES_HOST
+              value: postgresql
+            - name: POSTGRES_USER
+              value: postgres
+            - name: POSTGRES_PASSWORD
+              value: {{ .Values.postgres.password }}
+            - name: OPENNMS_DBNAME
+              value: opennms
+            - name: OPENNMS_DBUSER
+              value: postgres
+            - name: OPENNMS_DBPASS
+              value: {{ .Values.postgres.password }}
+          volumeMounts:
+            - name: "etc"
+              mountPath: /opt/opennms/etc
+            - name: "etc-overlay"
+              mountPath: /opt/opennms-etc-overlay
+            - name: "deploy"
+              mountPath: /opt/opennms/deploy
+          ports:
+            - name: karaf
+              containerPort: 8101
+            - name: http
+              containerPort: 8980
+            - name: jmx
+              containerPort: 18980
+            - name: activemq
+              containerPort: 61616
+          livenessProbe:
+            httpGet:
+              path: /opennms/login.jsp
+              port: 8980
+              scheme: HTTP
+            periodSeconds: 15
+          readinessProbe:
+            httpGet:
+              path: /opennms/login.jsp
+              port: 8980
+              scheme: HTTP
+            periodSeconds: 15
+          startupProbe:
+            httpGet:
+              path: /opennms/login.jsp
+              port: 8980
+              scheme: HTTP
+            initialDelaySeconds: 60
+            periodSeconds: 15
+            failureThreshold: 10
+            timeoutSeconds: 5
+          resources:
+            limits:
+              cpu: "2"
+              memory: 2Gi
+            requests:
+              cpu: 100m
+              memory: 2Gi
+      volumes:
+        - name: opennms-metadata
+          emptyDir:
+            sizeLimit: 2Gi
+        - name: init-scripts
+          configMap:
+            defaultMode: 511
+            name: init-scripts
+        - name: creds
+          secret:
+            secretName: onms-initial-creds
+  volumeClaimTemplates:
+    - apiVersion: v1
+      kind: PersistentVolumeClaim
+      metadata:
+        name: etc
+        namespace: {{ .Values.namespace }}
+      spec:
+        accessModes: [ ReadWriteOnce ]
+        resources:
+          requests:
+            storage: {{ .Values.opennms.volumeSize }}
+    - apiVersion: v1
+      kind: PersistentVolumeClaim
+      metadata:
+        name: etc-overlay
+        namespace: {{ .Values.namespace }}
+      spec:
+        accessModes: [ ReadWriteOnce ]
+        resources:
+          requests:
+            storage: {{ .Values.opennms.volumeSize }}
+    - apiVersion: v1
+      kind: PersistentVolumeClaim
+      metadata:
+        name: deploy
+        namespace: {{ .Values.namespace }}
+      spec:
+        accessModes: [ ReadWriteOnce ]
+        resources:
+          requests:
+            storage: {{ .Values.opennms.volumeSize }}
+
+

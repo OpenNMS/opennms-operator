@@ -1,0 +1,34 @@
+namespace: opennms-instance
+host: localhost
+opennms:
+  image: opennms/horizon:bleeding
+  volumeSize: 500Mi
+  securityGroup: 10001
+  resources:
+    limits:
+      cpu: 2
+      memory: 2Gi
+    requests:
+      cpu: 100m
+      memory: 1Gi
+  initContainerImage: <<Init Container Image>>
+  timeseries:
+    mode: default
+    host: postgresql
+    port: 5432
+tls:
+  enabled: false
+  certSecret: ssl-cert
+auth:
+  enabled: false
+  image: <<Auth Service Image>>
+  port: 5000
+  adminPass: admin
+  minionPass: minion
+  allowedUsers: test@email.com
+postgres:
+  image: timescale/timescaledb:latest-pg12
+  password: password
+  volumeSize: 10Gi
+grafana:
+  image: <<Grafana Image>>

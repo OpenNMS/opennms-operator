@@ -1,0 +1,39 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: opennms-ingress
+  namespace: {{ .Values.namespace }}
+spec:
+  rules:
+    - host: {{ .Values.host }}
+      http:
+        paths:
+          {{ if .Values.auth.enabled }}
+          - backend:
+              service:
+                name: auth-service
+                port:
+                  number: {{ .Values.auth.port }}
+            path: /authz
+            pathType: Prefix
+          {{ end }}
+          - backend:
+              service:
+                name: grafana
+                port:
+                  number: 3000
+            path: /grafana
+            pathType: Prefix
+          - backend:
+              service:
+                name: opennms
+                port:
+                  number: 8980
+            path: /
+            pathType: Prefix
+  {{ if .Values.tls.enabled }}
+  tls:
+    - hosts:
+        -  {{.Values.host }}
+      secretName: {{ .Values.tls.certSecret }}
+  {{ end }}
