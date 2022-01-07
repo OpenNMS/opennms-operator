@@ -11,7 +11,7 @@ metadata:
     app.kubernetes.io/version: 8.0.3
     helm.sh/chart: grafana-6.13.6
   name: grafana
-  namespace: {{ .Values.namespace }}
+  namespace: {{ .Values.Namespace }}
 data:
   grafana.ini: |
     [analytics]
@@ -32,7 +32,7 @@ data:
     name = postgres
     user = postgres
     # TODO; template this password in the new operator
-    password = {{ .Values.postgres.password }}
+    password = {{ .Values.Postgres.Password }}
     # COMMENT OUT WHEN DONE DEBUGGING
     #[log]
     #level = debug
@@ -133,7 +133,7 @@ data:
        # <int> org id. will default to orgId 1 if not specified
        orgId: 1
        # <string> url
-       url: https://{{ .Values.namespace }}.devtenant.oaaslite.opennms.com/opennms
+       url: https://{{ .Values.Namespace }}.devtenant.oaaslite.opennms.com/opennms
        isDefault: false
     
        # IMPORTANT: Use the secure json data object below instead of basic auth fields above.
@@ -142,7 +142,7 @@ data:
           httpHeaderName1: "Authorization"
        ## <string> json object of data that will be encrypted.
        secureJsonData:
-         httpHeaderValue1: "Basic {{ .Values.auth.adminPass }}"
+         httpHeaderValue1: "Basic {{ .Values.Auth.AdminPass }}"
        version: 1
        # <bool> allow users to edit datasources from the UI.
        editable: false
@@ -162,7 +162,7 @@ data:
        # <int> org id. will default to orgId 1 if not specified
        orgId: 1
        # <string> url
-       url: https://{{ .Values.namespace }}.devtenant.oaaslite.opennms.com/opennms
+       url: https://{{ .Values.Namespace }}.devtenant.oaaslite.opennms.com/opennms
        isDefault: false
     
        # IMPORTANT: Use the secure json data object below instead of basic auth fields above.
@@ -171,7 +171,7 @@ data:
           httpHeaderName1: "Authorization"
        ## <string> json object of data that will be encrypted.
        secureJsonData:
-         httpHeaderValue1: "Basic {{ .Values.auth.adminPass }}"
+         httpHeaderValue1: "Basic {{ .Values.Auth.AdminPass }}"
        version: 1
        # <bool> allow users to edit datasources from the UI.
        editable: false
@@ -191,7 +191,7 @@ data:
        # <int> org id. will default to orgId 1 if not specified
        orgId: 1
        # <string> url
-       url: https://{{ .Values.namespace }}.devtenant.oaaslite.opennms.com/opennms
+       url: https://{{ .Values.Namespace }}.devtenant.oaaslite.opennms.com/opennms
        isDefault: true
     
        # IMPORTANT: Use the secure json data object below instead of basic auth fields above.
@@ -200,7 +200,7 @@ data:
           httpHeaderName1: "Authorization"
        ## <string> json object of data that will be encrypted.
        secureJsonData:
-         httpHeaderValue1: "Basic {{ .Values.auth.adminPass }}"
+         httpHeaderValue1: "Basic {{ .Values.Auth.AdminPass }}"
        version: 1
        # <bool> allow users to edit datasources from the UI.
        editable: false
@@ -229,7 +229,7 @@ data:
           httpHeaderName1: "X-Scope-OrgID"
        ## <string> json object of data that will be encrypted.
        secureJsonData:
-         httpHeaderValue1: "{{ .Values.namespace }}"
+         httpHeaderValue1: "{{ .Values.Namespace }}"
        version: 1
        # <bool> allow users to edit datasources from the UI.
        editable: false

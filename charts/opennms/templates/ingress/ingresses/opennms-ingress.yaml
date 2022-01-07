@@ -2,18 +2,18 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: opennms-ingress
-  namespace: {{ .Values.namespace }}
+  namespace: {{ .Values.Namespace }}
 spec:
   rules:
-    - host: {{ .Values.host }}
+    - host: {{ .Values.Host }}
       http:
         paths:
-          {{ if .Values.auth.enabled }}
+          {{ if .Values.Auth.Enabled }}
           - backend:
               service:
                 name: auth-service
                 port:
-                  number: {{ .Values.auth.port }}
+                  number: {{ .Values.Auth.Port }}
             path: /authz
             pathType: Prefix
           {{ end }}
@@ -31,9 +31,9 @@ spec:
                   number: 8980
             path: /
             pathType: Prefix
-  {{ if .Values.tls.enabled }}
+  {{ if .Values.TLS.Enabled }}
   tls:
     - hosts:
-        -  {{.Values.host }}
-      secretName: {{ .Values.tls.certSecret }}
+        -  {{.Values.Host }}
+      secretName: {{ .Values.TLS.CertSecret }}
   {{ end }}

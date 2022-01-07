@@ -3,10 +3,10 @@ kind: StatefulSet
 metadata:
   labels:
     app: postgres
-    opennms_cr: {{ .Values.namespace }}
+    opennms_cr: {{ .Values.Namespace }}
     role: master
   name: postgres
-  namespace: {{ .Values.namespace }}
+  namespace: {{ .Values.Namespace }}
 spec:
   replicas: 1
   selector:
@@ -27,7 +27,7 @@ spec:
                   name: postgres
                   key: password
 
-          image: {{ .Values.postgres.image }}
+          image: {{ .Values.Postgres.Image }}
           imagePullPolicy: Always
           livenessProbe:
             exec:
@@ -77,4 +77,4 @@ spec:
         accessModes: [ ReadWriteOnce ]
         resources:
           requests:
-            storage: {{ .Values.postgres.volumeSize }}
+            storage: {{ .Values.Postgres.VolumeSize }}

@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: stunnel-runtime
-  namespace: {{ .Values.namespace }}
+  namespace: {{ .Values.Namespace }}
 data:
   entry.sh: |-
     #!/bin/sh

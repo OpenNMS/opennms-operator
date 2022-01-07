@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: opennms-core
-  namespace: {{ .Values.namespace }}
+  namespace: {{ .Values.Namespace }}
   labels:
     app: onms
 spec:
@@ -19,7 +19,7 @@ spec:
       terminationGracePeriodSeconds: 120
       initContainers:
         - name: init-config
-          image: {{ .Values.opennms.image }}
+          image: {{ .Values.OpenNMS.Image }}
           imagePullPolicy: Always
           command: [ "bash", "/init.sh" ]
           env:
@@ -36,18 +36,18 @@ spec:
             name: init-scripts
             subPath: onms-core-init.sh
         - name: setup-timeseries
-          image: {{ .Values.opennms.initContainerImage }}
+          image: {{ .Values.OpenNMS.InitContainerImage }}
           imagePullPolicy: IfNotPresent
-          command: ["sh", "-c", "/userconfig/setupTss.sh {{ .Values.opennms.timeseries.mode }}"]
+          command: ["sh", "-c", "/userconfig/setupTss.sh {{ .Values.OpenNMS.Timeseries.Mode }}"]
           env:
             - name: TIMESERIESHOST
-              value: {{ .Values.opennms.timeseries.host }}
+              value: {{ .Values.OpenNMS.Timeseries.Host }}
             - name: TIMESERIESPORT
-              value: "{{ .Values.opennms.timeseries.port }}"
+              value: "{{ .Values.OpenNMS.Timeseries.Port }}"
             - name: TIMESERIESAPIKEY
-              value: {{ .Values.opennms.timeseries.apiKey }}
+              value: {{ .Values.OpenNMS.Timeseries.ApiKey }}
             - name: TIMESERIESORGANIZATIONID
-              value: {{ .Values.namespace }}
+              value: {{ .Values.Namespace }}
           volumeMounts:
           - mountPath: /opennms-deploy
             name: deploy
@@ -58,7 +58,7 @@ spec:
           - mountPath: /creds
             name: creds
         - name: install-user-overlay
-          image: {{ .Values.opennms.initContainerImage }}
+          image: {{ .Values.OpenNMS.InitContainerImage }}
           imagePullPolicy: IfNotPresent
           command: [ "sh", "-c", "/userconfig/createUsersFile.sh /opt/opennms-etc-overlay" ]
           volumeMounts:
@@ -76,7 +76,7 @@ spec:
               value: "600"
       containers:
         - name: opennms
-          image: {{ .Values.opennms.image }}
+          image: {{ .Values.OpenNMS.Image }}
           imagePullPolicy: Always
           args:
           - -s
@@ -90,13 +90,13 @@ spec:
             - name: POSTGRES_USER
               value: postgres
             - name: POSTGRES_PASSWORD
-              value: {{ .Values.postgres.password }}
+              value: {{ .Values.Postgres.Password }}
             - name: OPENNMS_DBNAME
               value: opennms
             - name: OPENNMS_DBUSER
               value: postgres
             - name: OPENNMS_DBPASS
-              value: {{ .Values.postgres.password }}
+              value: {{ .Values.Postgres.Password }}
           volumeMounts:
             - name: "etc"
               mountPath: /opt/opennms/etc
@@ -157,31 +157,31 @@ spec:
       kind: PersistentVolumeClaim
       metadata:
         name: etc
-        namespace: {{ .Values.namespace }}
+        namespace: {{ .Values.Namespace }}
       spec:
         accessModes: [ ReadWriteOnce ]
         resources:
           requests:
-            storage: {{ .Values.opennms.volumeSize }}
+            storage: {{ .Values.OpenNMS.VolumeSize }}
     - apiVersion: v1
       kind: PersistentVolumeClaim
       metadata:
         name: etc-overlay
-        namespace: {{ .Values.namespace }}
+        namespace: {{ .Values.Namespace }}
       spec:
         accessModes: [ ReadWriteOnce ]
         resources:
           requests:
-            storage: {{ .Values.opennms.volumeSize }}
+            storage: {{ .Values.OpenNMS.VolumeSize }}
     - apiVersion: v1
       kind: PersistentVolumeClaim
       metadata:
         name: deploy
-        namespace: {{ .Values.namespace }}
+        namespace: {{ .Values.Namespace }}
       spec:
         accessModes: [ ReadWriteOnce ]
         resources:
           requests:
-            storage: {{ .Values.opennms.volumeSize }}
+            storage: {{ .Values.OpenNMS.VolumeSize }}
 
 

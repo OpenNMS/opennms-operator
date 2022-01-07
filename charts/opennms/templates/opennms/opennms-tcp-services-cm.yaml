@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tcp-services
+  namespace: {{ .Values.Namespace }}
+data:
+  "61616": {{ .Values.Namespace }}/stunnel:61616

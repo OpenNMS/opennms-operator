@@ -1,30 +1,32 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: ingress-nginx-admission-create
+  name: ingress-nginx-admission-patch
   labels:
     app.kubernetes.io/name: ingress-nginx
     app.kubernetes.io/instance: ingress-nginx
     app.kubernetes.io/component: admission-webhook
-  namespace: {{ .Values.namespace }}
+  namespace: {{ .Values.Namespace }}
 spec:
   template:
     metadata:
-      name: ingress-nginx-admission-create
+      name: ingress-nginx-admission-patch
       labels:
         app.kubernetes.io/name: ingress-nginx
         app.kubernetes.io/instance: ingress-nginx
         app.kubernetes.io/component: admission-webhook
     spec:
       containers:
-        - name: create
+        - name: patch
           image: docker.io/jettech/kube-webhook-certgen:v1.5.1
           imagePullPolicy: IfNotPresent
           args:
-            - create
-            - --host=ingress-nginx-controller-admission,ingress-nginx-controller-admission.{{ .Values.namespace }}.svc
-            - --namespace={{ .Values.namespace }}
+            - patch
+            - --webhook-name=ingress-nginx-admission-{{ .Values.Namespace }}
+            - --namespace={{ .Values.Namespace }}
+            - --patch-mutating=false
             - --secret-name=ingress-nginx-admission
+            - --patch-failure-policy=Fail
       restartPolicy: OnFailure
       serviceAccountName: ingress-nginx-admission
       securityContext:

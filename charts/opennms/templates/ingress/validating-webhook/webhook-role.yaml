@@ -6,7 +6,7 @@ metadata:
     app.kubernetes.io/name: ingress-nginx
     app.kubernetes.io/instance: ingress-nginx
     app.kubernetes.io/component: admission-webhook
-  namespace: {{ .Values.namespace }}
+  namespace: {{ .Values.Namespace }}
 rules:
   - apiGroups:
       - ''

@@ -4,7 +4,7 @@ metadata:
   labels:
     app: grafana
   name: grafana
-  namespace: {{ .Values.namespace }}
+  namespace: {{ .Values.Namespace }}
 spec:
   selector:
     matchLabels:
@@ -57,7 +57,7 @@ spec:
           - 0
       containers:
         - name: grafana
-          image: {{ .Values.grafana.image }}
+          image: {{ .Values.Grafana.Image }}
           imagePullPolicy: IfNotPresent
           env:
             - name: GF_SECURITY_ADMIN_USER

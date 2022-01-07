@@ -8,7 +8,7 @@ metadata:
     app.kubernetes.io/name: ingress-nginx
     app.kubernetes.io/instance: ingress-nginx
     app.kubernetes.io/component: admission-webhook
-  name: ingress-nginx-admission-{{ .Values.namespace }}
+  name: ingress-nginx-admission-{{ .Values.Namespace }}
 webhooks:
   - name: validate.nginx.ingress.kubernetes.io
     matchPolicy: Equivalent
@@ -30,6 +30,6 @@ webhooks:
       - v1beta1
     clientConfig:
       service:
-        namespace: {{ .Values.namespace }}
+        namespace: {{ .Values.Namespace }}
         name: ingress-nginx-controller-admission
         path: /networking/v1beta1/ingresses

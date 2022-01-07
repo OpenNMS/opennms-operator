@@ -6,7 +6,7 @@ metadata:
     app.kubernetes.io/name: ingress-nginx
     app.kubernetes.io/instance: ingress-nginx
     app.kubernetes.io/component: admission-webhook
-  namespace: {{ .Values.namespace }}
+  namespace: {{ .Values.Namespace }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
@@ -14,4 +14,4 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: ingress-nginx-admission
-    namespace: {{ .Values.namespace }}
+    namespace: {{ .Values.Namespace }}
