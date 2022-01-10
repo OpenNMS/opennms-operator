@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: stunnel
-  namespace: {{ .Values.namespace }}
+  namespace: {{ .Values.Namespace }}
   labels:
     app: stunnel
 spec:

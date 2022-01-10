@@ -1,9 +1,9 @@
-{{ if .Values.auth.enabled }}
+{{ if .Values.Auth.Enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: onms-auth
-  namespace: {{ .Values.namespace }}
+  namespace: {{ .Values.Namespace }}
   labels:
     app: onms-auth
 spec:
@@ -18,10 +18,10 @@ spec:
     spec:
       containers:
       - name: onms-auth
-        image: {{ .Values.auth.image }}
+        image: {{ .Values.Auth.Image }}
         imagePullPolicy: Always
         ports:
-        - containerPort: {{ .Values.auth.port }}
+        - containerPort: {{ .Values.Auth.Port }}
         env:
           - name: ADMIN_PASS
             valueFrom:

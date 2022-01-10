@@ -7,7 +7,7 @@ metadata:
     app.kubernetes.io/instance: ingress-nginx
     app.kubernetes.io/component: controller
   name: ingress-nginx-controller
-  namespace: {{ .Values.namespace }}
+  namespace: {{ .Values.Namespace }}
 spec:
   selector:
     matchLabels:
@@ -36,14 +36,14 @@ spec:
           args:
             - /nginx-ingress-controller
             - --default-backend-service=opennms/opennms-nginx-errors
-            - --publish-service={{ .Values.namespace }}/ingress-nginx-controller
+            - --publish-service={{ .Values.Namespace }}/ingress-nginx-controller
             - --election-id=ingress-controller-leader
-            - --ingress-class=nginx-{{ .Values.namespace }}
-            - --configmap={{ .Values.namespace }}/ingress-nginx-controller
+            - --ingress-class=nginx-{{ .Values.Namespace }}
+            - --configmap={{ .Values.Namespace }}/ingress-nginx-controller
             - --validating-webhook=:8443
             - --validating-webhook-certificate=/usr/local/certificates/cert
             - --validating-webhook-key=/usr/local/certificates/key
-            - --tcp-services-configmap={{ .Values.namespace }}/tcp-services
+            - --tcp-services-configmap={{ .Values.Namespace }}/tcp-services
           securityContext:
             capabilities:
               drop:

@@ -13,4 +13,4 @@ roleRef:
 subjects:
   - kind: ServiceAccount
     name: ingress-nginx-admission
-    namespace: {{ .Values.namespace }}
+    namespace: {{ .Values.Namespace }}
