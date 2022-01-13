@@ -55,15 +55,15 @@ type Version struct {
 type Timeseries struct {
 	Mode   string `json:"mode,omitempty"`
 	Host   string `json:"host,omitempty"`
-	Port   int    `json:"port,omitempty"`
-	APIKey string `json:"api-key,omitempty"`
+	Port   string `json:"port,omitempty"`
+	ApiKey string `json:"apiKey,omitempty"`
 }
 
 //BaseServiceResources - defines basic resource needs of a service
 type BaseServiceResources struct {
 	MEM  string `json:"mem,omitempty"`
 	Disk string `json:"disk,omitempty"`
-	CPU  int    `json:"cpu,omitempty"`
+	CPU  string `json:"cpu,omitempty"`
 }
 
 // OpenNMSStatus - defines the observed state of OpenNMS

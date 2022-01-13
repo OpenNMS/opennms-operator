@@ -48,6 +48,10 @@ func TestLoadYaml(t *testing.T) {
 	LoadYaml(TestFilename, values, &testInterface)
 	assert.Equal(t, "test", testInterface.ObjectMeta.Name, "should have loaded the correct name from the yaml")
 	assert.Equal(t, "testNamespace", testInterface.ObjectMeta.Namespace, "should have templated in the correct provided namespace")
+
+	cachedFile, ok := Cache().Get(TestFilename)
+	assert.True(t, ok)
+	assert.Equal(t, TestFileContents, cachedFile, "should have stored the untemplated file in the cache")
 }
 
 func writeTestFiles(t *testing.T) {

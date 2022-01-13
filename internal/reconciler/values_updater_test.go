@@ -17,10 +17,10 @@ limitations under the License.
 package reconciler
 
 import (
+	"github.com/OpenNMS/opennms-operator/api/v1alpha1"
 	"github.com/OpenNMS/opennms-operator/internal/model/values"
 	"github.com/stretchr/testify/assert"
-	"k8s.io/apimachinery/pkg/types"
-	ctrl "sigs.k8s.io/controller-runtime"
+	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"testing"
 )
 
@@ -37,13 +37,13 @@ func TestUpdateValues(t *testing.T) {
 		DefaultValues: testValues,
 	}
 
-	req := ctrl.Request{
-		NamespacedName: types.NamespacedName{
-			Name: testNamespace,
+	crd := v1alpha1.OpenNMS{
+		ObjectMeta: v1.ObjectMeta{
+			Namespace: testNamespace,
 		},
 	}
 
-	res := testRecon.UpdateValues(req)
+	res := testRecon.UpdateValues(crd)
 
 
 	assert.Equal(t, testNamespace, res.Values.Namespace, "should have populated values from reconcile request")

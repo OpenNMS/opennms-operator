@@ -31,15 +31,15 @@ func LoadYaml(filename string, values values.TemplateValues, decodeInto interfac
 		if err != nil {
 			log.Fatalf("%s: failed to load config: %v", filename, err)
 		}
-		templatedConfig, err := template.TemplateConfig(loadedFile, values)
-		if err != nil {
-			log.Fatalf("%s: failed to template config: %v", filename, err)
-		}
-		cache.Set(filename, templatedConfig)
-		file = templatedConfig
+		cache.Set(filename, loadedFile)
+		file = loadedFile
 	}
-	reader := strings.NewReader(file)
-	err := yaml.NewYAMLOrJSONDecoder(reader, 4096).Decode(decodeInto)
+	templatedConfig, err := template.TemplateConfig(file, values)
+	if err != nil {
+		log.Fatalf("%s: failed to template config: %v", filename, err)
+	}
+	reader := strings.NewReader(templatedConfig)
+	err = yaml.NewYAMLOrJSONDecoder(reader, 4096).Decode(decodeInto)
 	if err != nil {
 		log.Fatalf("%s: failed to unmarshal config: %v", filename, err)
 	}

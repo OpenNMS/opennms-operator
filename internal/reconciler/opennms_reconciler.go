@@ -19,6 +19,7 @@ import (
 	"github.com/OpenNMS/opennms-operator/config"
 	"github.com/OpenNMS/opennms-operator/internal/handlers"
 	"github.com/OpenNMS/opennms-operator/internal/model/values"
+	"github.com/OpenNMS/opennms-operator/internal/util/crd"
 	"github.com/go-logr/logr"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/serializer"
@@ -40,12 +41,19 @@ type OpenNMSReconciler struct {
 
 func (r *OpenNMSReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 
-	valuesForInstance := r.UpdateValues(req)
+	instanceCRD, err := crd.GetCRDFromCluster(ctx, r.Client, req)
+	if err != nil {
+		r.Log.Error(err, "failed to get crd for instance " + req.Name)
+		return ctrl.Result{}, err
+	}
+	valuesForInstance := r.UpdateValues(ctx, instanceCRD)
+
 	for _, handler := range r.Handlers {
 		for _, resource := range handler.ProvideConfig(valuesForInstance) {
 			err := r.Create(ctx, resource)
 			if err != nil {
 				r.Log.Error(err, "error creating resource")
+				return ctrl.Result{}, err
 			}
 		}
 	}
