@@ -38,7 +38,9 @@ func (r *OpenNMSReconciler) UpdateValues(ctx context.Context, instance v1alpha1.
 	}
 
 	templateValues = valuesutil.ConvertCRDToValues(instance, templateValues)
-	if !r.CheckForExistingCreds(ctx, namespace) { // only set new passwords if they weren't already created by a previous operator
+	//TODO checking the cluster and reloading creds every iteration doesn't feel great, maybe rework
+	templateValues, existingCreds := r.CheckForExistingCreds(ctx, templateValues, namespace)
+	if !existingCreds { // only set new passwords if they weren't already created by a previous operator
 		templateValues = setPasswords(templateValues)
 	}
 
@@ -48,13 +50,21 @@ func (r *OpenNMSReconciler) UpdateValues(ctx context.Context, instance v1alpha1.
 }
 
 //CheckForExistingCreds - checks if core credentials already exist for a given namespace
-func (r *OpenNMSReconciler) CheckForExistingCreds(ctx context.Context, namespace string) bool {
+func (r *OpenNMSReconciler) CheckForExistingCreds(ctx context.Context, v values.TemplateValues, namespace string) (values.TemplateValues, bool) {
 	var credSecret v1.Secret
 	err := r.Client.Get(ctx, types.NamespacedName{Namespace: namespace, Name: "onms-initial-creds"}, &credSecret)
 	if err != nil {
-		return false
+		return v, false
 	}
-	return true
+	v.Values.Auth.AdminPass = string(credSecret.Data["admin"])
+	v.Values.Auth.AdminPass = string(credSecret.Data["minion"])
+
+	err = r.Client.Get(ctx, types.NamespacedName{Namespace: namespace, Name: "postgres"}, &credSecret)
+	if err != nil {
+		return v, false
+	}
+	v.Values.Postgres.Password = string(credSecret.Data["password"])
+	return v, true
 }
 
 //setPasswords - sets randomly generated passwords if not already set

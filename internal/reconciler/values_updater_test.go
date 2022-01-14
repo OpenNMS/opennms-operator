@@ -17,6 +17,7 @@ limitations under the License.
 package reconciler
 
 import (
+	"context"
 	"github.com/OpenNMS/opennms-operator/api/v1alpha1"
 	"github.com/OpenNMS/opennms-operator/internal/model/values"
 	"github.com/stretchr/testify/assert"
@@ -43,7 +44,7 @@ func TestUpdateValues(t *testing.T) {
 		},
 	}
 
-	res := testRecon.UpdateValues(crd)
+	res := testRecon.UpdateValues(context.Background(), crd)
 
 
 	assert.Equal(t, testNamespace, res.Values.Namespace, "should have populated values from reconcile request")
