@@ -68,8 +68,6 @@ type BaseServiceResources struct {
 
 // OpenNMSStatus - defines the observed state of OpenNMS
 type OpenNMSStatus struct {
-	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
-	// Important: Run "make" to regenerate code after modifying this file
 	Ready  bool        `json:"ready"`
 	Reason string      `json:"reason"`
 	Image  ImageStatus `json:"image"`
@@ -101,8 +99,6 @@ type OpenNMS struct {
 	Spec   OpenNMSSpec   `json:"spec,omitempty"`
 	Status OpenNMSStatus `json:"status,omitempty"`
 }
-
-// +kubebuilder:object:root=true
 
 // OpenNMSList - contains a list of OpenNMS
 type OpenNMSList struct {

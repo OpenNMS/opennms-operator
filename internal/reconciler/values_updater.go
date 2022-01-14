@@ -18,8 +18,8 @@ import (
 	"context"
 	"github.com/OpenNMS/opennms-operator/api/v1alpha1"
 	"github.com/OpenNMS/opennms-operator/internal/model/values"
+	valuesutil "github.com/OpenNMS/opennms-operator/internal/util/crd"
 	"github.com/OpenNMS/opennms-operator/internal/util/security"
-	valuesutil "github.com/OpenNMS/opennms-operator/internal/util/values"
 	v1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/types"
 )
@@ -68,5 +68,6 @@ func setPasswords(tv values.TemplateValues) values.TemplateValues {
 	if tv.Values.Postgres.Password == "notset" {
 		tv.Values.Postgres.Password = security.GeneratePassword()
 	}
+	return tv
 }
 
