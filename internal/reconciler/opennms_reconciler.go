@@ -77,27 +77,28 @@ func (r *OpenNMSReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 				r.Log.Info("updating resource", "name", resource.GetName(), "namespace", resource.GetNamespace(), "kind", kind)
 				r.updateStatus(ctx, &instance, false, "updating instance resource")
 				var err error
+				var res reconcile.Result
 				switch kind {
 				case "v1.Deployment":
-					err = r.updateDeployment(resource, deployedResource)
+					res, err = r.updateDeployment(ctx, resource, deployedResource)
 				case "v1.StatefulSet":
-					err = r.updateStatefulSet(resource, deployedResource)
+					res, err = r.updateStatefulSet(ctx, resource, deployedResource)
 				case "v1.Job":
-					err = r.updateJob(resource, deployedResource)
+					res, err = r.updateJob(ctx, resource, deployedResource)
 				case "v1.Secret":
-					err = r.updateSecret(resource, deployedResource)
+					res, err = r.updateSecret(ctx, resource, deployedResource)
 				case "v1.ConfigMap":
-					err = r.updateConfigMap(resource, deployedResource)
+					res, err = r.updateConfigMap(ctx, resource, deployedResource)
 				}
 				if err != nil {
 					r.Log.Info("error updating resource", "name", resource.GetName(), "namespace", resource.GetNamespace(), "kind", kind, "error", err)
 					r.updateStatus(ctx, &instance, false, fmt.Sprintf("Error: failed to update resource: %s %s %s", resource.GetNamespace(), kind, resource.GetName()))
 					return reconcile.Result{}, err
 				}
+				return res, nil
 			}
 		}
 	}
-
 	return ctrl.Result{}, nil
 }
 
