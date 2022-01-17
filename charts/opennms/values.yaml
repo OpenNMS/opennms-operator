@@ -24,12 +24,12 @@ Auth:
   Enabled: false
   Image: placeholder
   Port: 5000
-  AdminPass: admin
-  MinionPass: minion
+  AdminPass: notset
+  MinionPass: notset
   AllowedUsers: test@email.com
 Postgres:
   Image: timescale/timescaledb:latest-pg12
-  Password: password
+  Password: notset
   VolumeSize: 10Gi
 Grafana:
   Image: placeholder
