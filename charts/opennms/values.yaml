@@ -1,5 +1,6 @@
 Namespace: opennms-instance
 Host: localhost
+DisableProbes: false
 OpenNMS:
   Image: opennms/horizon:bleeding
   VolumeSize: 500Mi

@@ -68,7 +68,7 @@ spec:
                   type: array
                   items:
                     type: string
-                image_update:
+                imageUpdate:
                   description: Configuration for automatic image updating
                   type: object
                   properties:
@@ -89,6 +89,23 @@ spec:
                       enum: [ Horizon, Meridian ]
                     tag:
                       type: string
+                imageOverride:
+                  description: Define custom images for each of the services, if desired.
+                  type: object
+                  properties:
+                    opennms:
+                      type: string
+                    initContainer:
+                      type: string
+                    postgres:
+                      type: string
+                    grafana:
+                      type: string
+                    auth:
+                      type: string
+                disableProbes:
+                  description: Disable pod probes for nonfunctional testing purposes
+                  type: boolean
             status:
               description: OpenNMSStatus defines the observed state of OpenNMS
               type: object
@@ -140,7 +157,3 @@ spec:
                           timestamp:
                             description: Timestamp when the service's readiness was last determined
                             type: string
-              required:
-                - image
-                - nodes
-                - readiness

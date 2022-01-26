@@ -76,8 +76,8 @@ func (r *OpenNMSReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 			} else {
 				r.Log.Info("updating resource", "name", resource.GetName(), "namespace", resource.GetNamespace(), "kind", kind)
 				r.updateStatus(ctx, &instance, false, "updating instance resource")
+				var res *reconcile.Result
 				var err error
-				var res reconcile.Result
 				switch kind {
 				case "v1.Deployment":
 					res, err = r.updateDeployment(ctx, resource, deployedResource)
@@ -95,7 +95,9 @@ func (r *OpenNMSReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 					r.updateStatus(ctx, &instance, false, fmt.Sprintf("Error: failed to update resource: %s %s %s", resource.GetNamespace(), kind, resource.GetName()))
 					return reconcile.Result{}, err
 				}
-				return res, nil
+				if res != nil {
+					return *res, nil
+				}
 			}
 		}
 	}
@@ -106,7 +108,7 @@ func (r *OpenNMSReconciler) getResourceFromCluster(ctx context.Context, resource
 	r.Log.Info("Attempting get for", "name", resource.GetName(), "namespace", resource.GetNamespace())
 	deployedResource := resource.DeepCopyObject().(client.Object)
 	err := r.Get(ctx, types.NamespacedName{Name: resource.GetName(), Namespace: resource.GetNamespace()}, deployedResource)
-	return deployedResource, err != nil && errors.IsNotFound(err)
+	return deployedResource, !(err != nil && errors.IsNotFound(err))
 }
 
 func (r *OpenNMSReconciler) updateStatus(ctx context.Context, instance *v1alpha1.OpenNMS, ready bool, reason string) {

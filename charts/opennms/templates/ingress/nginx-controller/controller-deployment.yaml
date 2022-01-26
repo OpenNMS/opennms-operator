@@ -63,6 +63,7 @@ spec:
                   fieldPath: metadata.namespace
             - name: LD_PRELOAD
               value: /usr/local/lib/libmimalloc.so
+          {{ if not .Values.DisableProbes }}
           livenessProbe:
             failureThreshold: 5
             httpGet:
@@ -83,6 +84,7 @@ spec:
             periodSeconds: 10
             successThreshold: 1
             timeoutSeconds: 1
+          {{ end }}
           ports:
             - name: http
               containerPort: 80

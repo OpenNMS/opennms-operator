@@ -26,68 +26,68 @@ import (
 	"time"
 )
 
-func (r *OpenNMSReconciler) updateDeployment(ctx context.Context, resource client.Object, deployedResource client.Object) (reconcile.Result, error) {
+func (r *OpenNMSReconciler) updateDeployment(ctx context.Context, resource client.Object, deployedResource client.Object) (*reconcile.Result, error) {
 	if !subsets.SubsetEqual(resource, deployedResource) {
 		if err := r.Update(ctx, resource); err != nil {
-			return reconcile.Result{}, err
+			return &reconcile.Result{}, err
 		}
-		return ctrl.Result{RequeueAfter: 10 * time.Second}, nil
+		return &ctrl.Result{RequeueAfter: 10 * time.Second}, nil
 	} else {
 		// Determine if the resources are fully created, otherwise wait longer
 		deployment := deployedResource.(*v1.Deployment)
 		if deployment.Status.ReadyReplicas != deployment.Status.Replicas {
-			return ctrl.Result{RequeueAfter: 10 * time.Second}, nil
+			return &ctrl.Result{RequeueAfter: 10 * time.Second}, nil
 		}
 	}
-	return reconcile.Result{}, nil
+	return nil, nil
 }
 
-func (r *OpenNMSReconciler) updateStatefulSet(ctx context.Context, resource client.Object, deployedResource client.Object) (reconcile.Result, error) {
-	if !subsets.SubsetEqual(resource, deployedResource) {
+func (r *OpenNMSReconciler) updateStatefulSet(ctx context.Context, resource client.Object, deployedResource client.Object) (*reconcile.Result, error) {
+	if !subsets.SubsetEqual(deployedResource, resource) {
 		if err := r.Update(ctx, resource); err != nil {
-			return reconcile.Result{}, err
+			return &reconcile.Result{}, err
 		}
-		return ctrl.Result{RequeueAfter: 10 * time.Second}, nil
+		return &ctrl.Result{RequeueAfter: 10 * time.Second}, nil
 	} else {
 		// Determine if the resources are fully created, otherwise wait longer
 		statefulset := deployedResource.(*v1.StatefulSet)
 		if statefulset.Status.ReadyReplicas != statefulset.Status.Replicas {
-			return ctrl.Result{RequeueAfter: 10 * time.Second}, nil
+			return &ctrl.Result{RequeueAfter: 10 * time.Second}, nil
 		}
 	}
-	return reconcile.Result{}, nil
+	return nil, nil
 }
 
-func (r *OpenNMSReconciler) updateJob(ctx context.Context, resource client.Object, deployedResource client.Object) (reconcile.Result, error) {
+func (r *OpenNMSReconciler) updateJob(ctx context.Context, resource client.Object, deployedResource client.Object) (*reconcile.Result, error) {
 	job := deployedResource.(*batchv1.Job)
 	if job.Status.Succeeded < 1 {
-		return ctrl.Result{RequeueAfter: 10 * time.Second}, nil
+		return &ctrl.Result{RequeueAfter: 10 * time.Second}, nil
 	}
-	return reconcile.Result{}, nil
+	return nil, nil
 }
 
-func (r *OpenNMSReconciler) updateSecret(ctx context.Context, resource client.Object, deployedResource client.Object) (reconcile.Result, error) {
+func (r *OpenNMSReconciler) updateSecret(ctx context.Context, resource client.Object, deployedResource client.Object) (*reconcile.Result, error) {
 	if resource.GetName() == "onms-allowed-users" && !subsets.SubsetEqual(resource, deployedResource) {
 		err := r.updateAllowedUsersSecret(ctx, resource)
 		if err != nil {
-			return reconcile.Result{}, err
+			return &reconcile.Result{}, err
 		}
 	} else if !subsets.SubsetEqual(resource, deployedResource) {
 		if err := r.Update(ctx, resource); err != nil {
-			return reconcile.Result{}, err
+			return &reconcile.Result{}, err
 		}
 	}
-	return reconcile.Result{}, nil
+	return nil, nil
 }
 
-func (r *OpenNMSReconciler) updateConfigMap(ctx context.Context, resource client.Object, deployedResource client.Object) (reconcile.Result, error) {
+func (r *OpenNMSReconciler) updateConfigMap(ctx context.Context, resource client.Object, deployedResource client.Object) (*reconcile.Result, error) {
 	if !subsets.SubsetEqual(resource, deployedResource) {
 		if err := r.Update(ctx, resource); err != nil {
-			return reconcile.Result{}, err
+			return &reconcile.Result{}, err
 		}
-		return reconcile.Result{RequeueAfter: 10 * time.Second}, nil
+		return &reconcile.Result{RequeueAfter: 10 * time.Second}, nil
 	}
-	return reconcile.Result{}, nil
+	return nil, nil
 }
 
 func (r *OpenNMSReconciler) updateAllowedUsersSecret(ctx context.Context, resource client.Object) error {

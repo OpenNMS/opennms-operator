@@ -47,6 +47,7 @@ spec:
             - containerPort: 5432
               name: postgresql
               protocol: TCP
+          {{ if not .Values.DisableProbes }}
           readinessProbe:
             exec:
               command:
@@ -57,6 +58,7 @@ spec:
                 - postgres
             initialDelaySeconds: 10
             periodSeconds: 10
+          {{ end }}
           resources:
             limits:
               cpu: "2"

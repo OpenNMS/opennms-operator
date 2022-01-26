@@ -19,11 +19,12 @@ type TemplateValues struct {
 }
 
 type Values struct {
-	Namespace string         `yaml:"Namespace"`
-	Host      string         `yaml:"Host"`
-	OpenNMS   OpenNMSValues  `yaml:"OpenNMS"`
-	TLS       TLSValues      `yaml:"TLS"`
-	Auth      AuthValues     `yaml:"Auth"`
-	Postgres  PostgresValues `yaml:"Postgres"`
-	Grafana   GrafanaValues  `yaml:"Grafana"`
+	Namespace     string         `yaml:"Namespace"`
+	Host          string         `yaml:"Host"`
+	DisableProbes bool           `yaml:"DisableProbes"`
+	OpenNMS       OpenNMSValues  `yaml:"OpenNMS"`
+	TLS           TLSValues      `yaml:"TLS"`
+	Auth          AuthValues     `yaml:"Auth"`
+	Postgres      PostgresValues `yaml:"Postgres"`
+	Grafana       GrafanaValues  `yaml:"Grafana"`
 }

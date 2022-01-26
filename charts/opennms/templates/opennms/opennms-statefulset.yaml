@@ -113,6 +113,7 @@ spec:
               containerPort: 18980
             - name: activemq
               containerPort: 61616
+          {{ if not .Values.DisableProbes }}
           livenessProbe:
             httpGet:
               path: /opennms/login.jsp
@@ -134,6 +135,7 @@ spec:
             periodSeconds: 15
             failureThreshold: 10
             timeoutSeconds: 5
+          {{ end }}
           resources:
             limits:
               cpu: "2"

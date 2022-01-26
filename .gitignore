@@ -4,3 +4,6 @@
 # Local test files
 local.yaml
 testtmp/
+
+# Build
+operator

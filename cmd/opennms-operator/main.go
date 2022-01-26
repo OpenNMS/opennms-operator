@@ -17,29 +17,21 @@ package main
 import (
 	"github.com/OpenNMS/opennms-operator/config"
 	"github.com/OpenNMS/opennms-operator/internal/reconciler"
+	"github.com/OpenNMS/opennms-operator/internal/scheme"
 	"github.com/OpenNMS/opennms-operator/internal/util/values"
-	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/serializer"
-	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
-	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 	"os"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
-	opennmsv1alpha1 "github.com/OpenNMS/opennms-operator/api/v1alpha1"
 	// +kubebuilder:scaffold:imports
 )
 
 var (
-	scheme   = runtime.NewScheme()
-	setupLog = ctrl.Log.WithName("setup")
+	K8sScheme = scheme.GetScheme()
+	setupLog  = ctrl.Log.WithName("setup")
 )
-
-func init() {
-	utilruntime.Must(clientgoscheme.AddToScheme(scheme))
-	utilruntime.Must(opennmsv1alpha1.AddToScheme(scheme))
-}
 
 func main() {
 
@@ -48,7 +40,7 @@ func main() {
 	operatorConfig := config.LoadConfig()
 
 	mgr, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{
-		Scheme:             scheme,
+		Scheme:             K8sScheme,
 		MetricsBindAddress: ":9090",
 		Port:               9443,
 		LeaderElection:     false,

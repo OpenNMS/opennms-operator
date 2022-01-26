@@ -1,7 +1,8 @@
 operator:
   namespace: opennms
   serviceName: opennms-operator
-  image: opennms-operator:stable
+  image: opennms-operator:bleeding
+  imagePullPolicy: IfNotPresent
   resources:
     limits:
       cpu: 100m
@@ -10,5 +11,5 @@ operator:
       cpu: 100m
       memory: 50Mi
 customErrors:
-  image: <<Custom Error Backend Image>>
+  image: quay.io/kubernetes-ingress-controller/custom-error-pages-amd64:0.4
   debug: true

@@ -37,6 +37,8 @@ func ConvertCRDToValues(crd v1alpha1.OpenNMS, defaultValues values.TemplateValue
 	//Postgres
 	v.Postgres = getPostgresValues(spec, v.Postgres)
 
+	v = getImageOverrides(spec, v)
+
 	templateValues.Values = v
 
 	return templateValues
@@ -48,9 +50,11 @@ func getCoreValues(spec v1alpha1.OpenNMSSpec, v values.OpenNMSValues) values.Ope
 	v.Image = getImage(spec)
 	if spec.Core.CPU != "" {
 		v.Resources.Request.Cpu = spec.Core.CPU
+		v.Resources.Limits.Cpu = spec.Core.CPU
 	}
 	if spec.Core.MEM != "" {
 		v.Resources.Request.Memory = spec.Core.MEM
+		v.Resources.Limits.Memory = spec.Core.MEM
 	}
 	if spec.Core.Disk != "" {
 		v.VolumeSize = spec.Core.Disk
@@ -88,6 +92,22 @@ func getImage(spec v1alpha1.OpenNMSSpec) string {
 		imageTag = "bleeding"
 	}
 	return fmt.Sprintf("opennms/%s:%s", distro, imageTag)
+}
+
+func getImageOverrides(spec v1alpha1.OpenNMSSpec, v values.Values) values.Values {
+	if spec.ImageOverride.OpenNMS != "" {
+		v.OpenNMS.Image = spec.ImageOverride.OpenNMS
+	}
+	if spec.ImageOverride.Postgres != "" {
+		v.Postgres.Image = spec.ImageOverride.Postgres
+	}
+	if spec.ImageOverride.Grafana != "" {
+		v.Grafana.Image = spec.ImageOverride.Grafana
+	}
+	if spec.ImageOverride.Auth != "" {
+		v.Auth.Image = spec.ImageOverride.Auth
+	}
+	return v
 }
 
 
