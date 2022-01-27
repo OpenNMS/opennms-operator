@@ -47,7 +47,7 @@ spec:
             - containerPort: 5432
               name: postgresql
               protocol: TCP
-          {{ if not .Values.DisableProbes }}
+          {{ if not .Values.TestDeploy }}
           readinessProbe:
             exec:
               command:
@@ -71,9 +71,7 @@ spec:
               name: pgdata
               subPath: pgdata
   volumeClaimTemplates:
-    - apiVersion: v1
-      kind: PersistentVolumeClaim
-      metadata:
+    - metadata:
         name: pgdata
       spec:
         accessModes: [ ReadWriteOnce ]

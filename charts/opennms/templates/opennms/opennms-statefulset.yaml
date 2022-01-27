@@ -17,6 +17,7 @@ spec:
         app: onms
     spec:
       terminationGracePeriodSeconds: 120
+      {{ if not .Values.TestDeploy }}
       initContainers:
         - name: init-config
           image: {{ .Values.OpenNMS.Image }}
@@ -74,12 +75,15 @@ spec:
               value: postgresql:5432
             - name: TIMEOUT
               value: "600"
+      {{ end }}
       containers:
         - name: opennms
           image: {{ .Values.OpenNMS.Image }}
           imagePullPolicy: Always
+          {{ if not .Values.TestDeploy }}
           args:
           - -s
+          {{ end }}
           env:
             - name: TZ
               value: UTC
@@ -113,7 +117,7 @@ spec:
               containerPort: 18980
             - name: activemq
               containerPort: 61616
-          {{ if not .Values.DisableProbes }}
+          {{ if not .Values.TestDeploy }}
           livenessProbe:
             httpGet:
               path: /opennms/login.jsp
@@ -155,9 +159,7 @@ spec:
           secret:
             secretName: onms-initial-creds
   volumeClaimTemplates:
-    - apiVersion: v1
-      kind: PersistentVolumeClaim
-      metadata:
+    - metadata:
         name: etc
         namespace: {{ .Values.Namespace }}
       spec:
@@ -165,9 +167,7 @@ spec:
         resources:
           requests:
             storage: {{ .Values.OpenNMS.VolumeSize }}
-    - apiVersion: v1
-      kind: PersistentVolumeClaim
-      metadata:
+    - metadata:
         name: etc-overlay
         namespace: {{ .Values.Namespace }}
       spec:
@@ -175,9 +175,7 @@ spec:
         resources:
           requests:
             storage: {{ .Values.OpenNMS.VolumeSize }}
-    - apiVersion: v1
-      kind: PersistentVolumeClaim
-      metadata:
+    - metadata:
         name: deploy
         namespace: {{ .Values.Namespace }}
       spec:

@@ -14,19 +14,6 @@ limitations under the License.
 
 package values
 
-type TemplateValues struct {
-	Values Values
-}
-
-type Values struct {
-	Namespace  string         `yaml:"Namespace"`
-	Host       string         `yaml:"Host"`
-	TestDeploy bool           `yaml:"TestDeploy"`
-	OpenNMS    OpenNMSValues  `yaml:"OpenNMS"`
-	TLS        TLSValues      `yaml:"TLS"`
-	Auth       AuthValues     `yaml:"Auth"`
-	Postgres   PostgresValues `yaml:"Postgres"`
-	Grafana    GrafanaValues  `yaml:"Grafana"`
-	Ingress    IngressValues  `yaml:"Ingress"`
-	Stunnel    StunnelValues  `yaml:"Stunnel"`
+type StunnelValues struct {
+	Image string `yaml:"Image"`
 }

@@ -71,7 +71,7 @@ spec:
             - containerPort: 3000
               name: http-grafana
               protocol: TCP
-          {{ if not .Values.DisableProbes }}
+          {{ if not .Values.TestDeploy }}
           readinessProbe:
             failureThreshold: 3
             httpGet:

@@ -27,13 +27,19 @@ type AuthHandler struct {
 }
 
 func (h *AuthHandler) ProvideConfig(values values.TemplateValues) []client.Object {
+	var initCredsSecret corev1.Secret
+	var allowedUsersSecret corev1.Secret
 	var service corev1.Service
 	var deployment appsv1.Deployment
 
+	yaml.LoadYaml(filepath("auth/secrets/auth-initial-creds.yaml"), values, &initCredsSecret)
+	yaml.LoadYaml(filepath("auth/secrets/auth-allowed-users.yaml"), values, &allowedUsersSecret)
 	yaml.LoadYaml(filepath("auth/auth-service.yaml"), values, &service)
 	yaml.LoadYaml(filepath("auth/auth-deployment.yaml"), values, &deployment)
 
 	h.Config = []client.Object{
+		&initCredsSecret,
+		&allowedUsersSecret,
 		&service,
 		&deployment,
 	}

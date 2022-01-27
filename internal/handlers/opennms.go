@@ -27,23 +27,17 @@ type OpenNMSHandler struct {
 }
 
 func (h *OpenNMSHandler) ProvideConfig(values values.TemplateValues) []client.Object {
-	var initCredsSecret corev1.Secret
-	var allowedUsersSecret corev1.Secret
 	var configMap corev1.ConfigMap
 	var tcpServices corev1.ConfigMap
 	var service corev1.Service
 	var statefulSet appsv1.StatefulSet
 
-	yaml.LoadYaml(filepath("opennms/secrets/opennms-allowed-users.yaml"), values, &initCredsSecret)
-	yaml.LoadYaml(filepath("opennms/secrets/opennms-allowed-users.yaml"), values, &allowedUsersSecret)
 	yaml.LoadYaml(filepath("opennms/opennms-configmap.yaml"), values, &configMap)
 	yaml.LoadYaml(filepath("opennms/opennms-tcp-services-cm.yaml"), values, &tcpServices)
 	yaml.LoadYaml(filepath("opennms/opennms-service.yaml"), values, &service)
 	yaml.LoadYaml(filepath("opennms/opennms-statefulset.yaml"), values, &statefulSet)
 
 	h.Config = []client.Object{
-		&initCredsSecret,
-		&allowedUsersSecret,
 		&configMap,
 		&tcpServices,
 		&service,

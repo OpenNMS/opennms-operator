@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: stunnel
-        image: dweomer/stunnel:latest
+        image: {{ .Values.Stunnel.Image }}
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 61616
@@ -32,7 +32,9 @@ spec:
             value: "/certificate/tls.key"
           - name: STUNNEL_CRT
             value: "/certificate/tls.crt"
+        {{ if not .Values.TestDeploy }}
         command: ['/bin/sh', '/runtime/entry.sh']
+        {{ end }}
         resources:
           requests:
             cpu: "10m"

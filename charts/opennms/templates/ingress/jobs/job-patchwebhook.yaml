@@ -18,8 +18,9 @@ spec:
     spec:
       containers:
         - name: patch
-          image: docker.io/jettech/kube-webhook-certgen:v1.5.1
+          image: {{ .Values.Ingress.WebhookPatchJobImage }}
           imagePullPolicy: IfNotPresent
+          {{ if not .Values.TestDeploy }}
           args:
             - patch
             - --webhook-name=ingress-nginx-admission-{{ .Values.Namespace }}
@@ -27,6 +28,7 @@ spec:
             - --patch-mutating=false
             - --secret-name=ingress-nginx-admission
             - --patch-failure-policy=Fail
+          {{ end }}
       restartPolicy: OnFailure
       serviceAccountName: ingress-nginx-admission
       securityContext:

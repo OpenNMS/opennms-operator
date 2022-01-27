@@ -20,7 +20,6 @@ import (
 	"github.com/OpenNMS/opennms-operator/internal/model/values"
 )
 
-
 //ConvertCRDToValues - convert an ONMS crd into a set of template values
 func ConvertCRDToValues(crd v1alpha1.OpenNMS, defaultValues values.TemplateValues) values.TemplateValues {
 	templateValues := defaultValues
@@ -37,13 +36,15 @@ func ConvertCRDToValues(crd v1alpha1.OpenNMS, defaultValues values.TemplateValue
 	//Postgres
 	v.Postgres = getPostgresValues(spec, v.Postgres)
 
-	v = getImageOverrides(spec, v)
+	if spec.TestDeploy {
+		v.TestDeploy = spec.TestDeploy
+		v = overrideImages(spec, v)
+	}
 
 	templateValues.Values = v
 
 	return templateValues
 }
-
 
 //getCoreValues - get ONMS core values from the crd
 func getCoreValues(spec v1alpha1.OpenNMSSpec, v values.OpenNMSValues) values.OpenNMSValues {
@@ -62,7 +63,6 @@ func getCoreValues(spec v1alpha1.OpenNMSSpec, v values.OpenNMSValues) values.Ope
 	v.Timeseries = getTimeseriesValues(spec, v.Timeseries)
 	return v
 }
-
 
 //getTimeseriesValues - get TS DB values from the crd
 func getTimeseriesValues(spec v1alpha1.OpenNMSSpec, v values.TimeseriesValues) values.TimeseriesValues {
@@ -94,22 +94,23 @@ func getImage(spec v1alpha1.OpenNMSSpec) string {
 	return fmt.Sprintf("opennms/%s:%s", distro, imageTag)
 }
 
-func getImageOverrides(spec v1alpha1.OpenNMSSpec, v values.Values) values.Values {
-	if spec.ImageOverride.OpenNMS != "" {
-		v.OpenNMS.Image = spec.ImageOverride.OpenNMS
-	}
-	if spec.ImageOverride.Postgres != "" {
-		v.Postgres.Image = spec.ImageOverride.Postgres
-	}
-	if spec.ImageOverride.Grafana != "" {
-		v.Grafana.Image = spec.ImageOverride.Grafana
-	}
-	if spec.ImageOverride.Auth != "" {
-		v.Auth.Image = spec.ImageOverride.Auth
-	}
+//overrideImages - overrides images with noop images for deployment testing purposes
+func overrideImages(spec v1alpha1.OpenNMSSpec, v values.Values) values.Values {
+	noopServiceImage := "lipanski/docker-static-website:latest"
+	noopJobImage := "alpine:latest"
+
+	v.OpenNMS.Image = noopServiceImage
+	v.Postgres.Image = noopServiceImage
+	v.Grafana.Image = noopServiceImage
+	v.Auth.Image = noopServiceImage
+	v.Stunnel.Image = noopServiceImage
+
+	v.Ingress.ControllerImage = noopServiceImage
+	v.Ingress.SecretJobImage = noopJobImage
+	v.Ingress.WebhookPatchJobImage = noopJobImage
+
 	return v
 }
-
 
 //getPostgresValues - get Postgres DB values from the CRD
 func getPostgresValues(spec v1alpha1.OpenNMSSpec, v values.PostgresValues) values.PostgresValues {

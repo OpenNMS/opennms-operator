@@ -32,8 +32,8 @@ type OpenNMSSpec struct {
 	// Users allowed login via tokens
 	AllowedUsers []string `json:"allowedUsers,omitempty"`
 
-	// Disable probes for testing purposes
-	DisableProbes bool `json:"disableProbes,omitempty"`
+	// Deploy an instance in a nonoperative testing mode
+	TestDeploy bool `json:"testDeploy,omitempty"`
 
 	// Defines what plugin for timeseries to use
 	Timeseries Timeseries `json:"timeseries,omitempty"`
@@ -46,9 +46,6 @@ type OpenNMSSpec struct {
 
 	// Defines the logic of ONMS image update
 	ImageUpdateConfig ImageUpdateConfig `json:"imageUpdate,omitempty"`
-
-	//Defines image overrides for each of the constituent services
-	ImageOverride ImageOverride `json:"imageOverride,omitempty"`
 }
 
 //Version - defines the version of the ONMS core to use
@@ -85,15 +82,6 @@ type ImageUpdateConfig struct {
 	Update string `json:"update,omitempty"`
 	// represents number of minutes for recurrent checks of a new image
 	Frequency int `json:"frequency,omitempty"`
-}
-
-//ImageOverride - defines image overrides for each of the constituent services
-type ImageOverride struct {
-	OpenNMS       string `json:"opennms,omitempty"`
-	InitContainer string `json:"initContainer,omitempty"`
-	Postgres      string `json:"postgres,omitempty"`
-	Grafana       string `json:"grafana,omitempty"`
-	Auth          string `json:"auth,omitempty"`
 }
 
 // ImageStatus - defines current status of used image for OpenNMS container

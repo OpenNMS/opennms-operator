@@ -4,14 +4,9 @@ metadata:
   name: test-instance
 spec:
   version:
-    distribution: Horizon
+    distribution: horizon
     tag: bleeding
   namespace: test-instance
   host: localhost
   allowedUsers: [ email@address.com ]
-  disableProbes: true
-  imageOverride:
-    opennms: lipanski/docker-static-website:latest
-    initContainer: alpine:latest
-    grafana: lipanski/docker-static-website:latest
-    auth: lipanski/docker-static-website:latest
+  testDeploy: true

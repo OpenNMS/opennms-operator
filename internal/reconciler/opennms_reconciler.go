@@ -64,17 +64,17 @@ func (r *OpenNMSReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 			deployedResource, exists := r.getResourceFromCluster(ctx, resource)
 			if !exists {
 				r.updateStatus(ctx, &instance, false, "instance starting")
-				r.Log.Info("creating resource", "name", resource.GetName(), "namespace", resource.GetNamespace(), "kind", kind)
+				r.Log.Info("creating resource", "namespace", resource.GetNamespace(), "name", resource.GetName(),  "kind", kind)
 				err := r.Create(ctx, resource)
 				if err != nil {
-					r.Log.Error(err, "error creating resource", resource.GetName(), "namespace", resource.GetNamespace(), "kind", kind, "error", err)
+					r.Log.Error(err, "error creating resource", "namespace", resource.GetNamespace(), "name", resource.GetName(),  "kind", kind, "error", err)
 					return ctrl.Result{}, err
 				}
 				if kind == "v1.Deployment" || kind == "v1.Job" || kind == "v1.StatefulSet" {
 					return ctrl.Result{RequeueAfter: 10 * time.Second}, nil
 				}
 			} else {
-				r.Log.Info("updating resource", "name", resource.GetName(), "namespace", resource.GetNamespace(), "kind", kind)
+				r.Log.Info("updating resource", "namespace", resource.GetNamespace(), "name", resource.GetName(),  "kind", kind)
 				r.updateStatus(ctx, &instance, false, "updating instance resource")
 				var res *reconcile.Result
 				var err error
@@ -91,7 +91,7 @@ func (r *OpenNMSReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 					res, err = r.updateConfigMap(ctx, resource, deployedResource)
 				}
 				if err != nil {
-					r.Log.Info("error updating resource", "name", resource.GetName(), "namespace", resource.GetNamespace(), "kind", kind, "error", err)
+					r.Log.Info("error updating resource", "namespace", resource.GetNamespace(), "name", resource.GetName(),  "kind", kind, "error", err)
 					r.updateStatus(ctx, &instance, false, fmt.Sprintf("Error: failed to update resource: %s %s %s", resource.GetNamespace(), kind, resource.GetName()))
 					return reconcile.Result{}, err
 				}
@@ -105,7 +105,7 @@ func (r *OpenNMSReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 }
 
 func (r *OpenNMSReconciler) getResourceFromCluster(ctx context.Context, resource client.Object) (client.Object, bool) {
-	r.Log.Info("Attempting get for", "name", resource.GetName(), "namespace", resource.GetNamespace())
+	r.Log.Info("Attempting get for", "namespace", resource.GetNamespace(), "name", resource.GetName())
 	deployedResource := resource.DeepCopyObject().(client.Object)
 	err := r.Get(ctx, types.NamespacedName{Name: resource.GetName(), Namespace: resource.GetNamespace()}, deployedResource)
 	return deployedResource, !(err != nil && errors.IsNotFound(err))

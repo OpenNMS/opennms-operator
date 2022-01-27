@@ -26,8 +26,9 @@ spec:
       dnsPolicy: ClusterFirst
       containers:
         - name: controller
-          image: k8s.gcr.io/ingress-nginx/controller:v0.46.0
+          image: {{ .Values.Ingress.ControllerImage }}
           imagePullPolicy: IfNotPresent
+          {{ if not .Values.TestDeploy }}
           lifecycle:
             preStop:
               exec:
@@ -44,6 +45,7 @@ spec:
             - --validating-webhook-certificate=/usr/local/certificates/cert
             - --validating-webhook-key=/usr/local/certificates/key
             - --tcp-services-configmap={{ .Values.Namespace }}/tcp-services
+          {{ end }}
           securityContext:
             capabilities:
               drop:
@@ -63,7 +65,7 @@ spec:
                   fieldPath: metadata.namespace
             - name: LD_PRELOAD
               value: /usr/local/lib/libmimalloc.so
-          {{ if not .Values.DisableProbes }}
+          {{ if not .Values.TestDeploy }}
           livenessProbe:
             failureThreshold: 5
             httpGet:
@@ -95,10 +97,12 @@ spec:
             - name: webhook
               containerPort: 8443
               protocol: TCP
+          {{ if not .Values.TestDeploy }}
           volumeMounts:
             - name: webhook-cert
               mountPath: /usr/local/certificates/
               readOnly: true
+          {{ end }}
           resources:
             requests:
               cpu: 100m
@@ -107,7 +111,9 @@ spec:
         kubernetes.io/os: linux
       serviceAccountName: ingress-nginx
       terminationGracePeriodSeconds: 300
+      {{ if not .Values.TestDeploy }}
       volumes:
         - name: webhook-cert
           secret:
             secretName: ingress-nginx-admission
+      {{ end }}

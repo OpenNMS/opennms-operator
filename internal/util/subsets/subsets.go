@@ -1,6 +1,4 @@
-/**
- Copied from https://github.com/lightbend/akka-cluster-operator/blob/a2e764272030151940171031a9a7a3168e47b15b/pkg/controller/akkacluster/subset.go#L1
-
+/*
 	Licensed under the Apache License, Version 2.0 (the "License");
 	you may not use this file except in compliance with the License.
 	You may obtain a copy of the License at
@@ -12,6 +10,8 @@
 	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 	See the License for the specific language governing permissions and
 	limitations under the License.
+
+	Copied from https://github.com/lightbend/akka-cluster-operator/blob/a2e764272030151940171031a9a7a3168e47b15b/pkg/controller/akkacluster/subset.go#L1
 */
 package subsets
 
@@ -68,7 +68,6 @@ func (t *treeWalk) subsetValueEqual(subset, superset reflect.Value) bool {
 	if !superset.IsValid() {
 		return false
 	}
-
 	if subset.Type() != superset.Type() {
 		return false
 	}
@@ -97,14 +96,7 @@ func (t *treeWalk) subsetValueEqual(subset, superset reflect.Value) bool {
 	switch subset.Kind() {
 	case reflect.Array, reflect.Slice:
 		// recursive subset: superset may have extra elements at the end, only the subset members must match
-		// Some array types (e.g. uint8) need to be fully compared
-		if superset.Len() > 0 && superset.Index(0).Type().String() == "uint8" {
-			// Full comparison - not subset
-			if superset.Len() != subset.Len() {
-				return false
-			}
-		} else if superset.Len() < subset.Len() {
-			// Case for allowing subset comparison
+		if superset.Len() < subset.Len() {
 			return false
 		}
 		for i := 0; i < subset.Len(); i++ {
