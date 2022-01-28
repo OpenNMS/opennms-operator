@@ -33,7 +33,7 @@ func DeployOperatorAndCRD(t *testing.T, ctx context.Context, helmClient helmclie
 		ReleaseName: "opennms-operator-integration-test",
 		ChartName: "charts/opennms-operator",
 		Wait: true,
-		Timeout: time.Second * 60,
+		Timeout: time.Second * 300,
 		UpgradeCRDs: true,
 	}
 	_, err := helmClient.InstallOrUpgradeChart(ctx, chartSpec)
