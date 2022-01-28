@@ -13,3 +13,17 @@ operator:
 customErrors:
   image: quay.io/kubernetes-ingress-controller/custom-error-pages-amd64:0.4
   debug: true
+ssl:
+  enabled: true
+  issuer:
+    issuerServer: https://acme-v02.api.letsencrypt.org/directory
+    issuerUserEmail: email@address.com
+  cert:
+    hostname: "*.wildcard.domain.com"
+  solver:
+    # Configure according to: https://cert-manager.io/docs/configuration/acme/dns01/
+    cloudDNS:
+      project: my-project
+      serviceAccountSecretRef:
+        name: prod-clouddns-svc-acct-secret
+        key: service-account.json
