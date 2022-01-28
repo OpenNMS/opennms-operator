@@ -32,6 +32,9 @@ type OpenNMSSpec struct {
 	// Users allowed login via tokens
 	AllowedUsers []string `json:"allowedUsers,omitempty"`
 
+	// Deploy an instance in a nonoperative testing mode
+	TestDeploy bool `json:"testDeploy,omitempty"`
+
 	// Defines what plugin for timeseries to use
 	Timeseries Timeseries `json:"timeseries,omitempty"`
 
@@ -42,7 +45,7 @@ type OpenNMSSpec struct {
 	Postgres BaseServiceResources `json:"postgres,omitempty"`
 
 	// Defines the logic of ONMS image update
-	ImageUpdateConfig ImageUpdateConfig `json:"image_update,omitempty"`
+	ImageUpdateConfig ImageUpdateConfig `json:"imageUpdate,omitempty"`
 }
 
 //Version - defines the version of the ONMS core to use

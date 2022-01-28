@@ -71,6 +71,7 @@ spec:
             - containerPort: 3000
               name: http-grafana
               protocol: TCP
+          {{ if not .Values.TestDeploy }}
           readinessProbe:
             failureThreshold: 3
             httpGet:
@@ -89,6 +90,7 @@ spec:
             tcpSocket:
               port: 3000
             timeoutSeconds: 1
+          {{ end }}
           resources:
             requests:
               cpu: 250m

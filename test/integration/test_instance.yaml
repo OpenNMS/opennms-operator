@@ -1,0 +1,12 @@
+apiVersion: opennms.k8s.opennms.com/v1alpha1
+kind: OpenNMS
+metadata:
+  name: test-instance
+spec:
+  version:
+    distribution: horizon
+    tag: bleeding
+  namespace: test-instance
+  host: localhost
+  allowedUsers: [ email@address.com ]
+  testDeploy: true

@@ -68,7 +68,7 @@ spec:
                   type: array
                   items:
                     type: string
-                image_update:
+                imageUpdate:
                   description: Configuration for automatic image updating
                   type: object
                   properties:
@@ -85,10 +85,13 @@ spec:
                   properties:
                     distribution:
                       type: string
-                      default: Horizon
-                      enum: [ Horizon, Meridian ]
+                      default: horizon
+                      enum: [ horizon, meridian ]
                     tag:
                       type: string
+                testDeploy:
+                  description: Deploy the instance in a nonoperative testing mode
+                  type: boolean
             status:
               description: OpenNMSStatus defines the observed state of OpenNMS
               type: object
@@ -140,7 +143,3 @@ spec:
                           timestamp:
                             description: Timestamp when the service's readiness was last determined
                             type: string
-              required:
-                - image
-                - nodes
-                - readiness

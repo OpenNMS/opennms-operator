@@ -12,21 +12,13 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package values
+package maps
 
-type TemplateValues struct {
-	Values Values
-}
-
-type Values struct {
-	Namespace  string         `yaml:"Namespace"`
-	Host       string         `yaml:"Host"`
-	TestDeploy bool           `yaml:"TestDeploy"`
-	OpenNMS    OpenNMSValues  `yaml:"OpenNMS"`
-	TLS        TLSValues      `yaml:"TLS"`
-	Auth       AuthValues     `yaml:"Auth"`
-	Postgres   PostgresValues `yaml:"Postgres"`
-	Grafana    GrafanaValues  `yaml:"Grafana"`
-	Ingress    IngressValues  `yaml:"Ingress"`
-	Stunnel    StunnelValues  `yaml:"Stunnel"`
+// ConvertByteToStringMap - map[string][]byte -> map[string]string
+func ConvertByteToStringMap(m map[string][]byte) map[string]string {
+	returnMap := map[string]string{}
+	for k, v := range m {
+		returnMap[k] = string(v)
+	}
+	return returnMap
 }

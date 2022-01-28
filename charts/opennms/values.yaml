@@ -1,5 +1,6 @@
 Namespace: opennms-instance
 Host: localhost
+TestDeploy: false
 OpenNMS:
   Image: opennms/horizon:bleeding
   VolumeSize: 500Mi
@@ -21,7 +22,6 @@ TLS:
   Enabled: false
   CertSecret: ssl-cert
 Auth:
-  Enabled: false
   Image: placeholder
   Port: 5000
   AdminPass: notset
@@ -33,3 +33,9 @@ Postgres:
   VolumeSize: 10Gi
 Grafana:
   Image: placeholder
+Ingress:
+  ControllerImage: k8s.gcr.io/ingress-nginx/controller:v0.46.0
+  SecretJobImage: docker.io/jettech/kube-webhook-certgen:v1.5.1
+  WebhookPatchJobImage: docker.io/jettech/kube-webhook-certgen:v1.5.1
+Stunnel:
+  Image: dweomer/stunnel:latest

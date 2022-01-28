@@ -15,11 +15,9 @@ spec:
     spec:
       serviceAccountName: {{ .Values.operator.serviceName }}
       containers:
-        - command:
-            - /manager
-          image:  {{ .Values.operator.image }}
+        - image:  {{ .Values.operator.image }}
           name: {{ .Values.operator.serviceName }}
-          imagePullPolicy: Always
+          imagePullPolicy: {{ .Values.operator.imagePullPolicy }}
           resources:
             limits:
               cpu: {{ .Values.operator.resources.limits.cpu }}

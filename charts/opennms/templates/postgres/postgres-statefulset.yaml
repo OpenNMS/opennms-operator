@@ -47,6 +47,7 @@ spec:
             - containerPort: 5432
               name: postgresql
               protocol: TCP
+          {{ if not .Values.TestDeploy }}
           readinessProbe:
             exec:
               command:
@@ -57,6 +58,7 @@ spec:
                 - postgres
             initialDelaySeconds: 10
             periodSeconds: 10
+          {{ end }}
           resources:
             limits:
               cpu: "2"
@@ -69,9 +71,7 @@ spec:
               name: pgdata
               subPath: pgdata
   volumeClaimTemplates:
-    - apiVersion: v1
-      kind: PersistentVolumeClaim
-      metadata:
+    - metadata:
         name: pgdata
       spec:
         accessModes: [ ReadWriteOnce ]
