@@ -1,3 +1,4 @@
+{{ if .Values.ssl.enabled }}
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
@@ -13,3 +14,4 @@ spec:
   issuerRef:
     kind: ClusterIssuer
     name: cert-issuer
+{{ end }}
