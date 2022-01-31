@@ -7,3 +7,4 @@ testtmp/
 
 # Build
 operator
+charts/opennms-operator/charts

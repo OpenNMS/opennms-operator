@@ -8,9 +8,9 @@ spec:
   secretTemplate:
     annotations:
       replicator.v1.mittwald.de/replicate-to-matching: app.kubernetes.io/name=opennms
-  commonName: {{ .Values.ssl.cert.hostname }}
+  commonName: '{{ .Values.ssl.cert.hostname }}'
   dnsNames:
-    - {{ .Values.ssl.cert.hostname }}
+    - '{{ .Values.ssl.cert.hostname }}'
   issuerRef:
     kind: ClusterIssuer
     name: cert-issuer
