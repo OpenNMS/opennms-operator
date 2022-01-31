@@ -1,0 +1,17 @@
+{{ if .Values.ssl.enabled }}
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: cert-issuer
+  labels:
+    version: 'v1'
+spec:
+  acme:
+    server: {{ .Values.ssl.issuer.issuerServer }}
+    email: {{ .Values.ssl.issuer.issuerUserEmail }}
+    privateKeySecretRef:
+      name: cert-issuer
+    solvers:
+      - dns01:
+          {{ .Values.ssl.solver }}
+{{ end }}
