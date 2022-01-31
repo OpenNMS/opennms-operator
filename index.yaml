@@ -1,0 +1,25 @@
+apiVersion: v1
+entries:
+  opennms-operator:
+  - apiVersion: v2
+    created: "2022-01-31T11:00:58.714901-05:00"
+    dependencies:
+    - name: cert-manager
+      repository: https://charts.jetstack.io
+      version: 1.7.0
+    - name: kubernetes-replicator
+      repository: https://helm.mittwald.de
+      version: 2.7.3
+    description: A Kubernetes operator for deploying and maintaining OpenNMS in the
+      cloud.
+    digest: b0955495d769e16c925a70e39774b65d17686356b080fb8990f84b8327a42629
+    home: https://github.com/OpenNMS/opennms-operator
+    icon: https://www.opennms.com/wp-content/uploads/2021/04/OpenNMS_Horizontal-Logo_Light-BG-retina-website.png
+    maintainers:
+    - email: jkapp@opennms.com
+      name: Jeffrey-David Kapp
+    name: opennms-operator
+    urls:
+    - https://opennms.github.io/opennms-operator/opennms-operator-0.0.1.tgz
+    version: 0.0.1
+generated: "2022-01-31T11:00:58.706245-05:00"

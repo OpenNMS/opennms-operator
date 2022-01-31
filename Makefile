@@ -1,4 +1,5 @@
-.PHONY: dependencies build unit-test integration-test validate-build
+.PHONY: dependencies build alpine-build unit-test integration-test validate-build
+.PHONY: helm-dep helm-package
 
 all: build
 
@@ -10,6 +11,13 @@ integration-test:
 
 validate-build:
 	circleci config validate .circleci/config.yml
+
+helm-dep: charts/opennms-operator/charts
+	helm dep update charts/opennms-operator
+
+helm-package: helm-dep
+	helm package charts/opennms-operator
+	helm repo index --url https://opennms.github.io/opennms-operator/ --merge index.yaml .
 
 dependencies:
 	go mod download
