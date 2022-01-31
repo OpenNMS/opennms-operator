@@ -3,6 +3,7 @@ operator:
   serviceName: opennms-operator
   image: opennms/operator:bleeding
   imagePullPolicy: IfNotPresent
+  imageUpdateFreq: 60
   resources:
     limits:
       cpu: 100m

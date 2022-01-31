@@ -78,10 +78,8 @@ type OpenNMSStatus struct {
 
 // ImageUpdateConfig - defines current status of used image for OpenNMS container
 type ImageUpdateConfig struct {
-	// can have values of now/autoupdate/none
+	// can have values of now/none
 	Update string `json:"update,omitempty"`
-	// represents number of minutes for recurrent checks of a new image
-	Frequency int `json:"frequency,omitempty"`
 }
 
 // ImageStatus - defines current status of used image for OpenNMS container

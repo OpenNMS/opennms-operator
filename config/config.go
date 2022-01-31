@@ -10,6 +10,9 @@ type OperatorConfig struct {
 	DefaultOpenNMSValuesFile string `mapstructure:"DEFAULT_OPENNMS_VALUES_FILE"`
 	DevMode                  bool   `mapstructure:"DEV_MODE"`
 
+	//Image update
+	ImageUpdateFreq int `mapstructure:"IMAGE_UPDATE_FREQUENCY"`
+
 	//Service and job images
 	ServiceImageAuth    string `mapstructure:"SERVICE_IMAGE_AUTH"`
 	ServiceImageGrafana string `mapstructure:"SERVICE_IMAGE_GRAFANA"`

@@ -20,6 +20,7 @@ import (
 	"github.com/OpenNMS/opennms-operator/api/v1alpha1"
 	"github.com/OpenNMS/opennms-operator/config"
 	"github.com/OpenNMS/opennms-operator/internal/handlers"
+	"github.com/OpenNMS/opennms-operator/internal/image"
 	"github.com/OpenNMS/opennms-operator/internal/model/values"
 	"github.com/OpenNMS/opennms-operator/internal/util/crd"
 	"github.com/go-logr/logr"
@@ -44,6 +45,7 @@ type OpenNMSReconciler struct {
 	DefaultValues values.TemplateValues
 	Handlers      []handlers.ServiceHandler
 	ValuesMap     map[string]values.TemplateValues
+	ImageChecker  image.ImageChecker
 }
 
 func (r *OpenNMSReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {

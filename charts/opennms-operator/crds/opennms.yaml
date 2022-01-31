@@ -72,13 +72,10 @@ spec:
                   description: Configuration for automatic image updating
                   type: object
                   properties:
-                    frequency:
-                      description: Number of minutes between checks for a new image
-                      type: integer
                     update:
                       description: Strategy for updating the running image
                       type: string
-                      enum: [ NOW, AUTO, NONE ]
+                      enum: [ now, none ]
                 version:
                   description: Version of OpenNMS to be deployed
                   type: object
