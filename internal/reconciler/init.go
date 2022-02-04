@@ -39,5 +39,6 @@ func (r *OpenNMSReconciler) InitServiceHandlers() {
 		&handlers.GrafanaHandler{},
 		&handlers.IngressHandler{},
 		&handlers.StunnelHandler{},
+		&handlers.ElasticsearchHandler{},
 	}
 }
