@@ -20,8 +20,8 @@ ssl:
     issuerUserEmail: email@address.com
   cert:
     hostname: "*.wildcard.domain.com"
-  solver:
-    # Configure according to: https://cert-manager.io/docs/configuration/acme/dns01/
+  # Configure according to: https://cert-manager.io/docs/configuration/acme/dns01/
+  solver: |
     cloudDNS:
       project: my-project
       serviceAccountSecretRef:
