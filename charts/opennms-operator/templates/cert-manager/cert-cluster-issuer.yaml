@@ -13,5 +13,5 @@ spec:
       name: cert-issuer
     solvers:
       - dns01:
-          {{ .Values.ssl.solver }}
+{{ .Values.ssl.solver | indent 10 }}
 {{ end }}
