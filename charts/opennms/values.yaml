@@ -34,7 +34,7 @@ Postgres:
 Grafana:
   Image: placeholder
 Ingress:
-  ControllerImage: k8s.gcr.io/ingress-nginx/controller:v0.46.0
+  ControllerImage: k8s.gcr.io/ingress-nginx/controller:v1.1.0
   SecretJobImage: docker.io/jettech/kube-webhook-certgen:v1.5.1
   WebhookPatchJobImage: docker.io/jettech/kube-webhook-certgen:v1.5.1
 Stunnel:

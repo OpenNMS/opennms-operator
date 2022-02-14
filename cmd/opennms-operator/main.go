@@ -58,7 +58,7 @@ func main() {
 		Scheme: mgr.GetScheme(),
 		CodecFactory: serializer.NewCodecFactory(mgr.GetScheme()),
 		Config: operatorConfig,
-		DefaultValues: values.LoadValues(operatorConfig.DefaultOpenNMSValuesFile),
+		DefaultValues: values.GetDefaultValues(operatorConfig),
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create OpenNMS controller", "controller", "OpenNMS")
 		os.Exit(1)

@@ -1,7 +1,7 @@
 operator:
   namespace: opennms
   serviceName: opennms-operator
-  image: opennms-operator:bleeding
+  image: opennms/operator:bleeding
   imagePullPolicy: IfNotPresent
   resources:
     limits:
@@ -13,6 +13,10 @@ operator:
 customErrors:
   image: quay.io/kubernetes-ingress-controller/custom-error-pages-amd64:0.4
   debug: true
+serviceImages:
+  auth: placeholder
+  grafana: placeholder
+  initContainer: placeholder
 ssl:
   enabled: true
   issuer:

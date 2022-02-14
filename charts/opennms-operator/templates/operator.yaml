@@ -18,6 +18,13 @@ spec:
         - image:  {{ .Values.operator.image }}
           name: {{ .Values.operator.serviceName }}
           imagePullPolicy: {{ .Values.operator.imagePullPolicy }}
+          env:
+            - name: SERVICE_IMAGE_AUTH
+              value: "{{ .Values.serviceImages.auth }}"
+            - name: SERVICE_IMAGE_GRAFANA
+              value: "{{ .Values.serviceImages.grafana }}"
+            - name: SERVICE_IMAGE_INIT
+              value: "{{ .Values.serviceImages.initContainer }}"
           resources:
             limits:
               cpu: {{ .Values.operator.resources.limits.cpu }}
