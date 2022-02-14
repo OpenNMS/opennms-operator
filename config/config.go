@@ -5,10 +5,14 @@ import (
 	"log"
 )
 
-
 type OperatorConfig struct {
 	Version                  string `mapstructure:"VERSION"`
 	DefaultOpenNMSValuesFile string `mapstructure:"DEFAULT_OPENNMS_VALUES_FILE"`
+
+	//Service and job images
+	ServiceImageAuth    string `mapstructure:"SERVICE_IMAGE_AUTH"`
+	ServiceImageGrafana string `mapstructure:"SERVICE_IMAGE_GRAFANA"`
+	ServiceImageInit    string `mapstructure:"SERVICE_IMAGE_INIT"`
 }
 
 func LoadConfig() OperatorConfig {

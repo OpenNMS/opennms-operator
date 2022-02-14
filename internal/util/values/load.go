@@ -15,11 +15,19 @@ limitations under the License.
 */
 
 import (
+	"github.com/OpenNMS/opennms-operator/config"
 	"github.com/OpenNMS/opennms-operator/internal/model/values"
 	"gopkg.in/yaml.v3"
 	"io/ioutil"
 	"log"
 )
+
+// GetDefaultValues - get the default Helm/Template values
+func GetDefaultValues(operatorConfig config.OperatorConfig) values.TemplateValues {
+	defaultValues := LoadValues(operatorConfig.DefaultOpenNMSValuesFile)
+	defaultValues = SetServiceImages(operatorConfig, defaultValues)
+	return defaultValues
+}
 
 // LoadValues - load Helm/Template values from the given file
 func LoadValues(filename string) values.TemplateValues {
@@ -36,4 +44,13 @@ func LoadValues(filename string) values.TemplateValues {
 		Values: defValues,
 	}
 	return templateValues
+}
+
+// SetServiceImages - set service images in the Helm/Template values based on ENV config
+func SetServiceImages(config config.OperatorConfig, v values.TemplateValues) values.TemplateValues {
+	v.Values.Grafana.Image = config.ServiceImageGrafana
+	v.Values.Auth.Image = config.ServiceImageAuth
+
+	v.Values.OpenNMS.InitContainerImage = config.ServiceImageInit
+	return v
 }
