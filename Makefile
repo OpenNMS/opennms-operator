@@ -12,7 +12,7 @@ integration-test:
 validate-build:
 	circleci config validate .circleci/config.yml
 
-helm-dep: charts/opennms-operator/charts
+helm-dep:
 	helm dep update charts/opennms-operator
 
 helm-package: helm-dep
