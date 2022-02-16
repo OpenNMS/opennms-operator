@@ -8,17 +8,14 @@ metadata:
 spec:
   ports:
     - name: http
-      nodePort: 30480
       port: 8980
       protocol: TCP
       targetPort: 8980
     - name: karaf
-      nodePort: 31068
       port: 8101
       protocol: TCP
       targetPort: 8101
     - name: activemq
-      nodePort: 31104
       port: 61616
       protocol: TCP
       targetPort: 61616
