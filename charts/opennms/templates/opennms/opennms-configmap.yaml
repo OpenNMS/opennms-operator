@@ -38,12 +38,12 @@ data:
 
     # Enable Elasticsearch Flows
     cat <<EOF > ${CONFIG_DIR}/org.opennms.features.flows.persistence.elastic.cfg
-    elasticUrl = http://elasticsearch-es-http.${K8S_NAMESPACE}.svc.cluster.local:9200
+    elasticUrl = http://elasticsearch-es-http.{{ .Values.Namespace }}.svc.cluster.local:9200
     EOF
 
     # Enable Elasticsearch events
     cat <<EOF > ${CONFIG_DIR}/org.opennms.plugin.elasticsearch.rest.forwarder.cfg
-    elasticUrl = http://elasticsearch-es-http.${K8S_NAMESPACE}.svc.cluster.local:9200
+    elasticUrl = http://elasticsearch-es-http.{{ .Values.Namespace }}.svc.cluster.local:9200
     EOF
 
     # Enable ES REST
