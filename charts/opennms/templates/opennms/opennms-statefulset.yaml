@@ -153,7 +153,7 @@ spec:
             sizeLimit: 2Gi
         - name: init-scripts
           configMap:
-            defaultMode: 777
+            defaultMode: 0777
             name: init-scripts
         - name: creds
           secret:
