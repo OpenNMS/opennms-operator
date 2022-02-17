@@ -21,7 +21,7 @@ spec:
       initContainers:
         - name: init-config
           image: {{ .Values.OpenNMS.Image }}
-          imagePullPolicy: Always
+          imagePullPolicy: IfNotPresent
           command: [ "bash", "/init.sh" ]
           env:
             - name: TZ
@@ -153,7 +153,7 @@ spec:
             sizeLimit: 2Gi
         - name: init-scripts
           configMap:
-            defaultMode: 511
+            defaultMode: 777
             name: init-scripts
         - name: creds
           secret:

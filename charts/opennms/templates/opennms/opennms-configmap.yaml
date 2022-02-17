@@ -18,18 +18,18 @@ data:
 
     # Initialize configuration directory
     if [ ! -f ${CONFIG_DIR}/configured ]; then
-    echo "Initializing configuration directory for the first time ..."
-    rsync -arO --no-perms ${BACKUP_ETC}/ ${CONFIG_DIR}/
+      echo "Initializing configuration directory for the first time ..."
+      rsync -arO --no-perms ${BACKUP_ETC}/ ${CONFIG_DIR}/
 
-    echo "Disabling data choices"
-    cat <<EOF > ${CONFIG_DIR}/org.opennms.features.datachoices.cfg
+      echo "Disabling data choices"
+      cat <<EOF > ${CONFIG_DIR}/org.opennms.features.datachoices.cfg
     enabled=false
     acknowledged-by=admin
     acknowledged-at=Mon Jan 01 00\:00\:00 EDT 2018
     EOF
     echo 'opennms.web.base-url = https://%x%c/' > ${CONFIG_DIR}/opennms.properties.d/ssl.properties
     else
-    echo "Previous configuration found. Not synchronizing files..."
+      echo "Previous configuration found. Not synchronizing files..."
     fi
 
     # Enable activemq
@@ -54,7 +54,7 @@ data:
 
     # Fix permissions when executing the script as root
     if [[ "$(id -u)" == "0" ]]; then
-    chown -R opennms:opennms ${CONFIG_DIR}
+      chown -R opennms:opennms ${CONFIG_DIR}
     fi
     # Get the OIA version from the filesystem and drop into the metadata
     ls /opt/opennms/system/org/opennms/integration/api/api/ | awk -F '-' '{print $1}' > /metadata/OIA
