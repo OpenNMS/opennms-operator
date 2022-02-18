@@ -17,6 +17,8 @@ spec:
         app: onms
     spec:
       terminationGracePeriodSeconds: 120
+      securityContext:
+        fsGroup: 10001
       {{ if not .Values.TestDeploy }}
       initContainers:
         - name: init-config
