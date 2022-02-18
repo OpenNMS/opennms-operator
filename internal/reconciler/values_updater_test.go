@@ -1,3 +1,4 @@
+//go:build unit
 // +build unit
 
 /*
@@ -22,30 +23,37 @@ import (
 	"github.com/OpenNMS/opennms-operator/internal/model/values"
 	"github.com/stretchr/testify/assert"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"sigs.k8s.io/controller-runtime/pkg/client/fake"
 	"testing"
 )
 
 func TestUpdateValues(t *testing.T) {
+	testNamespace := "testNamespace"
+	testHost := "testingHost"
 	testValues := values.TemplateValues{
 		Values: values.Values{
-			Host: "testingHost",
+			Host:      testHost,
+			Namespace: testNamespace,
 		},
 	}
 
-	testNamespace := "testNamespace"
-
+	k8sClient := fake.NewClientBuilder().Build()
 	testRecon := OpenNMSReconciler{
 		DefaultValues: testValues,
+		Client:        k8sClient,
 	}
 
 	crd := v1alpha1.OpenNMS{
 		ObjectMeta: v1.ObjectMeta{
 			Namespace: testNamespace,
 		},
+		Spec: v1alpha1.OpenNMSSpec{
+			Namespace: testNamespace,
+			Host:      testHost,
+		},
 	}
 
 	res := testRecon.UpdateValues(context.Background(), crd)
-
 
 	assert.Equal(t, testNamespace, res.Values.Namespace, "should have populated values from reconcile request")
 	assert.Equal(t, "testingHost", res.Values.Host, "should have used values from the default values")

@@ -4,7 +4,7 @@
 all: build
 
 unit-test:
-	echo "These are unit test"
+	go test --tags=unit ./...
 
 integration-test:
 	echo "These are integration tests"
