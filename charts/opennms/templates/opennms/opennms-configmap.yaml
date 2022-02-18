@@ -55,6 +55,7 @@ data:
     # Fix permissions when executing the script as root
     if [[ "$(id -u)" == "0" ]]; then
       chown -R opennms:opennms ${CONFIG_DIR}
+      chown -R opennms:opennms /opennms-etc-overlay
     fi
     # Get the OIA version from the filesystem and drop into the metadata
     ls /opt/opennms/system/org/opennms/integration/api/api/ | awk -F '-' '{print $1}' > /metadata/OIA
