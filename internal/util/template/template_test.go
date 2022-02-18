@@ -1,3 +1,4 @@
+//go:build unit
 // +build unit
 
 /*
@@ -30,7 +31,13 @@ func TestTemplate(t *testing.T) {
 			Namespace: namespace,
 		},
 	}
-	res, err :=  TemplateConfig(testString, v)
+	res, err := TemplateConfig(testString, v)
 	assert.Nil(t, err)
-	assert.Equal(t, namespace, res)
+	assert.Equal(t, namespace, res, "should template")
+
+	testString = "<<<>>>"
+
+	res, err = TemplateConfig(testString, v)
+	assert.Nil(t, err)
+	assert.Equal(t, testString, res)
 }

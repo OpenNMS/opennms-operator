@@ -17,10 +17,10 @@ package template
 import (
 	"bytes"
 	"github.com/OpenNMS/opennms-operator/internal/model/values"
-	"html/template"
+	"text/template"
 )
 
-func TemplateConfig(file string, values values.TemplateValues) (string, error)  {
+func TemplateConfig(file string, values values.TemplateValues) (string, error) {
 	tmpl, err := template.New("file").Parse(file)
 	if err != nil {
 		return "", err
