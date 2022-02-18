@@ -33,11 +33,11 @@ func TestTemplate(t *testing.T) {
 	}
 	res, err := TemplateConfig(testString, v)
 	assert.Nil(t, err)
-	assert.Equal(t, namespace, res, "should template")
+	assert.Equal(t, namespace, res, "should template correctly")
 
 	testString = "<<<>>>"
 
 	res, err = TemplateConfig(testString, v)
 	assert.Nil(t, err)
-	assert.Equal(t, testString, res)
+	assert.Equal(t, testString, res, "should not encode lessthan symbols")
 }
