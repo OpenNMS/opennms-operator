@@ -30,18 +30,22 @@ func (r *OpenNMSReconciler) UpdateValues(ctx context.Context, instance v1alpha1.
 		r.ValuesMap = map[string]values.TemplateValues{}
 	}
 
-	namespace := instance.Namespace
+	namespace := instance.Name
 
 	templateValues, ok := r.ValuesMap[namespace]
 	if !ok {
 		templateValues = r.DefaultValues
 	}
-
 	templateValues = valuesutil.ConvertCRDToValues(instance, templateValues)
-	//TODO checking the cluster and reloading creds every iteration doesn't feel great, maybe rework
-	templateValues, existingCreds := r.CheckForExistingCreds(ctx, templateValues, namespace)
+
+	// only set new passwords if they weren't already created by a previous operator
+	templateValues, existingCreds := r.CheckForExistingCoreCreds(ctx, templateValues, namespace)
 	if !existingCreds { // only set new passwords if they weren't already created by a previous operator
-		templateValues = setPasswords(templateValues)
+		templateValues = setCorePasswords(templateValues)
+	}
+	templateValues, existingCreds = r.CheckForExistingPostgresCreds(ctx, templateValues, namespace)
+	if !existingCreds {
+		templateValues = setPostgresPassword(templateValues)
 	}
 
 	r.ValuesMap[namespace] = templateValues
@@ -49,35 +53,47 @@ func (r *OpenNMSReconciler) UpdateValues(ctx context.Context, instance v1alpha1.
 	return templateValues
 }
 
-//CheckForExistingCreds - checks if core credentials already exist for a given namespace
-func (r *OpenNMSReconciler) CheckForExistingCreds(ctx context.Context, v values.TemplateValues, namespace string) (values.TemplateValues, bool) {
+//CheckForExistingCoreCreds - checks if core credentials already exist for a given namespace
+func (r *OpenNMSReconciler) CheckForExistingCoreCreds(ctx context.Context, v values.TemplateValues, namespace string) (values.TemplateValues, bool) {
 	var credSecret v1.Secret
 	err := r.Client.Get(ctx, types.NamespacedName{Namespace: namespace, Name: "onms-initial-creds"}, &credSecret)
 	if err != nil {
 		return v, false
 	}
-	v.Values.Auth.AdminPass = string(credSecret.Data["admin"])
-	v.Values.Auth.AdminPass = string(credSecret.Data["minion"])
-
-	err = r.Client.Get(ctx, types.NamespacedName{Namespace: namespace, Name: "postgres"}, &credSecret)
-	if err != nil {
+	existingAdminPwd := string(credSecret.Data["admin"])
+	existingMinionPwd := string(credSecret.Data["minion"])
+	if existingAdminPwd == "" || existingMinionPwd == "" {
 		return v, false
 	}
-	v.Values.Postgres.Password = string(credSecret.Data["password"])
+	v.Values.Auth.AdminPass = existingAdminPwd
+	v.Values.Auth.MinionPass = existingMinionPwd
 	return v, true
 }
 
-//setPasswords - sets randomly generated passwords if not already set
-func setPasswords(tv values.TemplateValues) values.TemplateValues {
-	if tv.Values.Auth.AdminPass == "notset" {
-		tv.Values.Auth.AdminPass = security.GeneratePassword()
+//CheckForExistingPostgresCreds - checks if core credentials already exist for a given namespace
+func (r *OpenNMSReconciler) CheckForExistingPostgresCreds(ctx context.Context, v values.TemplateValues, namespace string) (values.TemplateValues, bool) {
+	var credSecret v1.Secret
+	err := r.Client.Get(ctx, types.NamespacedName{Namespace: namespace, Name: "postgres"}, &credSecret)
+	if err != nil {
+		return v, false
 	}
-	if tv.Values.Auth.MinionPass == "notset" {
-		tv.Values.Auth.MinionPass = security.GeneratePassword()
+	existingPwd := string(credSecret.Data["password"])
+	if existingPwd == "" {
+		return v, false
 	}
-	if tv.Values.Postgres.Password == "notset" {
-		tv.Values.Postgres.Password = security.GeneratePassword()
-	}
+	v.Values.Postgres.Password = existingPwd
+	return v, true
+}
+
+//setCorePasswords - sets randomly generated passwords for the core if not already set
+func setCorePasswords(tv values.TemplateValues) values.TemplateValues {
+	tv.Values.Auth.AdminPass = security.GeneratePassword()
+	tv.Values.Auth.MinionPass = security.GeneratePassword()
 	return tv
 }
 
+//setCorePasswords - sets randomly generated password for Postgres if not already set
+func setPostgresPassword(tv values.TemplateValues) values.TemplateValues {
+	tv.Values.Postgres.Password = security.GeneratePassword()
+	return tv
+}

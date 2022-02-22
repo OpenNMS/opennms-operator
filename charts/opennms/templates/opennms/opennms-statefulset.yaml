@@ -96,13 +96,19 @@ spec:
             - name: POSTGRES_USER
               value: postgres
             - name: POSTGRES_PASSWORD
-              value: {{ .Values.Postgres.Password }}
+              valueFrom:
+                secretKeyRef:
+                  name: postgres
+                  key: password
             - name: OPENNMS_DBNAME
               value: opennms
             - name: OPENNMS_DBUSER
               value: postgres
             - name: OPENNMS_DBPASS
-              value: {{ .Values.Postgres.Password }}
+              valueFrom:
+                secretKeyRef:
+                  name: postgres
+                  key: password
           volumeMounts:
             - name: "etc"
               mountPath: /opt/opennms/etc
