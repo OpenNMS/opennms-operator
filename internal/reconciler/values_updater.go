@@ -66,7 +66,7 @@ func (r *OpenNMSReconciler) CheckForExistingCoreCreds(ctx context.Context, v val
 		return v, false
 	}
 	v.Values.Auth.AdminPass = existingAdminPwd
-	v.Values.Auth.AdminPass = existingMinionPwd
+	v.Values.Auth.MinionPass = existingMinionPwd
 	return v, true
 }
 
@@ -87,19 +87,13 @@ func (r *OpenNMSReconciler) CheckForExistingPostgresCreds(ctx context.Context, v
 
 //setCorePasswords - sets randomly generated passwords for the core if not already set
 func setCorePasswords(tv values.TemplateValues) values.TemplateValues {
-	if tv.Values.Auth.AdminPass == "notset" {
-		tv.Values.Auth.AdminPass = security.GeneratePassword()
-	}
-	if tv.Values.Auth.MinionPass == "notset" {
-		tv.Values.Auth.MinionPass = security.GeneratePassword()
-	}
+	tv.Values.Auth.AdminPass = security.GeneratePassword()
+	tv.Values.Auth.MinionPass = security.GeneratePassword()
 	return tv
 }
 
 //setCorePasswords - sets randomly generated password for Postgres if not already set
 func setPostgresPassword(tv values.TemplateValues) values.TemplateValues {
-	if tv.Values.Postgres.Password == "notset" {
-		tv.Values.Postgres.Password = security.GeneratePassword()
-	}
+	tv.Values.Postgres.Password = security.GeneratePassword()
 	return tv
 }
