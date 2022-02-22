@@ -45,7 +45,7 @@ func TestUpdateValues(t *testing.T) {
 
 	crd := v1alpha1.OpenNMS{
 		ObjectMeta: v1.ObjectMeta{
-			Namespace: testNamespace,
+			Name: testNamespace,
 		},
 		Spec: v1alpha1.OpenNMSSpec{
 			Namespace: testNamespace,
@@ -60,4 +60,8 @@ func TestUpdateValues(t *testing.T) {
 
 	_, ok := testRecon.ValuesMap[testNamespace]
 	assert.True(t, ok, "should have saved the created values to the reconciler's values map")
+}
+
+func TestCheckForExistingCoreCreds(t *testing.T) {
+
 }
