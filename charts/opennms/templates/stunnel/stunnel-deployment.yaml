@@ -15,6 +15,23 @@ spec:
       labels:
         app: stunnel
     spec:
+      {{ if .Values.NodeRestrictions.Enabled }}
+      tolerations:
+        - effect: "NoSchedule"
+          key: "{{ .Values.NodeRestrictions.Key }}"
+          operator: "Equal"
+          value: {{ .Values.NodeRestrictions.Value }}
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 1
+            preference:
+              matchExpressions:
+              - key: "{{ .Values.NodeRestrictions.Key }}"
+                operator: In
+                values:
+                - {{ .Values.NodeRestrictions.Value }}
+      {{ end }}
       containers:
       - name: stunnel
         image: {{ .Values.Stunnel.Image }}

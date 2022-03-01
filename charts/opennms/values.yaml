@@ -39,3 +39,8 @@ Ingress:
   WebhookPatchJobImage: docker.io/jettech/kube-webhook-certgen:v1.5.1
 Stunnel:
   Image: dweomer/stunnel:latest
+NodeRestrictions: # will be applied to every pod in the instance
+  Enabled: true
+  Key: kubernetes.azure.com/scalesetpriority
+  Value: spot
+

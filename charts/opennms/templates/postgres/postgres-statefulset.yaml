@@ -19,6 +19,23 @@ spec:
         app: postgres
         role: master
     spec:
+      {{ if .Values.NodeRestrictions.Enabled }}
+      tolerations:
+        - effect: "NoSchedule"
+          key: "{{ .Values.NodeRestrictions.Key }}"
+          operator: "Equal"
+          value: {{ .Values.NodeRestrictions.Value }}
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 1
+            preference:
+              matchExpressions:
+              - key: "{{ .Values.NodeRestrictions.Key }}"
+                operator: In
+                values:
+                - {{ .Values.NodeRestrictions.Value }}
+      {{ end }}
       containers:
         - env:
             - name: POSTGRES_PASSWORD
@@ -26,7 +43,6 @@ spec:
                 secretKeyRef:
                   name: postgres
                   key: password
-
           image: {{ .Values.Postgres.Image }}
           imagePullPolicy: Always
           livenessProbe:

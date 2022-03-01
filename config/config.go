@@ -13,6 +13,10 @@ type OperatorConfig struct {
 	ServiceImageAuth    string `mapstructure:"SERVICE_IMAGE_AUTH"`
 	ServiceImageGrafana string `mapstructure:"SERVICE_IMAGE_GRAFANA"`
 	ServiceImageInit    string `mapstructure:"SERVICE_IMAGE_INIT"`
+
+	//instance node restrictions
+	NodeRestrictionKey   string `mapstructure:"NODE_RESTRICTION_KEY"`
+	NodeRestrictionValue string `mapstructure:"NODE_RESTRICTION_VALUE"`
 }
 
 func LoadConfig() OperatorConfig {

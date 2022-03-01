@@ -16,12 +16,18 @@ package template
 
 import (
 	"bytes"
+	"github.com/Masterminds/sprig"
 	"github.com/OpenNMS/opennms-operator/internal/model/values"
 	"text/template"
 )
 
+var templater *template.Template
+
 func TemplateConfig(file string, values values.TemplateValues) (string, error) {
-	tmpl, err := template.New("file").Parse(file)
+	if templater == nil {
+		initTemplater()
+	}
+	tmpl, err := templater.Parse(file)
 	if err != nil {
 		return "", err
 	}
@@ -31,4 +37,9 @@ func TemplateConfig(file string, values values.TemplateValues) (string, error) {
 		return "", err
 	}
 	return buffer.String(), nil
+}
+
+func initTemplater() {
+	templater = template.New("operator-templater")
+	templater.Funcs(sprig.TxtFuncMap())
 }
