@@ -8,6 +8,7 @@ import (
 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
 )
 
+//GetScheme - get the k8s scheme + any custom resources being used
 func GetScheme() *runtime.Scheme {
 	scheme := runtime.NewScheme()
 

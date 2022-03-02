@@ -15,6 +15,23 @@ spec:
       labels:
         app: onms-auth
     spec:
+      {{ if .Values.NodeRestrictions.Enabled }}
+      tolerations:
+        - effect: "NoSchedule"
+          key: "{{ .Values.NodeRestrictions.Key }}"
+          operator: "Equal"
+          value: {{ .Values.NodeRestrictions.Value }}
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 1
+            preference:
+              matchExpressions:
+              - key: "{{ .Values.NodeRestrictions.Key }}"
+                operator: In
+                values:
+                - {{ .Values.NodeRestrictions.Value }}
+      {{ end }}
       containers:
       - name: onms-auth
         image: {{ .Values.Auth.Image }}

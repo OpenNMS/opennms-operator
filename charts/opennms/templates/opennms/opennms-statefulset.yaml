@@ -16,6 +16,23 @@ spec:
       labels:
         app: onms
     spec:
+      {{ if .Values.NodeRestrictions.Enabled }}
+      tolerations:
+        - effect: "NoSchedule"
+          key: "{{ .Values.NodeRestrictions.Key }}"
+          operator: "Equal"
+          value: {{ .Values.NodeRestrictions.Value }}
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 1
+            preference:
+              matchExpressions:
+              - key: "{{ .Values.NodeRestrictions.Key }}"
+                operator: In
+                values:
+                - {{ .Values.NodeRestrictions.Value }}
+      {{ end }}
       terminationGracePeriodSeconds: 120
       securityContext:
         fsGroup: 10001

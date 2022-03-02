@@ -31,3 +31,6 @@ ssl:
       serviceAccountSecretRef:
         name: prod-clouddns-svc-acct-secret
         key: service-account.json
+nodeRestrictions: # will be applied to every pod in every instance deployed by the operator
+  key: kubernetes.azure.com/scalesetpriority
+  value: spot

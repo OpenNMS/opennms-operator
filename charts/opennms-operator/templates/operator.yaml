@@ -25,6 +25,10 @@ spec:
               value: "{{ .Values.serviceImages.grafana }}"
             - name: SERVICE_IMAGE_INIT
               value: "{{ .Values.serviceImages.initContainer }}"
+            - name: NODE_RESTRICTION_KEY
+              value: "{{ .Values.nodeRestrictions.key }}"
+            - name: NODE_RESTRICTION_VALUE
+              value: "{{ .Values.nodeRestrictions.value }}"
           resources:
             limits:
               cpu: {{ .Values.operator.resources.limits.cpu }}

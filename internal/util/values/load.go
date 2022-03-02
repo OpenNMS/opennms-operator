@@ -26,6 +26,7 @@ import (
 func GetDefaultValues(operatorConfig config.OperatorConfig) values.TemplateValues {
 	defaultValues := LoadValues(operatorConfig.DefaultOpenNMSValuesFile)
 	defaultValues = SetServiceImages(operatorConfig, defaultValues)
+	defaultValues = SetNodeRestrictions(operatorConfig, defaultValues)
 	return defaultValues
 }
 
@@ -52,5 +53,18 @@ func SetServiceImages(config config.OperatorConfig, v values.TemplateValues) val
 	v.Values.Auth.Image = config.ServiceImageAuth
 
 	v.Values.OpenNMS.InitContainerImage = config.ServiceImageInit
+	return v
+}
+
+// SetNodeRestrictions - set the node tolerations and affinity for every nod the operator will deploy
+func SetNodeRestrictions(config config.OperatorConfig, v values.TemplateValues) values.TemplateValues {
+	if config.NodeRestrictionKey == "" || config.NodeRestrictionValue == "" {
+		v.Values.NodeRestrictions.Enabled = false
+		return v
+	}
+	v.Values.NodeRestrictions.Enabled = true
+	v.Values.NodeRestrictions.Key = config.NodeRestrictionKey
+	v.Values.NodeRestrictions.Value = config.NodeRestrictionValue
+
 	return v
 }

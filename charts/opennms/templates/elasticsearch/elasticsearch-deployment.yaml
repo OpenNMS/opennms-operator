@@ -24,21 +24,23 @@ spec:
             authz_exception: false
       podTemplate:
         spec:
+          {{ if .Values.NodeRestrictions.Enabled }}
           tolerations:
             - effect: "NoSchedule"
-              key: "kubernetes.azure.com/scalesetpriority"
+              key: "{{ .Values.NodeRestrictions.Key }}"
               operator: "Equal"
-              value: "spot"
+              value: {{ .Values.NodeRestrictions.Value }}
           affinity:
             nodeAffinity:
               preferredDuringSchedulingIgnoredDuringExecution:
                 - weight: 1
                   preference:
                     matchExpressions:
-                      - key: kubernetes.azure.com/scalesetpriority
+                      - key: "{{ .Values.NodeRestrictions.Key }}"
                         operator: In
                         values:
-                          - spot
+                          - {{ .Values.NodeRestrictions.Value }}
+          {{ end }}
           initContainers:
             - name: install-plugins
               command:
