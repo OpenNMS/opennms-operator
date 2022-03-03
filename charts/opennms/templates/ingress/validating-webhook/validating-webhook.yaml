@@ -5,9 +5,9 @@ apiVersion: admissionregistration.k8s.io/v1
 kind: ValidatingWebhookConfiguration
 metadata:
   labels:
-    app.kubernetes.io/name: ingress-nginx
-    app.kubernetes.io/instance: ingress-nginx
-    app.kubernetes.io/component: admission-webhook
+    app.kubernetes.io/name: ingress-nginx-{{ .Values.Namespace }}
+    app.kubernetes.io/instance: ingress-nginx-{{ .Values.Namespace }}
+    app.kubernetes.io/component: admission-webhook-{{ .Values.Namespace }}
   name: ingress-nginx-admission-{{ .Values.Namespace }}
 webhooks:
   - name: validate.nginx.ingress.kubernetes.io

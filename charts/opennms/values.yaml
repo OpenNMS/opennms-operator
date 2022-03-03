@@ -35,8 +35,8 @@ Grafana:
   Image: placeholder
 Ingress:
   ControllerImage: k8s.gcr.io/ingress-nginx/controller:v1.1.0
-  SecretJobImage: docker.io/jettech/kube-webhook-certgen:v1.5.1
-  WebhookPatchJobImage: docker.io/jettech/kube-webhook-certgen:v1.5.1
+  SecretJobImage: k8s.gcr.io/ingress-nginx/kube-webhook-certgen:v1.1.1@sha256:64d8c73dca984af206adf9d6d7e46aa550362b1d7a01f3a0a91b20cc67868660
+  WebhookPatchJobImage: k8s.gcr.io/ingress-nginx/kube-webhook-certgen:v1.1.1@sha256:64d8c73dca984af206adf9d6d7e46aa550362b1d7a01f3a0a91b20cc67868660
 Stunnel:
   Image: dweomer/stunnel:latest
 NodeRestrictions: # will be applied to every pod in the instance
