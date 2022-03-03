@@ -101,6 +101,8 @@ func (r *OpenNMSReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 			}
 		}
 	}
+	// all clear, instance is ready
+	r.updateStatus(ctx, &instance, true, "")
 	return ctrl.Result{}, nil
 }
 
