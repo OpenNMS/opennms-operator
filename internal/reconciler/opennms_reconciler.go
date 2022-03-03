@@ -64,17 +64,17 @@ func (r *OpenNMSReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 			deployedResource, exists := r.getResourceFromCluster(ctx, resource)
 			if !exists {
 				r.updateStatus(ctx, &instance, false, "instance starting")
-				r.Log.Info("creating resource", "namespace", resource.GetNamespace(), "name", resource.GetName(),  "kind", kind)
+				r.Log.Info("creating resource", "namespace", resource.GetNamespace(), "name", resource.GetName(), "kind", kind)
 				err := r.Create(ctx, resource)
 				if err != nil {
-					r.Log.Error(err, "error creating resource", "namespace", resource.GetNamespace(), "name", resource.GetName(),  "kind", kind, "error", err)
+					r.Log.Error(err, "error creating resource", "namespace", resource.GetNamespace(), "name", resource.GetName(), "kind", kind, "error", err)
 					return ctrl.Result{}, err
 				}
 				if kind == "v1.Deployment" || kind == "v1.Job" || kind == "v1.StatefulSet" {
 					return ctrl.Result{RequeueAfter: 10 * time.Second}, nil
 				}
 			} else {
-				r.Log.Info("updating resource", "namespace", resource.GetNamespace(), "name", resource.GetName(),  "kind", kind)
+				r.Log.Info("updating resource", "namespace", resource.GetNamespace(), "name", resource.GetName(), "kind", kind)
 				r.updateStatus(ctx, &instance, false, "updating instance resource")
 				var res *reconcile.Result
 				var err error
@@ -91,7 +91,7 @@ func (r *OpenNMSReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 					res, err = r.updateConfigMap(ctx, resource, deployedResource)
 				}
 				if err != nil {
-					r.Log.Info("error updating resource", "namespace", resource.GetNamespace(), "name", resource.GetName(),  "kind", kind, "error", err)
+					r.Log.Info("error updating resource", "namespace", resource.GetNamespace(), "name", resource.GetName(), "kind", kind, "error", err)
 					r.updateStatus(ctx, &instance, false, fmt.Sprintf("Error: failed to update resource: %s %s %s", resource.GetNamespace(), kind, resource.GetName()))
 					return reconcile.Result{}, err
 				}
@@ -112,9 +112,9 @@ func (r *OpenNMSReconciler) getResourceFromCluster(ctx context.Context, resource
 }
 
 func (r *OpenNMSReconciler) updateStatus(ctx context.Context, instance *v1alpha1.OpenNMS, ready bool, reason string) {
-	if instance.Status.Ready != ready || instance.Status.Reason != reason {
-		instance.Status.Ready = ready
-		instance.Status.Reason = reason
+	if instance.Status.Readiness.Ready != ready || instance.Status.Readiness.Reason != reason {
+		instance.Status.Readiness.Ready = ready
+		instance.Status.Readiness.Reason = reason
 		_ = r.Status().Update(ctx, instance)
 	}
 }

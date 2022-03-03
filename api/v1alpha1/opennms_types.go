@@ -71,9 +71,9 @@ type BaseServiceResources struct {
 
 // OpenNMSStatus - defines the observed state of OpenNMS
 type OpenNMSStatus struct {
-	Ready  bool        `json:"ready"`
-	Reason string      `json:"reason"`
-	Image  ImageStatus `json:"image"`
+	Image     ImageStatus     `json:"image,omitempty"`
+	Readiness ReadinessStatus `json:"ready,omitempty"`
+	Nodes     []string        `json:"nodes,omitempty"`
 }
 
 // ImageUpdateConfig - defines current status of used image for OpenNMS container
@@ -92,6 +92,27 @@ type ImageStatus struct {
 	CheckedAt string `json:"checkedAt,omitempty"`
 	// readable message about image status
 	Message string `json:"message,omitempty"`
+}
+
+//ReadinessStatus - the ready status of the ONMS instance
+type ReadinessStatus struct {
+	// if the ONMS instance is ready
+	Ready bool `json:"ready,omitempty"`
+	// reason an ONMS instance isn't ready
+	Reason string `json:"reason,omitempty"`
+	// the time the `ready` flag was last updated
+	Timestamp string `json:"timestampv"`
+	// list of readinesses of the constituent services
+	Services []ServiceStatus `json:"services,omitempty"`
+}
+
+type ServiceStatus struct {
+	// if the service is ready
+	Ready bool `json:"ready,omitempty"`
+	// reason a service isn't ready
+	Reason string `json:"reason,omitempty"`
+	// the time the `ready` flag was last updated
+	Timestamp string `json:"timestamp,omitempty"`
 }
 
 // OpenNMS - is the Schema for the opennms API
