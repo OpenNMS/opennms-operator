@@ -3,9 +3,9 @@ apiVersion: v1
 kind: Service
 metadata:
   labels:
-    app.kubernetes.io/name: ingress-nginx
-    app.kubernetes.io/instance: ingress-nginx
-    app.kubernetes.io/component: controller
+    app.kubernetes.io/name: ingress-nginx-{{ .Values.Namespace }}
+    app.kubernetes.io/instance: ingress-nginx-{{ .Values.Namespace }}
+    app.kubernetes.io/component: controller-{{ .Values.Namespace }}
   name: ingress-nginx-controller-admission
   namespace: {{ .Values.Namespace }}
 spec:
@@ -15,6 +15,6 @@ spec:
       port: 443
       targetPort: webhook
   selector:
-    app.kubernetes.io/name: ingress-nginx
-    app.kubernetes.io/instance: ingress-nginx
-    app.kubernetes.io/component: controller
+    app.kubernetes.io/name: ingress-nginx-{{ .Values.Namespace }}
+    app.kubernetes.io/instance: ingress-nginx-{{ .Values.Namespace }}
+    app.kubernetes.io/component: controller-{{ .Values.Namespace }}
