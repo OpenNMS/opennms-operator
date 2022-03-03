@@ -59,17 +59,18 @@ spec:
           limits:
             cpu: "1000m"
             memory: "512Mi"
+{{ if not .Values.TestDeploy }}
         volumeMounts:
-{{/*        - name: certificate*/}}
-{{/*          mountPath: /certificate*/}}
+        - name: certificate
+          mountPath: /certificate
         - name: runtime
           mountPath: /runtime
-# figure this out with the SSL ticket
       volumes:
-{{/*        - name: certificate*/}}
-{{/*          secret:*/}}
-{{/*            secretName: wildcard*/}}
+        - name: certificate
+          secret:
+            secretName: wildcard
         - name: runtime
           configMap:
             name: stunnel-runtime
+{{ end }}
 
