@@ -101,7 +101,7 @@ type ReadinessStatus struct {
 	// reason an ONMS instance isn't ready
 	Reason string `json:"reason,omitempty"`
 	// the time the `ready` flag was last updated
-	Timestamp string `json:"timestampv"`
+	Timestamp string `json:"timestamp,omitempty"`
 	// list of readinesses of the constituent services
 	Services []ServiceStatus `json:"services,omitempty"`
 }
