@@ -117,6 +117,9 @@ func (r *OpenNMSReconciler) updateStatus(ctx context.Context, instance *v1alpha1
 	if instance.Status.Readiness.Ready != ready || instance.Status.Readiness.Reason != reason {
 		instance.Status.Readiness.Ready = ready
 		instance.Status.Readiness.Reason = reason
-		_ = r.Status().Update(ctx, instance)
+		err := r.Status().Update(ctx, instance)
+		if err != nil {
+			r.Log.Error(err, "failed to update instance status", "instance", instance.Namespace)
+		}
 	}
 }
