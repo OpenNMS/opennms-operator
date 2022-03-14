@@ -72,7 +72,7 @@ type BaseServiceResources struct {
 // OpenNMSStatus - defines the observed state of OpenNMS
 type OpenNMSStatus struct {
 	Image     ImageStatus     `json:"image,omitempty"`
-	Readiness ReadinessStatus `json:"ready,omitempty"`
+	Readiness ReadinessStatus `json:"readiness,omitempty"`
 	Nodes     []string        `json:"nodes,omitempty"`
 }
 
@@ -115,6 +115,9 @@ type ServiceStatus struct {
 	Timestamp string `json:"timestamp,omitempty"`
 }
 
+// +kubebuilder:object:root=true
+// +kubebuilder:subresource:status
+
 // OpenNMS - is the Schema for the opennms API
 type OpenNMS struct {
 	metav1.TypeMeta   `json:",inline"`
@@ -123,6 +126,8 @@ type OpenNMS struct {
 	Spec   OpenNMSSpec   `json:"spec,omitempty"`
 	Status OpenNMSStatus `json:"status,omitempty"`
 }
+
+// +kubebuilder:object:root=true
 
 // OpenNMSList - contains a list of OpenNMS
 type OpenNMSList struct {
