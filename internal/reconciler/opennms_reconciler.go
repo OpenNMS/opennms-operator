@@ -74,21 +74,20 @@ func (r *OpenNMSReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 					return ctrl.Result{RequeueAfter: 10 * time.Second}, nil
 				}
 			} else {
-				r.Log.Info("updating resource", "namespace", resource.GetNamespace(), "name", resource.GetName(), "kind", kind)
-				r.updateStatus(ctx, &instance, false, "updating instance resource")
+				r.Log.Info("checking resource for update", "namespace", resource.GetNamespace(), "name", resource.GetName(), "kind", kind)
 				var res *reconcile.Result
 				var err error
 				switch kind {
 				case "v1.Deployment":
-					res, err = r.updateDeployment(ctx, resource, deployedResource)
+					res, err = r.updateDeployment(ctx, &instance, resource, deployedResource)
 				case "v1.StatefulSet":
-					res, err = r.updateStatefulSet(ctx, resource, deployedResource)
+					res, err = r.updateStatefulSet(ctx, &instance, resource, deployedResource)
 				case "v1.Job":
-					res, err = r.updateJob(ctx, resource, deployedResource)
+					res, err = r.updateJob(deployedResource)
 				case "v1.Secret":
 					res, err = r.updateSecret(ctx, resource, deployedResource)
 				case "v1.ConfigMap":
-					res, err = r.updateConfigMap(ctx, resource, deployedResource)
+					res, err = r.updateConfigMap(ctx, &instance, resource, deployedResource)
 				}
 				if err != nil {
 					r.Log.Info("error updating resource", "namespace", resource.GetNamespace(), "name", resource.GetName(), "kind", kind, "error", err)
@@ -96,6 +95,7 @@ func (r *OpenNMSReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 					return reconcile.Result{}, err
 				}
 				if res != nil {
+					r.Log.Info("resource updated", "namespace", resource.GetNamespace(), "name", resource.GetName(), "kind", kind)
 					return *res, nil
 				}
 			}
@@ -107,7 +107,6 @@ func (r *OpenNMSReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 }
 
 func (r *OpenNMSReconciler) getResourceFromCluster(ctx context.Context, resource client.Object) (client.Object, bool) {
-	r.Log.Info("Attempting get for", "namespace", resource.GetNamespace(), "name", resource.GetName())
 	deployedResource := resource.DeepCopyObject().(client.Object)
 	err := r.Get(ctx, types.NamespacedName{Name: resource.GetName(), Namespace: resource.GetNamespace()}, deployedResource)
 	return deployedResource, !(err != nil && errors.IsNotFound(err))

@@ -10,6 +10,7 @@ operator:
     requests:
       cpu: 100m
       memory: 50Mi
+  devMode: false
 customErrors:
   image: quay.io/kubernetes-ingress-controller/custom-error-pages-amd64:0.4
   debug: true

@@ -19,12 +19,12 @@ import (
 	"github.com/OpenNMS/opennms-operator/internal/reconciler"
 	"github.com/OpenNMS/opennms-operator/internal/scheme"
 	"github.com/OpenNMS/opennms-operator/internal/util/values"
+	"go.uber.org/zap/zapcore"
 	"k8s.io/apimachinery/pkg/runtime/serializer"
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 	"os"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
-
 	// +kubebuilder:scaffold:imports
 )
 
@@ -34,10 +34,15 @@ var (
 )
 
 func main() {
-
-	ctrl.SetLogger(zap.New(zap.UseDevMode(true)))
-
 	operatorConfig := config.LoadConfig()
+
+	loggerOptions := zap.Options{
+		Development: operatorConfig.DevMode,
+		TimeEncoder: zapcore.ISO8601TimeEncoder,
+	}
+
+	ctrl.SetLogger(zap.New(zap.UseFlagOptions(&loggerOptions)))
+	logger := ctrl.Log.WithName("reconciler").WithName("OpenNMS")
 
 	mgr, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{
 		Scheme:             K8sScheme,
@@ -53,11 +58,11 @@ func main() {
 	}
 
 	if err = (&reconciler.OpenNMSReconciler{
-		Client: mgr.GetClient(),
-		Log:    ctrl.Log.WithName("controllers").WithName("OpenNMS"),
-		Scheme: mgr.GetScheme(),
-		CodecFactory: serializer.NewCodecFactory(mgr.GetScheme()),
-		Config: operatorConfig,
+		Client:        mgr.GetClient(),
+		Log:           logger,
+		Scheme:        mgr.GetScheme(),
+		CodecFactory:  serializer.NewCodecFactory(mgr.GetScheme()),
+		Config:        operatorConfig,
 		DefaultValues: values.GetDefaultValues(operatorConfig),
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create OpenNMS controller", "controller", "OpenNMS")

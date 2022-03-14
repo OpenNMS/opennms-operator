@@ -16,6 +16,8 @@ package reconciler
 
 import (
 	"context"
+	"fmt"
+	"github.com/OpenNMS/opennms-operator/api/v1alpha1"
 	"github.com/OpenNMS/opennms-operator/internal/util/maps"
 	"github.com/OpenNMS/opennms-operator/internal/util/subsets"
 	v1 "k8s.io/api/apps/v1"
@@ -28,8 +30,9 @@ import (
 	"time"
 )
 
-func (r *OpenNMSReconciler) updateDeployment(ctx context.Context, resource client.Object, deployedResource client.Object) (*reconcile.Result, error) {
- 	if !subsets.SubsetEqual(resource, deployedResource) {
+func (r *OpenNMSReconciler) updateDeployment(ctx context.Context, instance *v1alpha1.OpenNMS, resource client.Object, deployedResource client.Object) (*reconcile.Result, error) {
+	if !subsets.SubsetEqual(resource, deployedResource) {
+		r.updateStatus(ctx, instance, false, fmt.Sprintf("updating deployment: %s", resource.GetName()))
 		if err := r.Update(ctx, resource); err != nil {
 			return &reconcile.Result{}, err
 		}
@@ -44,8 +47,9 @@ func (r *OpenNMSReconciler) updateDeployment(ctx context.Context, resource clien
 	return nil, nil
 }
 
-func (r *OpenNMSReconciler) updateStatefulSet(ctx context.Context, resource client.Object, deployedResource client.Object) (*reconcile.Result, error) {
+func (r *OpenNMSReconciler) updateStatefulSet(ctx context.Context, instance *v1alpha1.OpenNMS, resource client.Object, deployedResource client.Object) (*reconcile.Result, error) {
 	if !subsets.SubsetEqual(resource, deployedResource) {
+		r.updateStatus(ctx, instance, false, fmt.Sprintf("updating sattefulset: %s", resource.GetName()))
 		if err := r.Update(ctx, resource); err != nil {
 			return &reconcile.Result{}, err
 		}
@@ -61,7 +65,7 @@ func (r *OpenNMSReconciler) updateStatefulSet(ctx context.Context, resource clie
 	return nil, nil
 }
 
-func (r *OpenNMSReconciler) updateJob(ctx context.Context, resource client.Object, deployedResource client.Object) (*reconcile.Result, error) {
+func (r *OpenNMSReconciler) updateJob(deployedResource client.Object) (*reconcile.Result, error) {
 	job := deployedResource.(*batchv1.Job)
 	if job.Status.Succeeded < 1 {
 		return &ctrl.Result{RequeueAfter: 10 * time.Second}, nil
@@ -81,8 +85,9 @@ func (r *OpenNMSReconciler) updateSecret(ctx context.Context, resource client.Ob
 	return nil, nil
 }
 
-func (r *OpenNMSReconciler) updateConfigMap(ctx context.Context, resource client.Object, deployedResource client.Object) (*reconcile.Result, error) {
+func (r *OpenNMSReconciler) updateConfigMap(ctx context.Context, instance *v1alpha1.OpenNMS, resource client.Object, deployedResource client.Object) (*reconcile.Result, error) {
 	if !subsets.SubsetEqual(resource, deployedResource) {
+		r.updateStatus(ctx, instance, false, fmt.Sprintf("updating sattefulset: %s", resource.GetName()))
 		if err := r.Update(ctx, resource); err != nil {
 			return &reconcile.Result{}, err
 		}

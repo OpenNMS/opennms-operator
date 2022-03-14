@@ -8,6 +8,7 @@ import (
 type OperatorConfig struct {
 	Version                  string `mapstructure:"VERSION"`
 	DefaultOpenNMSValuesFile string `mapstructure:"DEFAULT_OPENNMS_VALUES_FILE"`
+	DevMode                  bool   `mapstructure:"DEV_MODE"`
 
 	//Service and job images
 	ServiceImageAuth    string `mapstructure:"SERVICE_IMAGE_AUTH"`
