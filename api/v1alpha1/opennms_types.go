@@ -108,9 +108,9 @@ type ReadinessStatus struct {
 
 type ServiceStatus struct {
 	// if the service is ready
-	Ready bool `json:"ready,omitempty"`
+	Ready bool `json:"ready"`
 	// reason a service isn't ready
-	Reason string `json:"reason,omitempty"`
+	Reason string `json:"reason"`
 	// the time the `ready` flag was last updated
 	Timestamp string `json:"timestamp,omitempty"`
 }
