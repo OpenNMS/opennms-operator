@@ -30,7 +30,7 @@ spec:
             - name: NODE_RESTRICTION_VALUE
               value: "{{ .Values.nodeRestrictions.value }}"
             - name: DEV_MODE
-              value: {{ .Values.operator.devMode }}
+              value: "{{ .Values.operator.devMode }}"
           resources:
             limits:
               cpu: {{ .Values.operator.resources.limits.cpu }}

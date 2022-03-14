@@ -1,6 +1,6 @@
 apiVersion: v2
 name: opennms-operator
-version: 0.0.9
+version: 0.0.10
 description: A Kubernetes operator for deploying and maintaining OpenNMS in the cloud.
 home: https://github.com/OpenNMS/opennms-operator
 maintainers:
