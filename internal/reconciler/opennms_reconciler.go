@@ -102,7 +102,7 @@ func (r *OpenNMSReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 		}
 	}
 	// all clear, instance is ready
-	r.updateStatus(ctx, &instance, true, "")
+	r.updateStatus(ctx, &instance, true, "instance ready")
 	return ctrl.Result{}, nil
 }
 
@@ -116,6 +116,7 @@ func (r *OpenNMSReconciler) updateStatus(ctx context.Context, instance *v1alpha1
 	if instance.Status.Readiness.Ready != ready || instance.Status.Readiness.Reason != reason {
 		instance.Status.Readiness.Ready = ready
 		instance.Status.Readiness.Reason = reason
+		instance.Status.Readiness.Timestamp = time.Now().Format(time.RFC3339)
 		err := r.Status().Update(ctx, instance)
 		if err != nil {
 			r.Log.Error(err, "failed to update instance status", "instance", instance.Namespace)
