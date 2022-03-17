@@ -49,6 +49,10 @@ spec:
               secretKeyRef:
                 name: onms-allowed-users
                 key: users
+          - name: GRAFANA_HOST
+            value: "grafana"
+          - name: GRAFANA_PORT
+            value: "3000"
           - name: OPENNMS_HOST
             value: opennms
           - name: OPENNMS_PORT

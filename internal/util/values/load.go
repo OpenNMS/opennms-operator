@@ -27,6 +27,7 @@ func GetDefaultValues(operatorConfig config.OperatorConfig) values.TemplateValue
 	defaultValues := LoadValues(operatorConfig.DefaultOpenNMSValuesFile)
 	defaultValues = SetServiceImages(operatorConfig, defaultValues)
 	defaultValues = SetNodeRestrictions(operatorConfig, defaultValues)
+	defaultValues = SetTLSValues(operatorConfig, defaultValues)
 	return defaultValues
 }
 
@@ -66,5 +67,14 @@ func SetNodeRestrictions(config config.OperatorConfig, v values.TemplateValues) 
 	v.Values.NodeRestrictions.Key = config.NodeRestrictionKey
 	v.Values.NodeRestrictions.Value = config.NodeRestrictionValue
 
+	return v
+}
+
+func SetTLSValues(config config.OperatorConfig, v values.TemplateValues) values.TemplateValues {
+	if !config.TLSEnabled || config.TLSCertName == "" {
+		return v
+	}
+	v.Values.TLS.Enabled = config.TLSEnabled
+	v.Values.TLS.CertSecret = config.TLSCertName
 	return v
 }

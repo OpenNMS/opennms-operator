@@ -18,6 +18,10 @@ type OperatorConfig struct {
 	//instance node restrictions
 	NodeRestrictionKey   string `mapstructure:"NODE_RESTRICTION_KEY"`
 	NodeRestrictionValue string `mapstructure:"NODE_RESTRICTION_VALUE"`
+
+	//TLS config
+	TLSEnabled  bool   `mapstructure:"TLS_ENABLED"`
+	TLSCertName string `mapstructure:"TLS_CERT_NAME"`
 }
 
 func LoadConfig() OperatorConfig {

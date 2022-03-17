@@ -10,4 +10,4 @@ metadata:
   namespace: {{ .Values.Namespace }}
 data:
   custom-http-errors: 404,503,403,502
-
+  allow-snippet-annotations: 'true'

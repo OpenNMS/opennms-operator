@@ -18,13 +18,14 @@ serviceImages:
   auth: placeholder
   grafana: placeholder
   initContainer: placeholder
-ssl:
+tls:
   enabled: true
   issuer:
     issuerServer: https://acme-v02.api.letsencrypt.org/directory
     issuerUserEmail: email@address.com
   cert:
     hostname: "*.wildcard.domain.com"
+    name: tls-cert-wildcard
   # Configure according to: https://cert-manager.io/docs/configuration/acme/dns01/
   solver: |
     cloudDNS:

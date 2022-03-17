@@ -143,5 +143,5 @@ spec:
                           timestamp:
                             description: Timestamp when the service's readiness was last determined
                             type: string
-      subresources:
+      subresources: # this needs to be here to toggle the status subresource on
         status: { }

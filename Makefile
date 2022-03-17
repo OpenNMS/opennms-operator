@@ -16,8 +16,8 @@ helm-dep:
 	helm dep update charts/opennms-operator
 
 helm-package: helm-dep
-	helm package charts/opennms-operator
-	helm repo index --url https://opennms.github.io/opennms-operator/ --merge index.yaml .
+	helm package charts/opennms-operator -d charts/packaged
+	helm repo index --url https://opennms.github.io/opennms-operator/charts/packaged --merge index.yaml .
 
 dependencies:
 	go mod download

@@ -8,7 +8,6 @@ spec:
     - host: {{ .Values.Host }}
       http:
         paths:
-          {{ if .Values.Auth.Enabled }}
           - backend:
               service:
                 name: auth-service
@@ -16,7 +15,6 @@ spec:
                   number: {{ .Values.Auth.Port }}
             path: /authz
             pathType: Prefix
-          {{ end }}
           - backend:
               service:
                 name: grafana

@@ -1,16 +1,17 @@
-{{ if .Values.ssl.enabled }}
+{{ if .Values.tls.enabled }}
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: primary-cert-wildcard
+  name: primary-{{ .Values.tls.cert.name }}
+  namespace: {{ .Values.operator.namespace }}
 spec:
-  secretName: cert-wildcard
+  secretName: {{ .Values.tls.cert.name }}
   secretTemplate:
     annotations:
       replicator.v1.mittwald.de/replicate-to-matching: app.kubernetes.io/name=opennms
-  commonName: '{{ .Values.ssl.cert.hostname }}'
+  commonName: '{{ .Values.tls.cert.hostname }}'
   dnsNames:
-    - '{{ .Values.ssl.cert.hostname }}'
+    - '{{ .Values.tls.cert.hostname }}'
   issuerRef:
     kind: ClusterIssuer
     name: cert-issuer

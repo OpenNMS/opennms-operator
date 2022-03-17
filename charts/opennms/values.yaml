@@ -20,7 +20,7 @@ OpenNMS:
     ApiKey: placeholder
 TLS:
   Enabled: false
-  CertSecret: ssl-cert
+  CertSecret: placeholder
 Auth:
   Image: placeholder
   Port: 5000
