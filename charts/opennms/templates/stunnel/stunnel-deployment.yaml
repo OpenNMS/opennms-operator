@@ -68,7 +68,7 @@ spec:
       volumes:
         - name: certificate
           secret:
-            secretName: wildcard
+            secretName: {{ .Values.TLS.CertSecret }}
         - name: runtime
           configMap:
             name: stunnel-runtime
