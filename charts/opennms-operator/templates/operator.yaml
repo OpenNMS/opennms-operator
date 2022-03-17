@@ -29,6 +29,10 @@ spec:
               value: "{{ .Values.nodeRestrictions.key }}"
             - name: NODE_RESTRICTION_VALUE
               value: "{{ .Values.nodeRestrictions.value }}"
+            - name: TLS_ENABLED
+              value: "{{ .Values.tls.enabled }}"
+            - name: TLS_CERT_NAME
+              value: "{{ .Values.tls.cert.name }}"
             - name: DEV_MODE
               value: "{{ .Values.operator.devMode }}"
           resources:
