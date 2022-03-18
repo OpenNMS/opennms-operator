@@ -10,7 +10,7 @@ spec:
         paths:
           - backend:
               service:
-                name: auth-service
+                name: onms-auth
                 port:
                   number: {{ .Values.Auth.Port }}
             path: /authz

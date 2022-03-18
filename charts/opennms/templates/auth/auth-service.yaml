@@ -1,14 +1,14 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: auth-service
+  name: onms-auth
   namespace: {{ .Values.Namespace }}
   labels:
-    app: auth-service
+    app: onms-auth
 spec:
   type: ClusterIP
   selector:
-    app: auth-service
+    app: onms-auth
   ports:
     - name: http
       port: {{ .Values.Auth.Port }}
