@@ -10,16 +10,21 @@ const (
 	UpperChars   = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 	SpecialChars = "!@#$%"
 	Numbers      = "0123456789"
-	AllChars     = LowerChars + UpperChars + SpecialChars + Numbers
+	Alphanumeric = LowerChars + UpperChars + Numbers
+	AllChars     = Alphanumeric + SpecialChars
+	Length       = 20
 )
 
-func GeneratePassword() string {
+//GeneratePassword - generates a random password of 20 length
+func GeneratePassword(specialChars bool) string {
 	var password strings.Builder
 
 	//Set special character
-	for i := 0; i < 2; i++ {
-		random := rand.Intn(len(SpecialChars))
-		password.WriteString(string(SpecialChars[random]))
+	if specialChars {
+		for i := 0; i < 2; i++ {
+			random := rand.Intn(len(SpecialChars))
+			password.WriteString(string(SpecialChars[random]))
+		}
 	}
 
 	//Set numeric
@@ -34,10 +39,14 @@ func GeneratePassword() string {
 		password.WriteString(string(UpperChars[random]))
 	}
 
-	remainingLength := 14
+	remainingLength := Length - password.Len()
+	charSet := AllChars
+	if !specialChars {
+		charSet = Alphanumeric
+	}
 	for i := 0; i < remainingLength; i++ {
-		random := rand.Intn(len(AllChars))
-		password.WriteString(string(AllChars[random]))
+		random := rand.Intn(len(charSet))
+		password.WriteString(string(charSet[random]))
 	}
 	inRune := []rune(password.String())
 	rand.Shuffle(len(inRune), func(i, j int) {

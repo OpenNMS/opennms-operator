@@ -87,13 +87,13 @@ func (r *OpenNMSReconciler) CheckForExistingPostgresCreds(ctx context.Context, v
 
 //setCorePasswords - sets randomly generated passwords for the core if not already set
 func setCorePasswords(tv values.TemplateValues) values.TemplateValues {
-	tv.Values.Auth.AdminPass = security.GeneratePassword()
-	tv.Values.Auth.MinionPass = security.GeneratePassword()
+	tv.Values.Auth.AdminPass = security.GeneratePassword(true)
+	tv.Values.Auth.MinionPass = security.GeneratePassword(true)
 	return tv
 }
 
 //setCorePasswords - sets randomly generated password for Postgres if not already set
 func setPostgresPassword(tv values.TemplateValues) values.TemplateValues {
-	tv.Values.Postgres.Password = security.GeneratePassword()
+	tv.Values.Postgres.Password = security.GeneratePassword(false)
 	return tv
 }
