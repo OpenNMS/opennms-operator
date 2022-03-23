@@ -1,9 +1,0 @@
-dependencies:
-- name: cert-manager
-  repository: https://charts.jetstack.io
-  version: v1.7.0
-- name: kubernetes-replicator
-  repository: https://helm.mittwald.de
-  version: 2.7.3
-digest: sha256:8981e237cf83ea49044de46b00afbab98c031ee163bb0290d2379d1b4a85150e
-generated: "2022-01-31T10:56:53.493291-05:00"
