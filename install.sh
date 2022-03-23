@@ -5,7 +5,7 @@
 helm repo add jetstack https://charts.jetstack.io
 
 helm upgrade -i \
-  cert-manager jetstack/cert-manager \
+  onms-cert-manager jetstack/cert-manager \
   --namespace onms-cert-manager \
   --create-namespace \
   --version v1.7.0 \
@@ -19,4 +19,4 @@ helm upgrade -i opennms-operator opennms-operator/opennms-operator -f values.yam
 # k8s replicator
 helm repo add mittwald https://helm.mittwald.de
 
-helm upgrade -i kubernetes-replicator --namespace opennms mittwald/kubernetes-replicator
+helm upgrade -i onms-kubernetes-replicator --namespace opennms mittwald/kubernetes-replicator
