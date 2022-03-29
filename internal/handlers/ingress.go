@@ -39,6 +39,7 @@ func (h *IngressHandler) ProvideConfig(values values.TemplateValues) []client.Ob
 	var controllerConfigMap corev1.ConfigMap
 	var controllerService corev1.Service
 	var controllerServiceWebhook corev1.Service
+	var controllerIngressClass netv1.IngressClass
 	var controllerDeployment appsv1.Deployment
 
 	yaml.LoadYaml(filepath("ingress/nginx-controller/controller-serviceaccount.yaml"), values, &controllerServiceAccount)
@@ -47,6 +48,7 @@ func (h *IngressHandler) ProvideConfig(values values.TemplateValues) []client.Ob
 	yaml.LoadYaml(filepath("ingress/nginx-controller/controller-configmap.yaml"), values, &controllerConfigMap)
 	yaml.LoadYaml(filepath("ingress/nginx-controller/controller-service.yaml"), values, &controllerService)
 	yaml.LoadYaml(filepath("ingress/nginx-controller/controller-service-webhook.yaml"), values, &controllerServiceWebhook)
+	yaml.LoadYaml(filepath("ingress/nginx-controller/controller-ingress-class.yaml"), values, &controllerIngressClass)
 	yaml.LoadYaml(filepath("ingress/nginx-controller/controller-deployment.yaml"), values, &controllerDeployment)
 
 	//VALIDATING WEBHOOK CONFIGS
@@ -85,6 +87,7 @@ func (h *IngressHandler) ProvideConfig(values values.TemplateValues) []client.Ob
 		&controllerConfigMap,
 		&controllerService,
 		&controllerServiceWebhook,
+		&controllerIngressClass,
 
 		&webhookServiceAccount,
 		&webhookRole,
