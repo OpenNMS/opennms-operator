@@ -2,12 +2,12 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   annotations:
-    kubernetes.io/ingress.class: nginx-{{ .Values.Namespace }}
-    nginx.ingress.kubernetes.io/server-snippet: | 
+    nginx.ingress.kubernetes.io/server-snippet: |
       ssl_reject_handshake "on";
   name: rejectipssl-ingress-{{ .Values.Namespace }}
   namespace: {{ .Values.Namespace }}
 spec:
+  ingressClassName: ingress-nginx-{{ .Values.Namespace }}
   rules:
   -  http:
       paths:

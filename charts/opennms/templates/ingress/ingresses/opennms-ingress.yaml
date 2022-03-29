@@ -1,9 +1,12 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
+  labels:
+    kubernetes.io/ingress.class: ingress-nginx-{{ .Values.Namespace }}
   name: opennms-ingress
   namespace: {{ .Values.Namespace }}
 spec:
+  ingressClassName: ingress-nginx-{{ .Values.Namespace }}
   rules:
     - host: {{ .Values.Host }}
       http:

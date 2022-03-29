@@ -17,7 +17,6 @@ package handlers
 import (
 	"github.com/OpenNMS/opennms-operator/internal/model/values"
 	"github.com/OpenNMS/opennms-operator/internal/util/yaml"
-	adminv1 "k8s.io/api/admissionregistration/v1"
 	appsv1 "k8s.io/api/apps/v1"
 	batchv1 "k8s.io/api/batch/v1"
 	corev1 "k8s.io/api/core/v1"
@@ -52,26 +51,26 @@ func (h *IngressHandler) ProvideConfig(values values.TemplateValues) []client.Ob
 	yaml.LoadYaml(filepath("ingress/nginx-controller/controller-deployment.yaml"), values, &controllerDeployment)
 
 	//VALIDATING WEBHOOK CONFIGS
-	var validatingWebhook adminv1.ValidatingWebhookConfiguration
-	var webhookServiceAccount corev1.ServiceAccount
-	var webhookRole rbacv1.Role
-	var webhookRoleBinding rbacv1.RoleBinding
-	var webhookClusterRole rbacv1.ClusterRole
-	var webhookClusterRoleBinding rbacv1.ClusterRoleBinding
-
-	yaml.LoadYaml(filepath("ingress/validating-webhook/validating-webhook.yaml"), values, &validatingWebhook)
-	yaml.LoadYaml(filepath("ingress/validating-webhook/webhook-serviceaccount.yaml"), values, &webhookServiceAccount)
-	yaml.LoadYaml(filepath("ingress/validating-webhook/webhook-role.yaml"), values, &webhookRole)
-	yaml.LoadYaml(filepath("ingress/validating-webhook/webhook-rolebinding.yaml"), values, &webhookRoleBinding)
-	yaml.LoadYaml(filepath("ingress/validating-webhook/webhook-clusterrole.yaml"), values, &webhookClusterRole)
-	yaml.LoadYaml(filepath("ingress/validating-webhook/webhook-clusterrolebinding.yaml"), values, &webhookClusterRoleBinding)
+	//var validatingWebhook adminv1.ValidatingWebhookConfiguration
+	//var webhookServiceAccount corev1.ServiceAccount
+	//var webhookRole rbacv1.Role
+	//var webhookRoleBinding rbacv1.RoleBinding
+	//var webhookClusterRole rbacv1.ClusterRole
+	//var webhookClusterRoleBinding rbacv1.ClusterRoleBinding
+	//
+	//yaml.LoadYaml(filepath("ingress/validating-webhook/validating-webhook.yaml"), values, &validatingWebhook)
+	//yaml.LoadYaml(filepath("ingress/validating-webhook/webhook-serviceaccount.yaml"), values, &webhookServiceAccount)
+	//yaml.LoadYaml(filepath("ingress/validating-webhook/webhook-role.yaml"), values, &webhookRole)
+	//yaml.LoadYaml(filepath("ingress/validating-webhook/webhook-rolebinding.yaml"), values, &webhookRoleBinding)
+	//yaml.LoadYaml(filepath("ingress/validating-webhook/webhook-clusterrole.yaml"), values, &webhookClusterRole)
+	//yaml.LoadYaml(filepath("ingress/validating-webhook/webhook-clusterrolebinding.yaml"), values, &webhookClusterRoleBinding)
 
 	//JOBS CONFIGS
 	var createSecret batchv1.Job
-	var patchWebhook batchv1.Job
+	//var patchWebhook batchv1.Job
 
 	yaml.LoadYaml(filepath("ingress/jobs/job-createsecret.yaml"), values, &createSecret)
-	yaml.LoadYaml(filepath("ingress/jobs/job-patchwebhook.yaml"), values, &patchWebhook)
+	//yaml.LoadYaml(filepath("ingress/jobs/job-patchwebhook.yaml"), values, &patchWebhook)
 
 	//INGRESSES
 	var opennmsIngress netv1.Ingress
@@ -89,16 +88,16 @@ func (h *IngressHandler) ProvideConfig(values values.TemplateValues) []client.Ob
 		&controllerServiceWebhook,
 		&controllerIngressClass,
 
-		&webhookServiceAccount,
-		&webhookRole,
-		&webhookRoleBinding,
-		&webhookClusterRole,
-		&webhookClusterRoleBinding,
+		//&webhookServiceAccount,
+		//&webhookRole,
+		//&webhookRoleBinding,
+		//&webhookClusterRole,
+		//&webhookClusterRoleBinding,
 
 		&createSecret, // must be before controller deployment
 		&controllerDeployment,
-		&validatingWebhook,
-		&patchWebhook, // must be after validating-webhook and controller deployment
+		//&validatingWebhook,
+		//&patchWebhook, // must be after validating-webhook and controller deployment
 
 		&rejectipsslIngress,
 		&opennmsIngress,
