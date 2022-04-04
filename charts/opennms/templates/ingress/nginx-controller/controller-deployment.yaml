@@ -56,7 +56,8 @@ spec:
             - --default-backend-service=opennms/opennms-nginx-errors
             - --publish-service={{ .Values.Namespace }}/ingress-nginx-controller
             - --election-id=ingress-controller-leader
-            - --ingress-class=ingress-nginx-{{ .Values.Namespace }}
+            #- --ingress-class=ingress-nginx-{{ .Values.Namespace }}
+            - --controller-class=k8s.io/ingress-nginx-{{ .Values.Namespace }}
             - --configmap={{ .Values.Namespace }}/ingress-nginx-controller
             #- --validating-webhook=:8443
             #- --validating-webhook-certificate=/usr/local/certificates/cert
