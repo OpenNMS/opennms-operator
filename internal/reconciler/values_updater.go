@@ -22,6 +22,7 @@ import (
 	"github.com/OpenNMS/opennms-operator/internal/util/security"
 	v1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/types"
+	"strings"
 )
 
 //UpdateValues - update values for an instance based on it's crd
@@ -47,6 +48,8 @@ func (r *OpenNMSReconciler) UpdateValues(ctx context.Context, instance v1alpha1.
 	if !existingCreds {
 		templateValues = setPostgresPassword(templateValues)
 	}
+
+	templateValues.Values.Auth.AllowedUsers = strings.Join(instance.Spec.AllowedUsers, ",")
 
 	r.ValuesMap[namespace] = templateValues
 
