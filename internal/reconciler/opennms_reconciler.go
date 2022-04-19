@@ -60,9 +60,14 @@ func (r *OpenNMSReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 	}
 	valuesForInstance := r.UpdateValues(ctx, instance)
 
+	var autoUpdateServices []client.Object
+
 	for _, handler := range r.Handlers {
 		for _, resource := range handler.ProvideConfig(valuesForInstance) {
 			kind := reflect.ValueOf(resource).Elem().Type().String()
+			if (kind == "v1.Deployment" || kind == "v1.StatefulSet") && r.ImageChecker.ServiceMarkedForImageCheck(resource) {
+				autoUpdateServices = append(autoUpdateServices, resource)
+			}
 			deployedResource, exists := r.getResourceFromCluster(ctx, resource)
 			if !exists {
 				r.updateStatus(ctx, &instance, false, "instance starting")
@@ -103,6 +108,12 @@ func (r *OpenNMSReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 			}
 		}
 	}
+
+	// start recurrent image check if not started
+	if !r.ImageChecker.ImageCheckerForInstanceRunning(instance) {
+		r.ImageChecker.StartImageCheckerForInstance(instance, autoUpdateServices)
+	}
+
 	// all clear, instance is ready
 	r.updateStatus(ctx, &instance, true, "instance ready")
 	return ctrl.Result{}, nil

@@ -5,6 +5,9 @@ metadata:
   namespace: {{ .Values.Namespace }}
   labels:
     app: onms
+    app.kubernetes.io/name: opennms-core
+  annotations:
+    autoupdate: "true"
 spec:
   replicas: 1
   serviceName: opennms-core
