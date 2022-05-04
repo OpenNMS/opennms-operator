@@ -1,6 +1,20 @@
 //go:build unit
 // +build unit
 
+/*
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
 package image
 
 import (
@@ -10,8 +24,6 @@ import (
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/types"
-	v1 "k8s.io/apiserver/pkg/apis/example/v1"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/client/fake"
 	"testing"
@@ -93,6 +105,7 @@ func TestImageChecker_ServiceMarkedForImageCheck(t *testing.T) {
 
 func TestImageCheck_getImageForService(t *testing.T) {
 	imageName := "thisistheimage"
+	imageID := "imageID"
 	serviceName := "serviceName"
 	namespaceName := "namespace"
 	namespace := corev1.Namespace{
@@ -108,23 +121,21 @@ func TestImageCheck_getImageForService(t *testing.T) {
 			Name:      serviceName,
 			Namespace: namespaceName,
 		},
-		Spec: corev1.PodSpec{
-			Containers: []corev1.Container{
+		Status: corev1.PodStatus{
+			Phase: "Running",
+			ContainerStatuses: []corev1.ContainerStatus{
 				{
-					Image: imageName,
+					Image:   imageName,
+					ImageID: imageID,
 				},
 			},
 		},
-		Status: corev1.PodStatus{
-			Phase: "Running",
-		},
 	}
 	mockClient := fake.NewClientBuilder().WithObjects(&namespace, &mockPod).Build()
-	var pod v1.Pod
-	mockClient.Get(context.Background(), types.NamespacedName{Namespace: mockPod.GetNamespace(), Name: mockPod.GetName()}, &pod)
 
 	ic := NewImageChecker(mockClient, 60)
-	res := ic.getImageForService(namespaceName, &mockPod)
+	resImage, resImageID := ic.getImageForService(context.Background(), namespaceName, &mockPod)
 
-	assert.Equal(t, imageName, res, "should return the pod's image name")
+	assert.Equal(t, imageName, resImage, "should return the pod's image name")
+	assert.Equal(t, imageID, resImageID, "should return the pod's image ID")
 }

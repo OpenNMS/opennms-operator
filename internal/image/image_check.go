@@ -1,3 +1,17 @@
+/*
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
 package image
 
 import (
@@ -6,6 +20,7 @@ import (
 	"github.com/go-co-op/gocron"
 	"github.com/go-logr/logr"
 	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/fields"
 	"k8s.io/apimachinery/pkg/labels"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -80,33 +95,46 @@ func (ic *ImageChecker) checkAll() {
 	for instance, services := range ic.RunningInstances {
 		//instanceUpdate := false
 		for _, service := range services {
-			_ = ic.getImageForService(instance, service)
+			ctx := context.Background()
+			imageName, imageId := ic.getImageForService(ctx, instance, service)
+			_, err := ic.getLatestImageDigest(ctx, imageName, imageId)
+			if err != nil { //if there's an error getting the image digest, skip this service
+				continue
+			}
 		}
 	}
 }
 
-func (ic *ImageChecker) getImageForService(instanceName string, service client.Object) string {
-	pod := ic.getPodFromCluster(instanceName, service)
+//getImageForService - get the Image and ImageID for a given service in a given instance
+func (ic *ImageChecker) getImageForService(ctx context.Context, instanceName string, service client.Object) (string, string) {
+	pod := ic.getPodFromCluster(ctx, instanceName, service)
 	//should only be one running container
-	return pod.Spec.Containers[0].Image
+	return pod.Status.ContainerStatuses[0].Image, pod.Status.ContainerStatuses[0].ImageID
 }
 
 //getPodFromCluster - get the first running pod for the given service from the given instance namespace
-func (ic *ImageChecker) getPodFromCluster(instanceName string, service client.Object) corev1.Pod {
+func (ic *ImageChecker) getPodFromCluster(ctx context.Context, instanceName string, service client.Object) corev1.Pod {
 	serviceName := service.GetLabels()["app.kubernetes.io/name"]
 	labelMap := map[string]string{
 		"app.kubernetes.io/name": serviceName,
 	}
 	labelsSelector := labels.SelectorFromSet(labelMap)
 
-	//fieldSelector := fields.OneTermEqualSelector("status.phase", "Running")
+	fieldSelector := fields.OneTermEqualSelector("status.phase", "Running")
 
-	ctx := context.Background()
 	var pods corev1.PodList
-	err := ic.Client.List(ctx, &pods, &client.ListOptions{LabelSelector: labelsSelector, Namespace: instanceName})
+	err := ic.Client.List(ctx, &pods, &client.ListOptions{LabelSelector: labelsSelector, FieldSelector: fieldSelector, Namespace: instanceName})
 	if err != nil {
 		ic.Log.Error(err, "could not get pod from cluster", "namespace", instanceName, "service", serviceName)
 	}
 	//only return the first pod of the list - all replicas of a service should be running the same image
 	return pods.Items[0]
+}
+
+//markInstanceForUpdate -
+func (ic *ImageChecker) markInstanceForUpdate(instance, oldDigest, newDigest string) {
+	if oldDigest == newDigest { //digests are the same, no need for an update
+		return
+	}
+
 }
