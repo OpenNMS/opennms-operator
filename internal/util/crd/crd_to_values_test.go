@@ -90,23 +90,6 @@ func TestGetTimeseriesValues(t *testing.T) {
 	assert.Equal(t, "testkey", v.ApiKey, "value should remain unchanged when spec is unset")
 }
 
-func TestGetImage(t *testing.T) {
-	spec := v1alpha1.OpenNMSSpec{
-		Version: v1alpha1.Version{
-			Distribution: "testdist",
-			Tag:          "testtag",
-		},
-	}
-
-	res := getImage(spec)
-
-	assert.Equal(t, "opennms/testdist:testtag", res, "should create the correct image name")
-
-	res = getImage(v1alpha1.OpenNMSSpec{})
-
-	assert.Equal(t, "opennms/horizon:bleeding", res, "should create default image when version is unset")
-}
-
 func TestGetPostgresValues(t *testing.T) {
 	spec := v1alpha1.OpenNMSSpec{
 		Postgres: v1alpha1.BaseServiceResources{

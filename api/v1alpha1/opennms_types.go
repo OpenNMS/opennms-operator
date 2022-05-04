@@ -20,8 +20,8 @@ import (
 
 // OpenNMSSpec defines the desired state of OpenNMS
 type OpenNMSSpec struct {
-	// Version of OpenNMS.
-	Version Version `json:"version,omitempty"`
+	// Image tag version of OpenNMS.
+	Version string `json:"version,omitempty"`
 
 	// Domain name used in ingress rule
 	Host string `json:"host,omitempty"`
@@ -46,12 +46,6 @@ type OpenNMSSpec struct {
 
 	// Defines the logic of ONMS image update
 	ImageUpdateConfig ImageUpdateConfig `json:"imageUpdate,omitempty"`
-}
-
-//Version - defines the version of the ONMS core to use
-type Version struct {
-	Distribution string `json:"distribution"`
-	Tag          string `json:"tag"`
 }
 
 //Timeseries - defines the timeseries DB backend to use

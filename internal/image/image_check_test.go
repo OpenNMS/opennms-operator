@@ -4,10 +4,16 @@
 package image
 
 import (
+	"context"
 	"github.com/OpenNMS/opennms-operator/api/v1alpha1"
 	"github.com/stretchr/testify/assert"
-	v1 "k8s.io/api/apps/v1"
+	appsv1 "k8s.io/api/apps/v1"
+	corev1 "k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/types"
+	v1 "k8s.io/apiserver/pkg/apis/example/v1"
 	"sigs.k8s.io/controller-runtime/pkg/client"
+	"sigs.k8s.io/controller-runtime/pkg/client/fake"
 	"testing"
 )
 
@@ -21,7 +27,7 @@ func TestImageChecker_InitScheduler(t *testing.T) {
 func TestImageChecker_StartImageCheckerForInstance(t *testing.T) {
 	instance := v1alpha1.OpenNMS{}
 	instance.SetName("test")
-	service := v1.Deployment{}
+	service := appsv1.Deployment{}
 	service.SetName("service")
 	services := []client.Object{
 		&service,
@@ -39,7 +45,7 @@ func TestImageChecker_StopImageCheckerForInstance(t *testing.T) {
 	instance := v1alpha1.OpenNMS{}
 	instance.SetName("test")
 	ic := NewImageChecker(nil, 60)
-	service := v1.Deployment{}
+	service := appsv1.Deployment{}
 	service.SetName("service")
 	services := []client.Object{
 		&service,
@@ -57,7 +63,7 @@ func TestImageChecker_ImageCheckerForInstanceRunning(t *testing.T) {
 	instance := v1alpha1.OpenNMS{}
 	instance.SetName("test")
 	ic := NewImageChecker(nil, 60)
-	service := v1.Deployment{}
+	service := appsv1.Deployment{}
 	service.SetName("service")
 	services := []client.Object{
 		&service,
@@ -69,7 +75,7 @@ func TestImageChecker_ImageCheckerForInstanceRunning(t *testing.T) {
 }
 
 func TestImageChecker_ServiceMarkedForImageCheck(t *testing.T) {
-	service := v1.Deployment{}
+	service := appsv1.Deployment{}
 	service.SetName("service")
 	service.SetAnnotations(map[string]string{
 		"autoupdate": "true",
@@ -83,4 +89,42 @@ func TestImageChecker_ServiceMarkedForImageCheck(t *testing.T) {
 	})
 	res = ic.ServiceMarkedForImageCheck(&service)
 	assert.False(t, res, "should recognise that a service is not marked for autoupdating")
+}
+
+func TestImageCheck_getImageForService(t *testing.T) {
+	imageName := "thisistheimage"
+	serviceName := "serviceName"
+	namespaceName := "namespace"
+	namespace := corev1.Namespace{
+		ObjectMeta: metav1.ObjectMeta{
+			Name: namespaceName,
+		},
+	}
+	mockPod := corev1.Pod{
+		ObjectMeta: metav1.ObjectMeta{
+			Labels: map[string]string{
+				"app.kubernetes.io/name": serviceName,
+			},
+			Name:      serviceName,
+			Namespace: namespaceName,
+		},
+		Spec: corev1.PodSpec{
+			Containers: []corev1.Container{
+				{
+					Image: imageName,
+				},
+			},
+		},
+		Status: corev1.PodStatus{
+			Phase: "Running",
+		},
+	}
+	mockClient := fake.NewClientBuilder().WithObjects(&namespace, &mockPod).Build()
+	var pod v1.Pod
+	mockClient.Get(context.Background(), types.NamespacedName{Namespace: mockPod.GetNamespace(), Name: mockPod.GetName()}, &pod)
+
+	ic := NewImageChecker(mockClient, 60)
+	res := ic.getImageForService(namespaceName, &mockPod)
+
+	assert.Equal(t, imageName, res, "should return the pod's image name")
 }

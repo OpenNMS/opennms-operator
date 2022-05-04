@@ -77,15 +77,8 @@ spec:
                       type: string
                       enum: [ now, none ]
                 version:
-                  description: Version of OpenNMS to be deployed
-                  type: object
-                  properties:
-                    distribution:
-                      type: string
-                      default: horizon
-                      enum: [ horizon, meridian ]
-                    tag:
-                      type: string
+                  description: Image tag version of OpenNMS to be deployed
+                  type: string
                 testDeploy:
                   description: Deploy the instance in a nonoperative testing mode
                   type: boolean

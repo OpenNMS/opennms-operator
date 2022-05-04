@@ -1,9 +1,12 @@
 package image
 
 import (
+	"context"
 	"github.com/OpenNMS/opennms-operator/api/v1alpha1"
 	"github.com/go-co-op/gocron"
 	"github.com/go-logr/logr"
+	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/labels"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"time"
@@ -12,7 +15,6 @@ import (
 const (
 	None             = "none"
 	Now              = "now"
-	Autoupdate       = "autoupdate"
 	DefaultFrequency = 60
 )
 
@@ -84,13 +86,27 @@ func (ic *ImageChecker) checkAll() {
 }
 
 func (ic *ImageChecker) getImageForService(instanceName string, service client.Object) string {
-	//ctx := context.Background()
-	//var pod corev1.Pod
-	//selector := types.Label{
-	//	Pairs: map[string]string{
-	//
-	//	},
-	//}
-	//ic.Client.Get(ctx, selector, &pod)
-	return ""
+	pod := ic.getPodFromCluster(instanceName, service)
+	//should only be one running container
+	return pod.Spec.Containers[0].Image
+}
+
+//getPodFromCluster - get the first running pod for the given service from the given instance namespace
+func (ic *ImageChecker) getPodFromCluster(instanceName string, service client.Object) corev1.Pod {
+	serviceName := service.GetLabels()["app.kubernetes.io/name"]
+	labelMap := map[string]string{
+		"app.kubernetes.io/name": serviceName,
+	}
+	labelsSelector := labels.SelectorFromSet(labelMap)
+
+	//fieldSelector := fields.OneTermEqualSelector("status.phase", "Running")
+
+	ctx := context.Background()
+	var pods corev1.PodList
+	err := ic.Client.List(ctx, &pods, &client.ListOptions{LabelSelector: labelsSelector, Namespace: instanceName})
+	if err != nil {
+		ic.Log.Error(err, "could not get pod from cluster", "namespace", instanceName, "service", serviceName)
+	}
+	//only return the first pod of the list - all replicas of a service should be running the same image
+	return pods.Items[0]
 }
