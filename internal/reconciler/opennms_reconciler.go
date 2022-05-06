@@ -50,7 +50,7 @@ type OpenNMSReconciler struct {
 
 func (r *OpenNMSReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 
-	instance, err := crd.GetCRDFromCluster(ctx, r.Client, req)
+	instance, err := crd.GetInstance(ctx, r.Client, req.NamespacedName)
 	if err != nil && errors.IsNotFound(err) {
 		r.Log.Info("queued instance does not exist " + req.Name)
 		return ctrl.Result{}, err

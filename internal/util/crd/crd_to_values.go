@@ -37,7 +37,7 @@ func ConvertCRDToValues(crd v1alpha1.OpenNMS, defaultValues values.TemplateValue
 
 	if spec.TestDeploy {
 		v.TestDeploy = spec.TestDeploy
-		v = overrideImages(spec, v)
+		v = overrideImages(v)
 	}
 
 	templateValues.Values = v
@@ -81,7 +81,7 @@ func getTimeseriesValues(spec v1alpha1.OpenNMSSpec, v values.TimeseriesValues) v
 }
 
 //overrideImages - overrides images with noop images for deployment testing purposes
-func overrideImages(spec v1alpha1.OpenNMSSpec, v values.Values) values.Values {
+func overrideImages(v values.Values) values.Values {
 	noopServiceImage := "lipanski/docker-static-website:latest"
 	noopJobImage := "alpine:latest"
 

@@ -9,7 +9,7 @@ data:
     umask 002
     command -v rsync >/dev/null 2>&1 || { echo >&2 "rsync is required but it's not installed. Aborting."; exit 1; }
 
-    OPENNMS_HOME=/opt/opennms
+    OPENNMS_HOME=/usr/share/opennms
     CONFIG_DIR=/opennms-etc
     BACKUP_ETC=/opt/opennms/etc
 
