@@ -17,22 +17,17 @@ package image
 import (
 	"context"
 	"github.com/OpenNMS/opennms-operator/api/v1alpha1"
-	"github.com/OpenNMS/opennms-operator/internal/util/crd"
 	"github.com/go-co-op/gocron"
 	"github.com/go-logr/logr"
 	corev1 "k8s.io/api/core/v1"
-	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/fields"
 	"k8s.io/apimachinery/pkg/labels"
-	"k8s.io/apimachinery/pkg/types"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"time"
 )
 
 const (
-	None             = "none"
-	Now              = "now"
 	DefaultFrequency = 60
 )
 
@@ -99,11 +94,12 @@ func (ic *ImageChecker) checkAll() {
 		//instanceUpdate := false
 		for _, service := range services {
 			ctx := context.Background()
-			imageName, imageId := ic.getImageForService(ctx, instance, service)
-			_, err := ic.getLatestImageDigest(ctx, imageName, imageId)
+			imageName, currentId := ic.getImageForService(ctx, instance, service)
+			latestId, err := ic.getLatestImageDigest(ctx, imageName, currentId)
 			if err != nil { //if there's an error getting the image digest, skip this service
 				continue
 			}
+			ic.markInstanceServiceForUpdate(ctx, instance, service.GetName(), currentId, latestId)
 		}
 	}
 }
@@ -132,25 +128,4 @@ func (ic *ImageChecker) getPodFromCluster(ctx context.Context, instanceName stri
 	}
 	//only return the first pod of the list - all replicas of a service should be running the same image
 	return pods.Items[0]
-}
-
-//markInstanceForUpdate -
-func (ic *ImageChecker) markInstanceForUpdate(ctx context.Context, instanceName, oldDigest, newDigest string) {
-	instance, err := crd.GetInstance(ctx, ic.Client, types.NamespacedName{Namespace: instanceName})
-	if err != nil {
-		if errors.IsNotFound(err) {
-			ic.Log.Info("OpenNMS resource not found", "name", instanceName)
-			return
-		}
-		// Error reading the object - requeue the request.
-		ic.Log.Error(err, "Failed to get OpenNMS", "name", instanceName)
-		return
-	}
-	now := time.Now().Format(time.Stamp)
-
-	instance.Status.Image.IsLatest = !(oldDigest == newDigest)
-	instance.Status.Image.CheckedAt = now
-	if err := ic.Status().Update(ctx, &instance); err != nil {
-		ic.Log.Error(err, "Failed to update OpenNMS status", "name", instanceName)
-	}
 }

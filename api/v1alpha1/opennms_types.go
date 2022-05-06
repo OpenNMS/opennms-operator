@@ -82,8 +82,8 @@ type ImageStatus struct {
 	IsLatest bool `json:"isLatest"`
 	// timestamp of a last image check in DockerHub
 	CheckedAt string `json:"checkedAt,omitempty"`
-	// readable message about image status
-	Message string `json:"message,omitempty"`
+	// list of services that have updates available
+	ServicesToUpdate string `json:"servicesToUpdate,omitempty"`
 }
 
 //ReadinessStatus - the ready status of the ONMS instance

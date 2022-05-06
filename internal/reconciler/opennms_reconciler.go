@@ -114,6 +114,8 @@ func (r *OpenNMSReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 		r.ImageChecker.StartImageCheckerForInstance(instance, autoUpdateServices)
 	}
 
+	r.ImageChecker
+
 	// all clear, instance is ready
 	r.updateStatus(ctx, &instance, true, "instance ready")
 	return ctrl.Result{}, nil

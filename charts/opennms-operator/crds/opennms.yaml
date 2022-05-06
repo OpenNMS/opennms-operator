@@ -97,8 +97,8 @@ spec:
                     isLatest:
                       description: true if latest image used, false otherwise
                       type: boolean
-                    message:
-                      description: readable message about image status
+                    serviceToUpdate:
+                      description: list of services that have updates available
                       type: string
                   required:
                     - isLatest
