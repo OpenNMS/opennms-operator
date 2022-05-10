@@ -20,6 +20,7 @@ import (
 	"github.com/OpenNMS/opennms-operator/api/v1alpha1"
 	"github.com/OpenNMS/opennms-operator/config"
 	"github.com/OpenNMS/opennms-operator/internal/handlers"
+	"github.com/OpenNMS/opennms-operator/internal/image"
 	"github.com/OpenNMS/opennms-operator/internal/model/values"
 	"github.com/OpenNMS/opennms-operator/internal/util/crd"
 	"github.com/go-logr/logr"
@@ -44,11 +45,12 @@ type OpenNMSReconciler struct {
 	DefaultValues values.TemplateValues
 	Handlers      []handlers.ServiceHandler
 	ValuesMap     map[string]values.TemplateValues
+	ImageChecker  image.ImageUpdater
 }
 
 func (r *OpenNMSReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 
-	instance, err := crd.GetCRDFromCluster(ctx, r.Client, req)
+	instance, err := crd.GetInstance(ctx, r.Client, req.NamespacedName)
 	if err != nil && errors.IsNotFound(err) {
 		r.Log.Info("queued instance does not exist " + req.Name)
 		return ctrl.Result{}, err
@@ -58,9 +60,14 @@ func (r *OpenNMSReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 	}
 	valuesForInstance := r.UpdateValues(ctx, instance)
 
+	var autoUpdateServices []client.Object
+
 	for _, handler := range r.Handlers {
 		for _, resource := range handler.ProvideConfig(valuesForInstance) {
 			kind := reflect.ValueOf(resource).Elem().Type().String()
+			if (kind == "v1.Deployment" || kind == "v1.StatefulSet") && r.ImageChecker.ServiceMarkedForImageCheck(resource) {
+				autoUpdateServices = append(autoUpdateServices, resource)
+			}
 			deployedResource, exists := r.getResourceFromCluster(ctx, resource)
 			if !exists {
 				r.updateStatus(ctx, &instance, false, "instance starting")
@@ -101,6 +108,15 @@ func (r *OpenNMSReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 			}
 		}
 	}
+
+	// start recurrent image check if not started
+	if !r.ImageChecker.ImageCheckerForInstanceRunning(instance) {
+		r.ImageChecker.StartImageCheckerForInstance(instance, autoUpdateServices)
+	}
+
+	//prompt an update to the instance's service, if any
+	r.ImageChecker.UpdateServices(instance)
+
 	// all clear, instance is ready
 	r.updateStatus(ctx, &instance, true, "instance ready")
 	return ctrl.Result{}, nil

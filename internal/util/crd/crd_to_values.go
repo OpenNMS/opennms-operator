@@ -15,7 +15,6 @@ limitations under the License.
 package crd
 
 import (
-	"fmt"
 	"github.com/OpenNMS/opennms-operator/api/v1alpha1"
 	"github.com/OpenNMS/opennms-operator/internal/model/values"
 )
@@ -38,7 +37,7 @@ func ConvertCRDToValues(crd v1alpha1.OpenNMS, defaultValues values.TemplateValue
 
 	if spec.TestDeploy {
 		v.TestDeploy = spec.TestDeploy
-		v = overrideImages(spec, v)
+		v = overrideImages(v)
 	}
 
 	templateValues.Values = v
@@ -48,7 +47,7 @@ func ConvertCRDToValues(crd v1alpha1.OpenNMS, defaultValues values.TemplateValue
 
 //getCoreValues - get ONMS core values from the crd
 func getCoreValues(spec v1alpha1.OpenNMSSpec, v values.OpenNMSValues) values.OpenNMSValues {
-	v.Image = getImage(spec)
+	v.Image = spec.Version
 	if spec.Core.CPU != "" {
 		v.Resources.Request.Cpu = spec.Core.CPU
 		v.Resources.Limits.Cpu = spec.Core.CPU
@@ -81,21 +80,8 @@ func getTimeseriesValues(spec v1alpha1.OpenNMSSpec, v values.TimeseriesValues) v
 	return v
 }
 
-//getImage - get an ONMS image from the crd
-func getImage(spec v1alpha1.OpenNMSSpec) string {
-	distro := spec.Version.Distribution
-	if distro == "" {
-		distro = "horizon"
-	}
-	imageTag := spec.Version.Tag
-	if imageTag == "" {
-		imageTag = "bleeding"
-	}
-	return fmt.Sprintf("opennms/%s:%s", distro, imageTag)
-}
-
 //overrideImages - overrides images with noop images for deployment testing purposes
-func overrideImages(spec v1alpha1.OpenNMSSpec, v values.Values) values.Values {
+func overrideImages(v values.Values) values.Values {
 	noopServiceImage := "lipanski/docker-static-website:latest"
 	noopJobImage := "alpine:latest"
 

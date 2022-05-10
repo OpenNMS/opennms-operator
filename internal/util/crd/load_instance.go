@@ -17,13 +17,13 @@ package crd
 import (
 	"context"
 	"github.com/OpenNMS/opennms-operator/api/v1alpha1"
-	ctrl "sigs.k8s.io/controller-runtime"
+	"k8s.io/apimachinery/pkg/types"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
-func GetCRDFromCluster(ctx context.Context, k8sClient client.Client, req ctrl.Request) (v1alpha1.OpenNMS, error) {
+func GetInstance(ctx context.Context, k8sClient client.Client, ns types.NamespacedName) (v1alpha1.OpenNMS, error) {
 	var instanceCRD v1alpha1.OpenNMS
-	err := k8sClient.Get(ctx, req.NamespacedName, &instanceCRD)
+	err := k8sClient.Get(ctx, ns, &instanceCRD)
 	if err != nil {
 		return v1alpha1.OpenNMS{}, err
 	}

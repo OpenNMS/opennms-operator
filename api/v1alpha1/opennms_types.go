@@ -20,8 +20,8 @@ import (
 
 // OpenNMSSpec defines the desired state of OpenNMS
 type OpenNMSSpec struct {
-	// Version of OpenNMS.
-	Version Version `json:"version,omitempty"`
+	// Image tag version of OpenNMS.
+	Version string `json:"version,omitempty"`
 
 	// Domain name used in ingress rule
 	Host string `json:"host,omitempty"`
@@ -48,12 +48,6 @@ type OpenNMSSpec struct {
 	ImageUpdateConfig ImageUpdateConfig `json:"imageUpdate,omitempty"`
 }
 
-//Version - defines the version of the ONMS core to use
-type Version struct {
-	Distribution string `json:"distribution"`
-	Tag          string `json:"tag"`
-}
-
 //Timeseries - defines the timeseries DB backend to use
 type Timeseries struct {
 	Mode   string `json:"mode,omitempty"`
@@ -78,10 +72,8 @@ type OpenNMSStatus struct {
 
 // ImageUpdateConfig - defines current status of used image for OpenNMS container
 type ImageUpdateConfig struct {
-	// can have values of now/autoupdate/none
+	// can have values of now/none
 	Update string `json:"update,omitempty"`
-	// represents number of minutes for recurrent checks of a new image
-	Frequency int `json:"frequency,omitempty"`
 }
 
 // ImageStatus - defines current status of used image for OpenNMS container
@@ -90,8 +82,8 @@ type ImageStatus struct {
 	IsLatest bool `json:"isLatest"`
 	// timestamp of a last image check in DockerHub
 	CheckedAt string `json:"checkedAt,omitempty"`
-	// readable message about image status
-	Message string `json:"message,omitempty"`
+	// list of services that have updates available
+	ServicesToUpdate string `json:"servicesToUpdate,omitempty"`
 }
 
 //ReadinessStatus - the ready status of the ONMS instance

@@ -72,23 +72,13 @@ spec:
                   description: Configuration for automatic image updating
                   type: object
                   properties:
-                    frequency:
-                      description: Number of minutes between checks for a new image
-                      type: integer
                     update:
                       description: Strategy for updating the running image
                       type: string
-                      enum: [ NOW, AUTO, NONE ]
+                      enum: [ now, none ]
                 version:
-                  description: Version of OpenNMS to be deployed
-                  type: object
-                  properties:
-                    distribution:
-                      type: string
-                      default: horizon
-                      enum: [ horizon, meridian ]
-                    tag:
-                      type: string
+                  description: Image tag version of OpenNMS to be deployed
+                  type: string
                 testDeploy:
                   description: Deploy the instance in a nonoperative testing mode
                   type: boolean
@@ -107,8 +97,8 @@ spec:
                     isLatest:
                       description: true if latest image used, false otherwise
                       type: boolean
-                    message:
-                      description: readable message about image status
+                    serviceToUpdate:
+                      description: list of services that have updates available
                       type: string
                   required:
                     - isLatest
