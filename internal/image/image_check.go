@@ -31,7 +31,7 @@ const (
 	DefaultFrequency = 60
 )
 
-type ImageChecker struct {
+type ImageUpdater struct {
 	client.Client
 	Log              logr.Logger
 	Frequency        int
@@ -39,11 +39,11 @@ type ImageChecker struct {
 	Scheduler        *gocron.Scheduler
 }
 
-func NewImageChecker(k8sClient client.Client, freq int) ImageChecker {
+func NewImageUpdater(k8sClient client.Client, freq int) ImageUpdater {
 	if freq == 0 {
 		freq = DefaultFrequency
 	}
-	return ImageChecker{
+	return ImageUpdater{
 		Client:           k8sClient,
 		Log:              ctrl.Log.WithName("imageCheck").WithName("OpenNMS"),
 		Frequency:        freq,
@@ -51,35 +51,35 @@ func NewImageChecker(k8sClient client.Client, freq int) ImageChecker {
 	}
 }
 
-func (ic *ImageChecker) InitScheduler() {
-	ic.Scheduler = gocron.NewScheduler(time.UTC)
-	ic.Scheduler.SetMaxConcurrentJobs(1, gocron.WaitMode)
-	ic.Scheduler.StartAsync()
-	ic.Scheduler.Every(ic.Frequency).Minute().Do(ic.checkAll)
+func (iu *ImageUpdater) InitScheduler() {
+	iu.Scheduler = gocron.NewScheduler(time.UTC)
+	iu.Scheduler.SetMaxConcurrentJobs(1, gocron.WaitMode)
+	iu.Scheduler.StartAsync()
+	iu.Scheduler.Every(iu.Frequency).Minute().Do(iu.checkAll)
 	//TODO capture job returned by Do() and stop it gracefully when the operator shuts down
 }
 
 //StartImageCheckerForInstance - start the recurrent image check for the given instance and services
-func (ic *ImageChecker) StartImageCheckerForInstance(instance v1alpha1.OpenNMS, services []client.Object) {
-	if ic.Scheduler == nil { //lazy scheduler start
-		ic.InitScheduler()
+func (iu *ImageUpdater) StartImageCheckerForInstance(instance v1alpha1.OpenNMS, services []client.Object) {
+	if iu.Scheduler == nil { //lazy scheduler start
+		iu.InitScheduler()
 	}
-	ic.RunningInstances[instance.Name] = services
+	iu.RunningInstances[instance.Name] = services
 }
 
 //StopImageCheckerForInstance - stop the recurrent image check for the given instance and services
-func (ic *ImageChecker) StopImageCheckerForInstance(instance v1alpha1.OpenNMS) {
-	delete(ic.RunningInstances, instance.Name)
+func (iu *ImageUpdater) StopImageCheckerForInstance(instance v1alpha1.OpenNMS) {
+	delete(iu.RunningInstances, instance.Name)
 }
 
 //ImageCheckerForInstanceRunning - check if an image check is running for the given instance
-func (ic *ImageChecker) ImageCheckerForInstanceRunning(instance v1alpha1.OpenNMS) bool {
-	_, ok := ic.RunningInstances[instance.Name]
+func (iu *ImageUpdater) ImageCheckerForInstanceRunning(instance v1alpha1.OpenNMS) bool {
+	_, ok := iu.RunningInstances[instance.Name]
 	return ok
 }
 
 //ServiceMarkedForImageCheck - check if a given service is marked for auto updating
-func (ic *ImageChecker) ServiceMarkedForImageCheck(service client.Object) bool {
+func (iu *ImageUpdater) ServiceMarkedForImageCheck(service client.Object) bool {
 	if autoupdate, ok := service.GetAnnotations()["autoupdate"]; ok {
 		if autoupdate == "true" {
 			return true
@@ -89,30 +89,33 @@ func (ic *ImageChecker) ServiceMarkedForImageCheck(service client.Object) bool {
 }
 
 //checkAll - check all registered instances for image updates
-func (ic *ImageChecker) checkAll() {
-	for instance, services := range ic.RunningInstances {
+func (iu *ImageUpdater) checkAll() {
+	for instance, services := range iu.RunningInstances {
 		//instanceUpdate := false
 		for _, service := range services {
 			ctx := context.Background()
-			imageName, currentId := ic.getImageForService(ctx, instance, service)
-			latestId, err := ic.getLatestImageDigest(ctx, imageName, currentId)
+			imageName, currentId := iu.getImageForService(ctx, instance, service)
+			latestId, err := iu.getLatestImageDigest(ctx, imageName, currentId)
 			if err != nil { //if there's an error getting the image digest, skip this service
 				continue
 			}
-			ic.markInstanceServiceForUpdate(ctx, instance, service.GetName(), currentId, latestId)
+			iu.markInstanceServiceForUpdate(ctx, instance, service.GetName(), currentId, latestId)
 		}
 	}
 }
 
 //getImageForService - get the Image and ImageID for a given service in a given instance
-func (ic *ImageChecker) getImageForService(ctx context.Context, instanceName string, service client.Object) (string, string) {
-	pod := ic.getPodFromCluster(ctx, instanceName, service)
+func (iu *ImageUpdater) getImageForService(ctx context.Context, instanceName string, service client.Object) (string, string) {
+	pod := iu.getPodFromCluster(ctx, instanceName, service)
+	if pod == nil {
+		return "", ""
+	}
 	//should only be one running container
 	return pod.Status.ContainerStatuses[0].Image, pod.Status.ContainerStatuses[0].ImageID
 }
 
 //getPodFromCluster - get the first running pod for the given service from the given instance namespace
-func (ic *ImageChecker) getPodFromCluster(ctx context.Context, instanceName string, service client.Object) corev1.Pod {
+func (iu *ImageUpdater) getPodFromCluster(ctx context.Context, instanceName string, service client.Object) *corev1.Pod {
 	serviceName := service.GetLabels()["app.kubernetes.io/name"]
 	labelMap := map[string]string{
 		"app.kubernetes.io/name": serviceName,
@@ -122,10 +125,13 @@ func (ic *ImageChecker) getPodFromCluster(ctx context.Context, instanceName stri
 	fieldSelector := fields.OneTermEqualSelector("status.phase", "Running")
 
 	var pods corev1.PodList
-	err := ic.Client.List(ctx, &pods, &client.ListOptions{LabelSelector: labelsSelector, FieldSelector: fieldSelector, Namespace: instanceName})
+	err := iu.Client.List(ctx, &pods, &client.ListOptions{LabelSelector: labelsSelector, FieldSelector: fieldSelector, Namespace: instanceName})
 	if err != nil {
-		ic.Log.Error(err, "could not get pod from cluster", "namespace", instanceName, "service", serviceName)
+		iu.Log.Error(err, "could not get pod from cluster", "namespace", instanceName, "service", serviceName)
+	}
+	if len(pods.Items) == 0 {
+		return nil
 	}
 	//only return the first pod of the list - all replicas of a service should be running the same image
-	return pods.Items[0]
+	return &pods.Items[0]
 }

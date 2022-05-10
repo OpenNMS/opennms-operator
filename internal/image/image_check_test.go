@@ -30,7 +30,7 @@ import (
 )
 
 func TestImageChecker_InitScheduler(t *testing.T) {
-	var ic ImageChecker
+	var ic ImageUpdater
 	ic.InitScheduler()
 	assert.NotNil(t, ic.Scheduler, "scheduler should have been init'd")
 	ic.Scheduler.Stop()
@@ -44,7 +44,7 @@ func TestImageChecker_StartImageCheckerForInstance(t *testing.T) {
 	services := []client.Object{
 		&service,
 	}
-	ic := NewImageChecker(nil, 60)
+	ic := NewImageUpdater(fake.NewClientBuilder().Build(), 60)
 	ic.StartImageCheckerForInstance(instance, services)
 
 	res := ic.RunningInstances["test"]
@@ -56,7 +56,7 @@ func TestImageChecker_StartImageCheckerForInstance(t *testing.T) {
 func TestImageChecker_StopImageCheckerForInstance(t *testing.T) {
 	instance := v1alpha1.OpenNMS{}
 	instance.SetName("test")
-	ic := NewImageChecker(nil, 60)
+	ic := NewImageUpdater(nil, 60)
 	service := appsv1.Deployment{}
 	service.SetName("service")
 	services := []client.Object{
@@ -74,7 +74,7 @@ func TestImageChecker_StopImageCheckerForInstance(t *testing.T) {
 func TestImageChecker_ImageCheckerForInstanceRunning(t *testing.T) {
 	instance := v1alpha1.OpenNMS{}
 	instance.SetName("test")
-	ic := NewImageChecker(nil, 60)
+	ic := NewImageUpdater(nil, 60)
 	service := appsv1.Deployment{}
 	service.SetName("service")
 	services := []client.Object{
@@ -92,7 +92,7 @@ func TestImageChecker_ServiceMarkedForImageCheck(t *testing.T) {
 	service.SetAnnotations(map[string]string{
 		"autoupdate": "true",
 	})
-	ic := NewImageChecker(nil, 60)
+	ic := NewImageUpdater(nil, 60)
 	res := ic.ServiceMarkedForImageCheck(&service)
 	assert.True(t, res, "should recognise that a service is marked for autoupdating")
 
@@ -133,8 +133,8 @@ func TestImageCheck_getImageForService(t *testing.T) {
 	}
 	mockClient := fake.NewClientBuilder().WithObjects(&namespace, &mockPod).Build()
 
-	ic := NewImageChecker(mockClient, 60)
-	resImage, resImageID := ic.getImageForService(context.Background(), namespaceName, &mockPod)
+	iu := NewImageUpdater(mockClient, 60)
+	resImage, resImageID := iu.getImageForService(context.Background(), namespaceName, &mockPod)
 
 	assert.Equal(t, imageName, resImage, "should return the pod's image name")
 	assert.Equal(t, imageID, resImageID, "should return the pod's image ID")

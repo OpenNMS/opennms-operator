@@ -45,7 +45,7 @@ type OpenNMSReconciler struct {
 	DefaultValues values.TemplateValues
 	Handlers      []handlers.ServiceHandler
 	ValuesMap     map[string]values.TemplateValues
-	ImageChecker  image.ImageChecker
+	ImageChecker  image.ImageUpdater
 }
 
 func (r *OpenNMSReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
@@ -114,7 +114,8 @@ func (r *OpenNMSReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 		r.ImageChecker.StartImageCheckerForInstance(instance, autoUpdateServices)
 	}
 
-	r.ImageChecker
+	//prompt an update to the instance's service, if any
+	r.ImageChecker.UpdateServices(instance)
 
 	// all clear, instance is ready
 	r.updateStatus(ctx, &instance, true, "instance ready")

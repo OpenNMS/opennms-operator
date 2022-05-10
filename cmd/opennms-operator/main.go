@@ -58,7 +58,7 @@ func main() {
 		os.Exit(1)
 	}
 	k8sClient := mgr.GetClient()
-	imageChecker := image.NewImageChecker(k8sClient, operatorConfig.ImageUpdateFreq)
+	imageChecker := image.NewImageUpdater(k8sClient, operatorConfig.ImageUpdateFreq)
 	if err = (&reconciler.OpenNMSReconciler{
 		Client:        mgr.GetClient(),
 		Log:           logger,

@@ -22,10 +22,10 @@ import (
 )
 
 //getLatestImageDigest - get digest of the latest version of a image tag
-func (ic *ImageChecker) getLatestImageDigest(ctx context.Context, imageName, imageId string) (string, error) {
-	latestDigest, err := ic.getDockerDigest(ctx, imageName)
+func (iu *ImageUpdater) getLatestImageDigest(ctx context.Context, imageName, imageId string) (string, error) {
+	latestDigest, err := iu.getDockerDigest(ctx, imageName)
 	if err != nil {
-		ic.Log.Error(err, "Failed to get latest digest for image", "image", imageName)
+		iu.Log.Error(err, "Failed to get latest digest for image", "image", imageName)
 		return "", err
 	}
 	latestImage := strings.Split(imageId, "@")[0] + "@" + latestDigest
@@ -33,7 +33,7 @@ func (ic *ImageChecker) getLatestImageDigest(ctx context.Context, imageName, ima
 }
 
 //getDockerDigest - get digest of a given image
-func (ic *ImageChecker) getDockerDigest(ctx context.Context, imageName string) (string, error) {
+func (iu *ImageUpdater) getDockerDigest(ctx context.Context, imageName string) (string, error) {
 	ref, err := docker.ParseReference("//" + imageName)
 	if err != nil {
 		return "", err
