@@ -9,6 +9,7 @@ COPY go.mod go.mod
 COPY go.sum go.sum
 
 COPY cmd/ cmd/
+COPY charts/dependencies charts/dependencies
 COPY api/ api/
 COPY config/ config/
 COPY internal/ internal/
