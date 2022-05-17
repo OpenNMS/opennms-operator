@@ -15,6 +15,7 @@ limitations under the License.
 package main
 
 import (
+	"github.com/OpenNMS/opennms-operator/charts/dependencies"
 	"github.com/OpenNMS/opennms-operator/config"
 	"github.com/OpenNMS/opennms-operator/internal/image"
 	"github.com/OpenNMS/opennms-operator/internal/reconciler"
@@ -44,6 +45,12 @@ func main() {
 
 	ctrl.SetLogger(zap.New(zap.UseFlagOptions(&loggerOptions)))
 	logger := ctrl.Log.WithName("reconciler").WithName("OpenNMS")
+
+	err := dependencies.ApplyHelmDependencies()
+	if err != nil {
+		setupLog.Error(err, "Error applying Helm dependencies")
+		os.Exit(1)
+	}
 
 	mgr, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{
 		Scheme:             K8sScheme,
