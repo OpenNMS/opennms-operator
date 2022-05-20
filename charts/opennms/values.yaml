@@ -2,22 +2,41 @@ Namespace: opennms-instance
 Host: localhost
 TestDeploy: false
 OpenNMS:
-  Image: opennms/horizon:bleeding
-  VolumeSize: 500Mi
-  SecurityGroup: 10001
-  Resources:
-    Limits:
-      Cpu: 2
-      Memory: 2Gi
-    Requests:
-      Cpu: 100m
-      Memory: 1Gi
-  InitContainerImage: placeholder
-  Timeseries:
-    Mode: default
-    Host: postgresql
-    Port: 5432
-    ApiKey: placeholder
+  Core:
+    ServiceName: opennms-core
+    Image: opennms/horizon-stream-core
+    Resources:
+      Limits:
+        Cpu: 2
+        Memory: 2Gi
+      Requests:
+        Cpu: 100m
+        Memory: 1Gi
+#    Timeseries:
+#      Mode: default
+#      Host: postgres
+#      Port: 5432
+#      ApiKey: placeholder
+  API:
+    ServiceName: opennms-api
+    Image: opennms/horizon-stream-api
+    Resources:
+      Limits:
+        Cpu: 100m
+        Memory: 500Mi
+      Requests:
+        Cpu: 100m
+        Memory: 100Mi
+  UI:
+    ServiceName: opennms-ui
+    Image: opennms/horizon-stream-ui-dev
+    Resources:
+      Limits:
+        Cpu: 100m
+        Memory: 100Mi
+      Requests:
+        Cpu: 100m
+        Memory: 100Mi
 TLS:
   Enabled: false
   CertSecret: placeholder
@@ -28,9 +47,16 @@ Auth:
   MinionPass: notset
   AllowedUsers: test@email.com
 Postgres:
-  Image: timescale/timescaledb:latest-pg12
-  Password: notset
+  ServiceName: postgres
+  Image: postgres:13.3-alpine
+  AdminPassword: notset
+  KeycloakPassword: notset
   VolumeSize: 10Gi
+Keycloak: #TODO
+  ServiceName: keycloak
+  Password: notset
+Kafka: #TODO
+  some: value
 Grafana:
   Image: placeholder
 Ingress:

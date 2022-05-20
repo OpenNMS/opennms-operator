@@ -15,6 +15,13 @@ limitations under the License.
 package values
 
 type OpenNMSValues struct {
+	Core ServiceValues `yaml:"Core"`
+	API  ServiceValues `yaml:"API"`
+	UI   ServiceValues `yaml:"UI"`
+}
+
+type ServiceValues struct {
+	ServiceName        string           `yaml:"ServiceName"`
 	Image              string           `yaml:"Image"`
 	VolumeSize         string           `yaml:"VolumeSize"`
 	InitContainerImage string           `yaml:"InitContainerImage"`

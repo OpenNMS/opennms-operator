@@ -1,22 +1,19 @@
 apiVersion: apps/v1
-kind: StatefulSet
+kind: Deployment
 metadata:
   labels:
-    app: postgres
-    opennms_cr: {{ .Values.Namespace }}
-    role: master
-  name: postgres
+    app: {{ .Values.Postgres.ServiceName }}
+  name: {{ .Values.Postgres.ServiceName }}
   namespace: {{ .Values.Namespace }}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: postgres
-  serviceName: postgresql
+      app: {{ .Values.Postgres.ServiceName }}
   template:
     metadata:
       labels:
-        app: postgres
+        app: {{ .Values.Postgres.ServiceName }}
         role: master
     spec:
       {{ if .Values.NodeRestrictions.Enabled }}
@@ -36,15 +33,31 @@ spec:
                 values:
                 - {{ .Values.NodeRestrictions.Value }}
       {{ end }}
+      volumes:
+        - name: postgres-volume
+        - name: postgres-initial-script
+          configMap:
+            name: postgres-initial-sql
       containers:
-        - env:
+        - name: {{ .Values.Postgres.ServiceName }}
+          image: {{ .Values.Postgres.Image }}
+          imagePullPolicy: Always
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: postgres
+                  key: adminUser
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: postgres
-                  key: password
-          image: {{ .Values.Postgres.Image }}
-          imagePullPolicy: Always
+                  key: adminPwd
+            - name: POSTGRES_HOST_AUTH_METHOD
+              value: "trust"
+          ports:
+            - containerPort: 5432
+          {{ if not .Values.TestDeploy }}
           livenessProbe:
             exec:
               command:
@@ -56,14 +69,6 @@ spec:
             failureThreshold: 3
             initialDelaySeconds: 30
             periodSeconds: 60
-            successThreshold: 1
-            timeoutSeconds: 1
-          name: postgres
-          ports:
-            - containerPort: 5432
-              name: postgresql
-              protocol: TCP
-          {{ if not .Values.TestDeploy }}
           readinessProbe:
             exec:
               command:
@@ -83,14 +88,11 @@ spec:
               cpu: 100m
               memory: 100Mi
           volumeMounts:
-            - mountPath: /var/lib/postgresql/data
-              name: pgdata
-              subPath: pgdata
-  volumeClaimTemplates:
-    - metadata:
-        name: pgdata
-      spec:
-        accessModes: [ ReadWriteOnce ]
-        resources:
-          requests:
-            storage: {{ .Values.Postgres.VolumeSize }}
+            - mountPath: "/var/lib/postgresql/data"
+              name: postgres-volume
+            - mountPath: "/docker-entrypoint-initdb.d/postgres.initial.script.sql"
+              name: postgres-initial-script
+              subPath: "postgres.initial.script.sql"
+            - mountPath: "/docker-entrypoint-initdb.d/postgres.keycloak.initial.script.sql"
+              name: postgres-initial-script
+              subPath: "postgres.keycloak.initial.script.sql"

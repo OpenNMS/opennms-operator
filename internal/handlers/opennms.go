@@ -34,8 +34,8 @@ func (h *OpenNMSHandler) ProvideConfig(values values.TemplateValues) []client.Ob
 
 	yaml.LoadYaml(filepath("opennms/opennms-configmap.yaml"), values, &configMap)
 	yaml.LoadYaml(filepath("opennms/opennms-tcp-services-cm.yaml"), values, &tcpServices)
-	yaml.LoadYaml(filepath("opennms/opennms-service.yaml"), values, &service)
-	yaml.LoadYaml(filepath("opennms/opennms-statefulset.yaml"), values, &statefulSet)
+	yaml.LoadYaml(filepath("opennms/opennms-core-service.yaml"), values, &service)
+	yaml.LoadYaml(filepath("opennms/opennms-core-deployment.yaml"), values, &statefulSet)
 
 	h.Config = []client.Object{
 		&configMap,

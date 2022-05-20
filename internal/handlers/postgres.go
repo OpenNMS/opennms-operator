@@ -31,9 +31,9 @@ func (h *PostgresHandler) ProvideConfig(values values.TemplateValues) []client.O
 	var service corev1.Service
 	var statefulset appsv1.StatefulSet
 
-	yaml.LoadYaml(filepath("postgres/postgres-secret.yaml"), values, &secret)
+	yaml.LoadYaml(filepath("postgres/postgres-cred-secret.yaml"), values, &secret)
 	yaml.LoadYaml(filepath("postgres/postgres-service.yaml"), values, &service)
-	yaml.LoadYaml(filepath("postgres/postgres-statefulset.yaml"), values, &statefulset)
+	yaml.LoadYaml(filepath("postgres/postgres-deployment.yaml"), values, &statefulset)
 
 	h.Config = []client.Object{
 		&secret,

@@ -2,8 +2,8 @@ apiVersion: v1
 kind: Service
 metadata:
   labels:
-    app: postgres
-  name: postgresql
+    app: {{ .Values.Postgres.ServiceName }}
+  name: {{ .Values.Postgres.ServiceName }}
   namespace: {{ .Values.Namespace }}
 spec:
   ports:
@@ -11,4 +11,4 @@ spec:
       protocol: TCP
       targetPort: 5432
   selector:
-    app: postgres
+    app: {{ .Values.Postgres.ServiceName }}
