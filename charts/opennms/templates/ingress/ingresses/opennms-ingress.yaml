@@ -25,9 +25,9 @@ spec:
             pathType: Prefix
           - backend:
               service:
-                name: opennms
+                name: opennms-core
                 port:
-                  number: 8980
+                  number: 8181
             path: /
             pathType: Prefix
   {{ if .Values.TLS.Enabled }}

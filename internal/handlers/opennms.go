@@ -28,20 +28,26 @@ type OpenNMSHandler struct {
 
 func (h *OpenNMSHandler) ProvideConfig(values values.TemplateValues) []client.Object {
 	var configMap corev1.ConfigMap
-	var tcpServices corev1.ConfigMap
-	var service corev1.Service
-	var statefulSet appsv1.StatefulSet
+	var coreService corev1.Service
+	var coreDeployment appsv1.Deployment
+	var apiService corev1.Service
+	var apiDeployment appsv1.Deployment
+	var uiDeployment appsv1.Deployment
 
 	yaml.LoadYaml(filepath("opennms/opennms-configmap.yaml"), values, &configMap)
-	yaml.LoadYaml(filepath("opennms/opennms-tcp-services-cm.yaml"), values, &tcpServices)
-	yaml.LoadYaml(filepath("opennms/opennms-core-service.yaml"), values, &service)
-	yaml.LoadYaml(filepath("opennms/opennms-core-deployment.yaml"), values, &statefulSet)
+	yaml.LoadYaml(filepath("opennms/opennms-core-service.yaml"), values, &coreService)
+	yaml.LoadYaml(filepath("opennms/opennms-core-deployment.yaml"), values, &coreDeployment)
+	yaml.LoadYaml(filepath("opennms/opennms-api-service.yaml"), values, &apiService)
+	yaml.LoadYaml(filepath("opennms/opennms-api-deployment.yaml"), values, &apiDeployment)
+	yaml.LoadYaml(filepath("opennms/opennms-ui-deployment.yaml"), values, &uiDeployment)
 
 	h.Config = []client.Object{
 		&configMap,
-		&tcpServices,
-		&service,
-		&statefulSet,
+		&coreService,
+		&coreDeployment,
+		&apiService,
+		&apiDeployment,
+		&uiDeployment,
 	}
 
 	return h.Config

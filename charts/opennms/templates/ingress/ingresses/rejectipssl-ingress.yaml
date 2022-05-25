@@ -15,6 +15,6 @@ spec:
           service:
             name: opennms
             port:
-              number: 8980
+              number: 8181
         path: /
         pathType: Prefix
