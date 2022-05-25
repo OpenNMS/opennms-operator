@@ -32,6 +32,12 @@ func ConvertCRDToValues(crd v1alpha1.OpenNMS, defaultValues values.TemplateValue
 	//ONMS Core
 	v.OpenNMS = getCoreValues(spec, v.OpenNMS)
 
+	//ONMS API
+	v.OpenNMS = getAPIValues(spec, v.OpenNMS)
+
+	//ONMS UI
+	v.OpenNMS = getUIValues(spec, v.OpenNMS)
+
 	//Postgres
 	v.Postgres = getPostgresValues(spec, v.Postgres)
 
@@ -47,19 +53,53 @@ func ConvertCRDToValues(crd v1alpha1.OpenNMS, defaultValues values.TemplateValue
 
 //getCoreValues - get ONMS core values from the crd
 func getCoreValues(spec v1alpha1.OpenNMSSpec, v values.OpenNMSValues) values.OpenNMSValues {
-	v.Image = spec.Version
+	v.Core.Image = spec.Version
 	if spec.Core.CPU != "" {
-		v.Resources.Request.Cpu = spec.Core.CPU
-		v.Resources.Limits.Cpu = spec.Core.CPU
+		v.Core.Resources.Request.Cpu = spec.Core.CPU
+		v.Core.Resources.Limits.Cpu = spec.Core.CPU
 	}
 	if spec.Core.MEM != "" {
-		v.Resources.Request.Memory = spec.Core.MEM
-		v.Resources.Limits.Memory = spec.Core.MEM
+		v.Core.Resources.Request.Memory = spec.Core.MEM
+		v.Core.Resources.Limits.Memory = spec.Core.MEM
 	}
 	if spec.Core.Disk != "" {
-		v.VolumeSize = spec.Core.Disk
+		v.Core.VolumeSize = spec.Core.Disk
 	}
-	v.Timeseries = getTimeseriesValues(spec, v.Timeseries)
+	v.Core.Timeseries = getTimeseriesValues(spec, v.Core.Timeseries)
+	return v
+}
+
+//getAPIValues - get ONMS core values from the crd
+func getAPIValues(spec v1alpha1.OpenNMSSpec, v values.OpenNMSValues) values.OpenNMSValues {
+	v.API.Image = spec.Version
+	if spec.API.CPU != "" {
+		v.API.Resources.Request.Cpu = spec.API.CPU
+		v.API.Resources.Limits.Cpu = spec.API.CPU
+	}
+	if spec.API.MEM != "" {
+		v.API.Resources.Request.Memory = spec.API.MEM
+		v.API.Resources.Limits.Memory = spec.API.MEM
+	}
+	if spec.API.Disk != "" {
+		v.API.VolumeSize = spec.API.Disk
+	}
+	return v
+}
+
+//getUIValues - get ONMS core values from the crd
+func getUIValues(spec v1alpha1.OpenNMSSpec, v values.OpenNMSValues) values.OpenNMSValues {
+	v.UI.Image = spec.Version
+	if spec.UI.CPU != "" {
+		v.UI.Resources.Request.Cpu = spec.UI.CPU
+		v.UI.Resources.Limits.Cpu = spec.UI.CPU
+	}
+	if spec.UI.MEM != "" {
+		v.UI.Resources.Request.Memory = spec.UI.MEM
+		v.UI.Resources.Limits.Memory = spec.UI.MEM
+	}
+	if spec.UI.Disk != "" {
+		v.UI.VolumeSize = spec.UI.Disk
+	}
 	return v
 }
 
@@ -85,7 +125,9 @@ func overrideImages(v values.Values) values.Values {
 	noopServiceImage := "lipanski/docker-static-website:latest"
 	noopJobImage := "alpine:latest"
 
-	v.OpenNMS.Image = noopServiceImage
+	v.OpenNMS.Core.Image = noopServiceImage
+	v.OpenNMS.API.Image = noopServiceImage
+	v.OpenNMS.Core.Image = noopServiceImage
 	v.Postgres.Image = noopServiceImage
 	v.Grafana.Image = noopServiceImage
 	v.Auth.Image = noopServiceImage

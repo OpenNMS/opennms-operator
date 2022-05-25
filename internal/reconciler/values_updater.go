@@ -80,11 +80,13 @@ func (r *OpenNMSReconciler) CheckForExistingPostgresCreds(ctx context.Context, v
 	if err != nil {
 		return v, false
 	}
-	existingPwd := string(credSecret.Data["password"])
-	if existingPwd == "" {
+	adminPwd := string(credSecret.Data["adminPwd"])
+	keycloakPwd := string(credSecret.Data["keycloakPwd"])
+	if adminPwd == "" || keycloakPwd == "" {
 		return v, false
 	}
-	v.Values.Postgres.Password = existingPwd
+	v.Values.Postgres.AdminPassword = adminPwd
+	v.Values.Postgres.KeycloakPassword = keycloakPwd
 	return v, true
 }
 
@@ -97,6 +99,7 @@ func setCorePasswords(tv values.TemplateValues) values.TemplateValues {
 
 //setCorePasswords - sets randomly generated password for Postgres if not already set
 func setPostgresPassword(tv values.TemplateValues) values.TemplateValues {
-	tv.Values.Postgres.Password = security.GeneratePassword(false)
+	tv.Values.Postgres.AdminPassword = security.GeneratePassword(false)
+	tv.Values.Postgres.KeycloakPassword = security.GeneratePassword(false)
 	return tv
 }

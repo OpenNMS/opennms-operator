@@ -52,8 +52,6 @@ func LoadValues(filename string) values.TemplateValues {
 func SetServiceImages(config config.OperatorConfig, v values.TemplateValues) values.TemplateValues {
 	v.Values.Grafana.Image = config.ServiceImageGrafana
 	v.Values.Auth.Image = config.ServiceImageAuth
-
-	v.Values.OpenNMS.InitContainerImage = config.ServiceImageInit
 	return v
 }
 

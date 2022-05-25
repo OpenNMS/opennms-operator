@@ -41,6 +41,12 @@ type OpenNMSSpec struct {
 	// Defines cpu,mem and disk size for core
 	Core BaseServiceResources `json:"core,omitempty"`
 
+	// Defines cpu,mem and disk size for api
+	API BaseServiceResources `json:"api,omitempty"`
+
+	// Defines cpu,mem and disk size for ui
+	UI BaseServiceResources `json:"ui,omitempty"`
+
 	// Defines cpu,mem and disk size for postgres
 	Postgres BaseServiceResources `json:"postgres,omitempty"`
 

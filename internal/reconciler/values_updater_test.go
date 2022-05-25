@@ -98,13 +98,15 @@ func TestCheckForExistingCoreCreds(t *testing.T) {
 	assert.Equal(t, adminPwd, res.Values.Auth.AdminPass, "should return the expected admin password values")
 	assert.Equal(t, minionPwd, res.Values.Auth.MinionPass, "should return the expected admin password values")
 
-	postgresPwd := "testpostgrespwd"
+	adminPglPwd := "testpostgresadminpwd"
+	keycloakPwd := "testpostgreskeycloakpwd"
 	pgSecret := corev1.Secret{
 		ObjectMeta: v1.ObjectMeta{
 			Name: "postgres",
 		},
 		Data: map[string][]byte{
-			"password": []byte(postgresPwd),
+			"adminPwd":    []byte(adminPglPwd),
+			"keycloakPwd": []byte(keycloakPwd),
 		},
 	}
 	err = k8sClient.Create(ctx, &pgSecret)
@@ -112,5 +114,6 @@ func TestCheckForExistingCoreCreds(t *testing.T) {
 
 	res, resbool = testRecon.CheckForExistingPostgresCreds(ctx, testValues, "")
 	assert.True(t, resbool, "should return that there are existing creds")
-	assert.Equal(t, postgresPwd, res.Values.Postgres.Password, "should return the postgres expected values")
+	assert.Equal(t, adminPglPwd, res.Values.Postgres.AdminPassword, "should return the postgres expected values")
+	assert.Equal(t, keycloakPwd, res.Values.Postgres.KeycloakPassword, "should return the postgres expected values")
 }
