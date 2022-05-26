@@ -34,7 +34,6 @@ func (r *OpenNMSReconciler) InitServiceHandlers() {
 	r.Handlers = []handlers.ServiceHandler{
 		&handlers.BaseHandler{},
 		&handlers.PostgresHandler{},
-		&handlers.AuthHandler{},
 		&handlers.OpenNMSHandler{},
 		&handlers.GrafanaHandler{},
 		&handlers.IngressHandler{},

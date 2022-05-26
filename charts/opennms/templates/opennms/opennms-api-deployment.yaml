@@ -38,11 +38,11 @@ spec:
       terminationGracePeriodSeconds: 120
       containers:
         - name: horizon-stream-api
-          image: {{ .Values.OpenNMS.ApiImage }}
+          image: {{ .Values.OpenNMS.API.Image }}
           imagePullPolicy: Always
           env:
             - name: SPRING_DATASOURCE_URL
-              value: "jdbc:postgresql://postgres:5432/horizon_stream"
+              value: "jdbc:postgresql://{{ .Values.Postgres.ServiceName }}:5432/horizon_stream"
             - name: KEYCLOAK_AUTH_SERVER_URL
               value: "http://{{ .Values.Keycloak.ServiceName }}:8080"
             - name: KEYCLOAK_RESOURCE
