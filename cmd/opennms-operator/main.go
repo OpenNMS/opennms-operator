@@ -39,14 +39,14 @@ func main() {
 	operatorConfig := config.LoadConfig()
 
 	loggerOptions := zap.Options{
-		Development: operatorConfig.DevMode,
+		Development: operatorConfig.DevMode, //TODO make this configurable
 		TimeEncoder: zapcore.ISO8601TimeEncoder,
 	}
 
 	ctrl.SetLogger(zap.New(zap.UseFlagOptions(&loggerOptions)))
 	logger := ctrl.Log.WithName("reconciler").WithName("OpenNMS")
 
-	err := dependencies.ApplyHelmDependencies()
+	err := dependencies.ApplyHelmDependencies(setupLog)
 	if err != nil {
 		setupLog.Error(err, "Error applying Helm dependencies")
 		os.Exit(1)

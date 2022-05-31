@@ -36,7 +36,7 @@ spec:
             - name: DEV_MODE
               value: "{{ .Values.operator.devMode }}"
             - name: IMAGE_UPDATE_FREQUENCY
-              value: {{ .Values.operator.imageUpdateFreq }}
+              value: "{{ .Values.operator.imageUpdateFreq }}"
           resources:
             limits:
               cpu: {{ .Values.operator.resources.limits.cpu }}

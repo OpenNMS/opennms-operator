@@ -6,19 +6,17 @@ operator:
   imageUpdateFreq: 60
   resources:
     limits:
-      cpu: 100m
-      memory: 100Mi
+      cpu: 200m
+      memory: 750Mi
     requests:
-      cpu: 100m
-      memory: 50Mi
+      cpu: 200m
+      memory: 500Mi
   devMode: false
 customErrors:
   image: quay.io/kubernetes-ingress-controller/custom-error-pages-amd64:0.4
   debug: true
 serviceImages:
-  auth: placeholder
   grafana: placeholder
-  initContainer: placeholder
 tls:
   enabled: true
   issuer:
