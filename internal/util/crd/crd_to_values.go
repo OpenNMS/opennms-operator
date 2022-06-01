@@ -57,11 +57,11 @@ func getCoreValues(spec v1alpha1.OpenNMSSpec, v values.OpenNMSValues) values.Ope
 		v.Core.Image = spec.Core.Version
 	}
 	if spec.Core.CPU != "" {
-		v.Core.Resources.Request.Cpu = spec.Core.CPU
+		v.Core.Resources.Requests.Cpu = spec.Core.CPU
 		v.Core.Resources.Limits.Cpu = spec.Core.CPU
 	}
 	if spec.Core.MEM != "" {
-		v.Core.Resources.Request.Memory = spec.Core.MEM
+		v.Core.Resources.Requests.Memory = spec.Core.MEM
 		v.Core.Resources.Limits.Memory = spec.Core.MEM
 	}
 	if spec.Core.Disk != "" {
@@ -77,11 +77,11 @@ func getAPIValues(spec v1alpha1.OpenNMSSpec, v values.OpenNMSValues) values.Open
 		v.API.Image = spec.API.Version
 	}
 	if spec.API.CPU != "" {
-		v.API.Resources.Request.Cpu = spec.API.CPU
+		v.API.Resources.Requests.Cpu = spec.API.CPU
 		v.API.Resources.Limits.Cpu = spec.API.CPU
 	}
 	if spec.API.MEM != "" {
-		v.API.Resources.Request.Memory = spec.API.MEM
+		v.API.Resources.Requests.Memory = spec.API.MEM
 		v.API.Resources.Limits.Memory = spec.API.MEM
 	}
 	if spec.API.Disk != "" {
@@ -96,11 +96,11 @@ func getUIValues(spec v1alpha1.OpenNMSSpec, v values.OpenNMSValues) values.OpenN
 		v.UI.Image = spec.UI.Version
 	}
 	if spec.UI.CPU != "" {
-		v.UI.Resources.Request.Cpu = spec.UI.CPU
+		v.UI.Resources.Requests.Cpu = spec.UI.CPU
 		v.UI.Resources.Limits.Cpu = spec.UI.CPU
 	}
 	if spec.UI.MEM != "" {
-		v.UI.Resources.Request.Memory = spec.UI.MEM
+		v.UI.Resources.Requests.Memory = spec.UI.MEM
 		v.UI.Resources.Limits.Memory = spec.UI.MEM
 	}
 	if spec.UI.Disk != "" {

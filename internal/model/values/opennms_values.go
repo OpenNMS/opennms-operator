@@ -30,8 +30,8 @@ type ServiceValues struct {
 }
 
 type ResourceValues struct {
-	Limits  ResourceDefinition `yaml:"Limits"`
-	Request ResourceDefinition `yaml:"Request"`
+	Limits   ResourceDefinition `yaml:"Limits"`
+	Requests ResourceDefinition `yaml:"Requests"`
 }
 
 type ResourceDefinition struct {
@@ -40,7 +40,7 @@ type ResourceDefinition struct {
 }
 
 type TimeseriesValues struct {
-	Mode   string `yaml:"mode"`
+	Mode   string `yaml:"Mode"`
 	Host   string `yaml:"Host"`
 	Port   string `yaml:"Port"`
 	ApiKey string `yaml:"ApiKey"`

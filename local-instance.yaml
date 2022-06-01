@@ -9,8 +9,8 @@ spec:
   core:
     version: opennms/horizon-stream-core
   api:
-    version: opennms/horizon-stream-api
+    version: opennms/horizon-stream-rest-server
   ui:
-    version: opennms/horizon-stream-ui-dev
+    version: opennms/horizon-stream-ui
   postgres:
     version: postgres:13.3-alpine

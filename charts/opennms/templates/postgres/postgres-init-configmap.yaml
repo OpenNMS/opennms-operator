@@ -1,7 +1,10 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
+  labels:
+    app: {{ .Values.Postgres.ServiceName }}
   name: postgres-initial-sql
+  namespace: {{ .Values.Namespace }}
 data:
   postgres.initial.script.sql: |
     CREATE USER opennms with password 'opennms';

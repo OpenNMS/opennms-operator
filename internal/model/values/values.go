@@ -29,5 +29,6 @@ type Values struct {
 	Grafana          GrafanaValues          `yaml:"Grafana"`
 	Ingress          IngressValues          `yaml:"Ingress"`
 	Stunnel          StunnelValues          `yaml:"Stunnel"`
+	Keycloak         KeycloakValues         `yaml:"Keycloak"`
 	NodeRestrictions NodeRestrictionsValues `yaml:"NodeRestrictions"`
 }

@@ -38,9 +38,16 @@ spec:
       terminationGracePeriodSeconds: 120
       containers:
         - name: {{ .Values.OpenNMS.UI.ServiceName }}
-          image: opennms/horizon-stream-ui-dev
+          image: {{ .Values.OpenNMS.UI.Image }}
           ports:
             - containerPort: 3000
+          env:
+            - name: DOMAIN_API
+              value: "{{ .Values.OpenNMS.API.ServiceName }}:9090"
+            - name: DOMAIN_KEYCLOAK
+              value: "{{ .Values.Keycloak.ServiceName }}:28080"
+          command: [ "/app/dev/entrypoint.sh" ]
+          args: [ "$(DOMAIN_KEYCLOAK)","$(DOMAIN_API)" ]
           resources:
             limits:
               cpu: "{{ .Values.OpenNMS.UI.Resources.Limits.Cpu }}"

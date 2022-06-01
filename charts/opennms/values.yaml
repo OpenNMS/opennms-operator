@@ -18,25 +18,25 @@ OpenNMS:
 #      Port: 5432
 #      ApiKey: placeholder
   API:
-    ServiceName: opennms-api
-    Image: opennms/horizon-stream-api
+    ServiceName: opennms-rest-server
+    Image: opennms/horizon-stream-rest-server
     Resources:
       Limits:
         Cpu: 100m
-        Memory: 500Mi
+        Memory: 1Gi
       Requests:
         Cpu: 100m
-        Memory: 100Mi
+        Memory: 1Gi
   UI:
     ServiceName: opennms-ui
-    Image: opennms/horizon-stream-ui-dev
+    Image: opennms/horizon-stream-ui
     Resources:
       Limits:
         Cpu: 100m
-        Memory: 100Mi
+        Memory: 1Gi
       Requests:
         Cpu: 100m
-        Memory: 100Mi
+        Memory: 1Gi
 TLS:
   Enabled: false
   CertSecret: placeholder

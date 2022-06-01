@@ -65,6 +65,7 @@ spec:
             - name: ACTIVEMQ_BROKER_URL
               value: "tcp://localhost:61616"
             - name: KEYCLOAK_BASE_URL
+              #value: "http://{{ .Values.Keycloak.ServiceName }}:8080"
               value: "http://{{ .Values.Keycloak.ServiceName }}:8080"
             - name: KEYCLOAK_ADMIN_USERNAME
               value: "keycloak-admin"

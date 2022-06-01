@@ -17,31 +17,21 @@ package handlers
 import (
 	"github.com/OpenNMS/opennms-operator/internal/model/values"
 	"github.com/OpenNMS/opennms-operator/internal/util/yaml"
-	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
-type PostgresHandler struct {
+type KeycloakHandler struct {
 	ServiceHandlerObject
 }
 
-func (h *PostgresHandler) ProvideConfig(values values.TemplateValues) []client.Object {
-	var configMap corev1.ConfigMap
-	var secret corev1.Secret
-	var service corev1.Service
-	var deployment appsv1.Deployment
+func (h *KeycloakHandler) ProvideConfig(values values.TemplateValues) []client.Object {
+	var credSecret corev1.Secret
 
-	yaml.LoadYaml(filepath("postgres/postgres-init-configmap.yaml"), values, &configMap)
-	yaml.LoadYaml(filepath("postgres/postgres-cred-secret.yaml"), values, &secret)
-	yaml.LoadYaml(filepath("postgres/postgres-service.yaml"), values, &service)
-	yaml.LoadYaml(filepath("postgres/postgres-deployment.yaml"), values, &deployment)
+	yaml.LoadYaml(filepath("keycloak/keycloak-cred-secret.yaml"), values, &credSecret)
 
 	h.Config = []client.Object{
-		&configMap,
-		&secret,
-		&service,
-		&deployment,
+		&credSecret,
 	}
 
 	return h.Config
