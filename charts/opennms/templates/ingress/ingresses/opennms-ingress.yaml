@@ -9,27 +9,41 @@ spec:
     - host: {{ .Values.Host }}
       http:
         paths:
-          - backend:
-              service:
-                name: onms-auth
-                port:
-                  number: {{ .Values.Auth.Port }}
-            path: /authz
+          - path: /
             pathType: Prefix
-          - backend:
+            backend:
               service:
-                name: grafana
+                name: {{ .Values.OpenNMS.UI.ServiceName }}
                 port:
                   number: 3000
-            path: /grafana
+          - path: /keycloak
             pathType: Prefix
-          - backend:
+            backend:
               service:
-                name: opennms-core
+                name: {{ .Values.Keycloak.ServiceName }}
                 port:
-                  number: 8181
-            path: /
+                  number: 8080
+          - path: /karaf
             pathType: Prefix
+            backend:
+              service:
+                name: {{ .Values.OpenNMS.Core.ServiceName }}
+                port:
+                  number: 8101
+          - path: /core
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Values.OpenNMS.Core.ServiceName }}
+                port:
+                  number: 8101
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Values.OpenNMS.API.ServiceName }}
+                port:
+                  number: 9090
   {{ if .Values.TLS.Enabled }}
   tls:
     - hosts:

@@ -52,7 +52,7 @@ Postgres:
   AdminPassword: notset
   KeycloakPassword: notset
   VolumeSize: 10Gi
-Keycloak: #TODO
+Keycloak:
   ServiceName: keycloak
   Password: notset
 Kafka: #TODO
@@ -66,7 +66,7 @@ Ingress:
 Stunnel:
   Image: dweomer/stunnel:latest
 NodeRestrictions: # will be applied to every pod in the instance
-  Enabled: true
+  Enabled: false #todo reenable
   Key: kubernetes.azure.com/scalesetpriority
   Value: spot
 
