@@ -51,14 +51,14 @@ func TestGetCoreValues(t *testing.T) {
 
 	v = getCoreValues(spec, v)
 
-	assert.Equal(t, spec.Core.CPU, v.Core.Resources.Request.Cpu, "should pull the correct value")
-	assert.Equal(t, spec.Core.MEM, v.Core.Resources.Request.Memory, "should pull the correct value")
+	assert.Equal(t, spec.Core.CPU, v.Core.Resources.Requests.Cpu, "should pull the correct value")
+	assert.Equal(t, spec.Core.MEM, v.Core.Resources.Requests.Memory, "should pull the correct value")
 	assert.Equal(t, spec.Core.Disk, v.Core.VolumeSize, "should pull the correct value")
 
 	v = getCoreValues(v1alpha1.OpenNMSSpec{}, v)
 
-	assert.Equal(t, "testcpu", v.Core.Resources.Request.Cpu, "value should remain unchanged when spec is unset")
-	assert.Equal(t, "testmem", v.Core.Resources.Request.Memory, "value should remain unchanged when spec is unset")
+	assert.Equal(t, "testcpu", v.Core.Resources.Requests.Cpu, "value should remain unchanged when spec is unset")
+	assert.Equal(t, "testmem", v.Core.Resources.Requests.Memory, "value should remain unchanged when spec is unset")
 	assert.Equal(t, "testdisk", v.Core.VolumeSize, "value should remain unchanged when spec is unset")
 }
 
@@ -75,14 +75,14 @@ func TestGetAPIValues(t *testing.T) {
 
 	v = getAPIValues(spec, v)
 
-	assert.Equal(t, spec.API.CPU, v.API.Resources.Request.Cpu, "should pull the correct value")
-	assert.Equal(t, spec.API.MEM, v.API.Resources.Request.Memory, "should pull the correct value")
+	assert.Equal(t, spec.API.CPU, v.API.Resources.Requests.Cpu, "should pull the correct value")
+	assert.Equal(t, spec.API.MEM, v.API.Resources.Requests.Memory, "should pull the correct value")
 	assert.Equal(t, spec.API.Disk, v.API.VolumeSize, "should pull the correct value")
 
 	v = getAPIValues(v1alpha1.OpenNMSSpec{}, v)
 
-	assert.Equal(t, "testcpu", v.API.Resources.Request.Cpu, "value should remain unchanged when spec is unset")
-	assert.Equal(t, "testmem", v.API.Resources.Request.Memory, "value should remain unchanged when spec is unset")
+	assert.Equal(t, "testcpu", v.API.Resources.Requests.Cpu, "value should remain unchanged when spec is unset")
+	assert.Equal(t, "testmem", v.API.Resources.Requests.Memory, "value should remain unchanged when spec is unset")
 	assert.Equal(t, "testdisk", v.API.VolumeSize, "value should remain unchanged when spec is unset")
 }
 
@@ -99,14 +99,14 @@ func TestGetUIValues(t *testing.T) {
 
 	v = getUIValues(spec, v)
 
-	assert.Equal(t, spec.UI.CPU, v.UI.Resources.Request.Cpu, "should pull the correct value")
-	assert.Equal(t, spec.UI.MEM, v.UI.Resources.Request.Memory, "should pull the correct value")
+	assert.Equal(t, spec.UI.CPU, v.UI.Resources.Requests.Cpu, "should pull the correct value")
+	assert.Equal(t, spec.UI.MEM, v.UI.Resources.Requests.Memory, "should pull the correct value")
 	assert.Equal(t, spec.UI.Disk, v.UI.VolumeSize, "should pull the correct value")
 
 	v = getUIValues(v1alpha1.OpenNMSSpec{}, v)
 
-	assert.Equal(t, "testcpu", v.UI.Resources.Request.Cpu, "value should remain unchanged when spec is unset")
-	assert.Equal(t, "testmem", v.UI.Resources.Request.Memory, "value should remain unchanged when spec is unset")
+	assert.Equal(t, "testcpu", v.UI.Resources.Requests.Cpu, "value should remain unchanged when spec is unset")
+	assert.Equal(t, "testmem", v.UI.Resources.Requests.Memory, "value should remain unchanged when spec is unset")
 	assert.Equal(t, "testdisk", v.UI.VolumeSize, "value should remain unchanged when spec is unset")
 }
 
