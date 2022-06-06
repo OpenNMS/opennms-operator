@@ -6,7 +6,7 @@ metadata:
 spec:
   ingressClassName: ingress-nginx-{{ .Values.Namespace }}
   rules:
-    - host: {{ .Values.Host }}
+    - host: {{ .Values.Host }}.opennms.com
       http:
         paths:
           - path: /
@@ -16,13 +16,13 @@ spec:
                 name: {{ .Values.OpenNMS.UI.ServiceName }}
                 port:
                   number: 3000
-          - path: /keycloak
-            pathType: Prefix
-            backend:
-              service:
-                name: {{ .Values.Keycloak.ServiceName }}
-                port:
-                  number: 8080
+{{/*          - path: /keycloak*/}}
+{{/*            pathType: Prefix*/}}
+{{/*            backend:*/}}
+{{/*              service:*/}}
+{{/*                name: {{ .Values.Keycloak.ServiceName }}*/}}
+{{/*                port:*/}}
+{{/*                  number: 8080*/}}
           - path: /karaf
             pathType: Prefix
             backend:
@@ -36,7 +36,7 @@ spec:
               service:
                 name: {{ .Values.OpenNMS.Core.ServiceName }}
                 port:
-                  number: 8101
+                  number: 8181
           - path: /api
             pathType: Prefix
             backend:

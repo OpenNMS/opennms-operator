@@ -62,7 +62,6 @@ func (h *IngressHandler) ProvideConfig(values values.TemplateValues) []client.Ob
 	var webhookRoleBinding rbacv1.RoleBinding
 	var webhookClusterRole rbacv1.ClusterRole
 	var webhookClusterRoleBinding rbacv1.ClusterRoleBinding
-	var webhookService corev1.Service
 
 	yaml.LoadYaml(filepath("ingress/validating-webhook/validating-webhook.yaml"), values, &validatingWebhook)
 	yaml.LoadYaml(filepath("ingress/validating-webhook/webhook-serviceaccount.yaml"), values, &webhookServiceAccount)
@@ -70,7 +69,6 @@ func (h *IngressHandler) ProvideConfig(values values.TemplateValues) []client.Ob
 	yaml.LoadYaml(filepath("ingress/validating-webhook/webhook-rolebinding.yaml"), values, &webhookRoleBinding)
 	yaml.LoadYaml(filepath("ingress/validating-webhook/webhook-clusterrole.yaml"), values, &webhookClusterRole)
 	yaml.LoadYaml(filepath("ingress/validating-webhook/webhook-clusterrolebinding.yaml"), values, &webhookClusterRoleBinding)
-	yaml.LoadYaml(filepath("ingress/validating-webhook/webhook-service.yaml"), values, &webhookService)
 
 	//JOBS CONFIGS
 	var createSecret batchv1.Job
@@ -102,7 +100,6 @@ func (h *IngressHandler) ProvideConfig(values values.TemplateValues) []client.Ob
 		&webhookRoleBinding,
 		&webhookClusterRole,
 		&webhookClusterRoleBinding,
-		&webhookService,
 
 		&createSecret, // must be before controller deployment
 		&controllerDeployment,

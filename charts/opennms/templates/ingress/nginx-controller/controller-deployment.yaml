@@ -55,7 +55,7 @@ spec:
             - /nginx-ingress-controller
             - --election-id=ingress-controller-leader
             - --controller-class=k8s.io/ingress-nginx-{{ .Values.Namespace }}
-            - --ingress-class=nginx
+            - --ingress-class=k8s.io/ingress-nginx-{{ .Values.Namespace }}
             - --configmap={{ .Values.Namespace }}/ingress-nginx-controller
             - --validating-webhook=:8443
             - --validating-webhook-certificate=/usr/local/certificates/cert

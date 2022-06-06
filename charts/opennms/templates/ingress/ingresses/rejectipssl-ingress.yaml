@@ -15,6 +15,6 @@ spec:
           service:
             name: {{ .Values.OpenNMS.Core.ServiceName }}
             port:
-              number: 8101
+              number: 8181
         path: /
         pathType: Prefix

@@ -4,7 +4,7 @@ metadata:
   name: local-instance
 spec:
   allowedUsers: []
-  host: localhost
+  host: local
   namespace: local-instance
   core:
     version: opennms/horizon-stream-core

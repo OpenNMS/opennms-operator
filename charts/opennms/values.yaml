@@ -1,5 +1,5 @@
 Namespace: opennms-instance
-Host: localhost
+Host: local
 TestDeploy: false
 OpenNMS:
   Core:
@@ -32,7 +32,7 @@ OpenNMS:
     Image: opennms/horizon-stream-ui
     Resources:
       Limits:
-        Cpu: 100m
+        Cpu: 1
         Memory: 1Gi
       Requests:
         Cpu: 100m

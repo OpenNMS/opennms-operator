@@ -33,6 +33,7 @@ func (h *OpenNMSHandler) ProvideConfig(values values.TemplateValues) []client.Ob
 	var apiService corev1.Service
 	var apiDeployment appsv1.Deployment
 	var uiDeployment appsv1.Deployment
+	var uiService corev1.Service
 
 	yaml.LoadYaml(filepath("opennms/opennms-configmap.yaml"), values, &configMap)
 	yaml.LoadYaml(filepath("opennms/opennms-core-service.yaml"), values, &coreService)
@@ -40,6 +41,7 @@ func (h *OpenNMSHandler) ProvideConfig(values values.TemplateValues) []client.Ob
 	yaml.LoadYaml(filepath("opennms/opennms-api-service.yaml"), values, &apiService)
 	yaml.LoadYaml(filepath("opennms/opennms-api-deployment.yaml"), values, &apiDeployment)
 	yaml.LoadYaml(filepath("opennms/opennms-ui-deployment.yaml"), values, &uiDeployment)
+	yaml.LoadYaml(filepath("opennms/opennms-ui-service.yaml"), values, &uiService)
 
 	h.Config = []client.Object{
 		&configMap,
@@ -48,6 +50,7 @@ func (h *OpenNMSHandler) ProvideConfig(values values.TemplateValues) []client.Ob
 		&apiService,
 		&apiDeployment,
 		&uiDeployment,
+		&uiService,
 	}
 
 	return h.Config
