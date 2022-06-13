@@ -110,33 +110,6 @@ func TestGetUIValues(t *testing.T) {
 	assert.Equal(t, "testdisk", v.UI.VolumeSize, "value should remain unchanged when spec is unset")
 }
 
-func TestGetTimeseriesValues(t *testing.T) {
-	spec := v1alpha1.OpenNMSSpec{
-		Timeseries: v1alpha1.Timeseries{
-			Mode:   "testmode",
-			Host:   "testhost",
-			Port:   "testport",
-			ApiKey: "testkey",
-		},
-	}
-
-	v := values.TimeseriesValues{}
-
-	v = getTimeseriesValues(spec, v)
-
-	assert.Equal(t, spec.Timeseries.Mode, v.Mode, "should pull the correct value")
-	assert.Equal(t, spec.Timeseries.Host, v.Host, "should pull the correct value")
-	assert.Equal(t, spec.Timeseries.Port, v.Port, "should pull the correct value")
-	assert.Equal(t, spec.Timeseries.ApiKey, v.ApiKey, "should pull the correct value")
-
-	v = getTimeseriesValues(v1alpha1.OpenNMSSpec{}, v)
-
-	assert.Equal(t, "testmode", v.Mode, "value should remain unchanged when spec is unset")
-	assert.Equal(t, "testhost", v.Host, "value should remain unchanged when spec is unset")
-	assert.Equal(t, "testport", v.Port, "value should remain unchanged when spec is unset")
-	assert.Equal(t, "testkey", v.ApiKey, "value should remain unchanged when spec is unset")
-}
-
 func TestGetPostgresValues(t *testing.T) {
 	spec := v1alpha1.OpenNMSSpec{
 		Postgres: v1alpha1.BaseServiceResources{

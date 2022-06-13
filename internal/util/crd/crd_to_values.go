@@ -67,7 +67,6 @@ func getCoreValues(spec v1alpha1.OpenNMSSpec, v values.OpenNMSValues) values.Ope
 	if spec.Core.Disk != "" {
 		v.Core.VolumeSize = spec.Core.Disk
 	}
-	v.Core.Timeseries = getTimeseriesValues(spec, v.Core.Timeseries)
 	return v
 }
 
@@ -109,23 +108,6 @@ func getUIValues(spec v1alpha1.OpenNMSSpec, v values.OpenNMSValues) values.OpenN
 	return v
 }
 
-//getTimeseriesValues - get TS DB values from the crd
-func getTimeseriesValues(spec v1alpha1.OpenNMSSpec, v values.TimeseriesValues) values.TimeseriesValues {
-	if spec.Timeseries.Mode != "" {
-		v.Mode = spec.Timeseries.Mode
-	}
-	if spec.Timeseries.Host != "" {
-		v.Host = spec.Timeseries.Host
-	}
-	if spec.Timeseries.Port != "" {
-		v.Port = spec.Timeseries.Port
-	}
-	if spec.Timeseries.ApiKey != "" {
-		v.ApiKey = spec.Timeseries.ApiKey
-	}
-	return v
-}
-
 //overrideImages - overrides images with noop images for deployment testing purposes
 func overrideImages(v values.Values) values.Values {
 	noopServiceImage := "lipanski/docker-static-website:latest"
@@ -136,8 +118,6 @@ func overrideImages(v values.Values) values.Values {
 	v.OpenNMS.Core.Image = noopServiceImage
 	v.Postgres.Image = noopServiceImage
 	v.Grafana.Image = noopServiceImage
-	v.Auth.Image = noopServiceImage
-	v.Stunnel.Image = noopServiceImage
 
 	v.Ingress.ControllerImage = noopServiceImage
 	v.Ingress.SecretJobImage = noopJobImage

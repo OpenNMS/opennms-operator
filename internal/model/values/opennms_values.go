@@ -21,12 +21,11 @@ type OpenNMSValues struct {
 }
 
 type ServiceValues struct {
-	ServiceName        string           `yaml:"ServiceName"`
-	Image              string           `yaml:"Image"`
-	VolumeSize         string           `yaml:"VolumeSize"`
-	InitContainerImage string           `yaml:"InitContainerImage"`
-	Resources          ResourceValues   `yaml:"Resources"`
-	Timeseries         TimeseriesValues `yaml:"Timeseries"`
+	ServiceName        string         `yaml:"ServiceName"`
+	Image              string         `yaml:"Image"`
+	VolumeSize         string         `yaml:"VolumeSize"`
+	InitContainerImage string         `yaml:"InitContainerImage"`
+	Resources          ResourceValues `yaml:"Resources"`
 }
 
 type ResourceValues struct {

@@ -19,7 +19,6 @@ import (
 	"github.com/OpenNMS/opennms-operator/internal/model/values"
 	"github.com/go-logr/logr"
 	helmclient "github.com/mittwald/go-helm-client"
-	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"strings"
 )
@@ -69,7 +68,7 @@ func applyCharts(ctx context.Context, logger logr.Logger, helmClient helmclient.
 			if strings.Contains(err.Error(), "rendered manifests contain a resource that already exists") {
 				logger.Info("Resources for chart already exist, skipping", "chart", chart.ChartName)
 				continue //not a real error, defer to the existing resources
-			}g
+			}
 			return err
 		}
 	}
@@ -85,4 +84,5 @@ func applyConfigs(ctx context.Context, logger logr.Logger, v values.TemplateValu
 			}
 		}
 	}
+	return nil
 }
