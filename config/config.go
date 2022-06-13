@@ -6,25 +6,20 @@ import (
 )
 
 type OperatorConfig struct {
-	Version                  string `mapstructure:"VERSION"`
-	DefaultOpenNMSValuesFile string `mapstructure:"DEFAULT_OPENNMS_VALUES_FILE"`
-	DevMode                  bool   `mapstructure:"DEV_MODE"`
+	Version                   string `mapstructure:"VERSION"`
+	DefaultOpenNMSValuesFile  string `mapstructure:"DEFAULT_OPENNMS_VALUES_FILE"`
+	DefaultOperatorValuesFile string `mapstructure:"DEFAULT_OPERATOR_VALUES_FILE"`
+	DevMode                   bool   `mapstructure:"DEV_MODE"`
 
 	//Image update
 	ImageUpdateFreq int `mapstructure:"IMAGE_UPDATE_FREQUENCY"`
 
 	//Service and job images
-	ServiceImageAuth    string `mapstructure:"SERVICE_IMAGE_AUTH"`
 	ServiceImageGrafana string `mapstructure:"SERVICE_IMAGE_GRAFANA"`
-	ServiceImageInit    string `mapstructure:"SERVICE_IMAGE_INIT"`
 
 	//instance node restrictions
 	NodeRestrictionKey   string `mapstructure:"NODE_RESTRICTION_KEY"`
 	NodeRestrictionValue string `mapstructure:"NODE_RESTRICTION_VALUE"`
-
-	//TLS config
-	TLSEnabled  bool   `mapstructure:"TLS_ENABLED"`
-	TLSCertName string `mapstructure:"TLS_CERT_NAME"`
 }
 
 func LoadConfig() OperatorConfig {

@@ -1,3 +1,4 @@
+//go:build integration
 // +build integration
 
 /*
@@ -31,9 +32,9 @@ import (
 func DeployOperatorAndCRD(t *testing.T, ctx context.Context, helmClient helmclient.Client) {
 	chartSpec := &helmclient.ChartSpec{
 		ReleaseName: "opennms-operator-integration-test",
-		ChartName: "charts/opennms-operator",
-		Wait: true,
-		Timeout: time.Second * 300,
+		ChartName:   "charts/opennms-operator",
+		Wait:        true,
+		Timeout:     time.Second * 300,
 		UpgradeCRDs: true,
 	}
 	_, err := helmClient.InstallOrUpgradeChart(ctx, chartSpec)

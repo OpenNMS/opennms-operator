@@ -5,14 +5,14 @@ metadata:
   name: cert-issuer
   labels:
     version: 'v1'
-  namespace: {{ .Values.operator.namespace }}
+  namespace: {{ .Values.Operator.Namespace }}
 spec:
   acme:
-    server: {{ .Values.tls.issuer.issuerServer }}
-    email: {{ .Values.tls.issuer.issuerUserEmail }}
+    server: {{ .Values.TLS.Issuer.IssuerServer }}
+    email: {{ .Values.TLS.Issuer.IssuerUserEmail }}
     privateKeySecretRef:
       name: cert-issuer
     solvers:
       - dns01:
-{{ .Values.tls.solver | indent 10 }}
+{{ .Values.TLS.Solver | indent 10 }}
 {{ end }}

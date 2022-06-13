@@ -22,7 +22,6 @@ import (
 	"github.com/OpenNMS/opennms-operator/internal/util/security"
 	v1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/types"
-	"strings"
 )
 
 //UpdateValues - update values for an instance based on it's crd
@@ -49,8 +48,6 @@ func (r *OpenNMSReconciler) UpdateValues(ctx context.Context, instance v1alpha1.
 		templateValues = setPostgresPassword(templateValues)
 	}
 
-	templateValues.Values.Auth.AllowedUsers = strings.Join(instance.Spec.AllowedUsers, ",")
-
 	r.ValuesMap[namespace] = templateValues
 
 	return templateValues
@@ -68,8 +65,9 @@ func (r *OpenNMSReconciler) CheckForExistingCoreCreds(ctx context.Context, v val
 	if existingAdminPwd == "" || existingMinionPwd == "" {
 		return v, false
 	}
-	v.Values.Auth.AdminPass = existingAdminPwd
-	v.Values.Auth.MinionPass = existingMinionPwd
+	//TODO rework for keycloak
+	//v.Values.Auth.AdminPass = existingAdminPwd
+	//v.Values.Auth.MinionPass = existingMinionPwd
 	return v, true
 }
 
@@ -92,8 +90,9 @@ func (r *OpenNMSReconciler) CheckForExistingPostgresCreds(ctx context.Context, v
 
 //setCorePasswords - sets randomly generated passwords for the core if not already set
 func setCorePasswords(tv values.TemplateValues) values.TemplateValues {
-	tv.Values.Auth.AdminPass = security.GeneratePassword(true)
-	tv.Values.Auth.MinionPass = security.GeneratePassword(true)
+	//TODO rework for keycloak
+	//tv.Values.Auth.AdminPass = security.GeneratePassword(true)
+	//tv.Values.Auth.MinionPass = security.GeneratePassword(true)
 	return tv
 }
 

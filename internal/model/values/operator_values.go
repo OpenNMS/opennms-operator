@@ -14,11 +14,6 @@ limitations under the License.
 
 package values
 
-type AuthValues struct {
-	Enabled      bool   `yaml:"Enabled"`
-	Image        string `yaml:"Image"`
-	Port         string `yaml:"Port"`
-	AdminPass    string `yaml:"AdminPass"`
-	MinionPass   string `yaml:"MinionPass"`
-	AllowedUsers string `yaml:"AllowedUsers"`
+type OperatorValues struct {
+	Namespace string `yaml:"Namespace"`
 }

@@ -15,6 +15,7 @@ limitations under the License.
 */
 
 import (
+	"fmt"
 	"github.com/OpenNMS/opennms-operator/config"
 	"github.com/OpenNMS/opennms-operator/internal/model/values"
 	"gopkg.in/yaml.v3"
@@ -24,55 +25,27 @@ import (
 
 // GetDefaultValues - get the default Helm/Template values
 func GetDefaultValues(operatorConfig config.OperatorConfig) values.TemplateValues {
-	defaultValues := LoadValues(operatorConfig.DefaultOpenNMSValuesFile)
-	defaultValues = SetServiceImages(operatorConfig, defaultValues)
-	defaultValues = SetNodeRestrictions(operatorConfig, defaultValues)
-	defaultValues = SetTLSValues(operatorConfig, defaultValues)
-	return defaultValues
+	v := LoadValues(operatorConfig.DefaultOpenNMSValuesFile, operatorConfig.DefaultOperatorValuesFile)
+	return values.TemplateValues{
+		Values: v,
+	}
 }
 
-// LoadValues - load Helm/Template values from the given file
-func LoadValues(filename string) values.TemplateValues {
-	yamlFile, err := ioutil.ReadFile(filename)
+// LoadValues - load Helm/Template values from the given files
+func LoadValues(filename1, filename2 string) values.Values {
+	yamlFile1, err := ioutil.ReadFile(filename1)
 	if err != nil {
 		log.Fatalf("error reading default values from file: %v", err)
 	}
+	yamlFile2, err := ioutil.ReadFile(filename2)
+	if err != nil {
+		log.Fatalf("error reading default values from file: %v", err)
+	}
+	combinedYaml := fmt.Sprintf("%s\n%s", yamlFile1, yamlFile2)
 	var defValues values.Values
-	err = yaml.Unmarshal(yamlFile, &defValues)
+	err = yaml.Unmarshal([]byte(combinedYaml), &defValues)
 	if err != nil {
 		log.Fatalf("error unmarshalling default values from file: %v", err)
 	}
-	templateValues := values.TemplateValues{
-		Values: defValues,
-	}
-	return templateValues
-}
-
-// SetServiceImages - set service images in the Helm/Template values based on ENV config
-func SetServiceImages(config config.OperatorConfig, v values.TemplateValues) values.TemplateValues {
-	v.Values.Grafana.Image = config.ServiceImageGrafana
-	v.Values.Auth.Image = config.ServiceImageAuth
-	return v
-}
-
-// SetNodeRestrictions - set the node tolerations and affinity for every nod the operator will deploy
-func SetNodeRestrictions(config config.OperatorConfig, v values.TemplateValues) values.TemplateValues {
-	if config.NodeRestrictionKey == "" || config.NodeRestrictionValue == "" {
-		v.Values.NodeRestrictions.Enabled = false
-		return v
-	}
-	v.Values.NodeRestrictions.Enabled = true
-	v.Values.NodeRestrictions.Key = config.NodeRestrictionKey
-	v.Values.NodeRestrictions.Value = config.NodeRestrictionValue
-
-	return v
-}
-
-func SetTLSValues(config config.OperatorConfig, v values.TemplateValues) values.TemplateValues {
-	if !config.TLSEnabled || config.TLSCertName == "" {
-		return v
-	}
-	v.Values.TLS.Enabled = config.TLSEnabled
-	v.Values.TLS.CertSecret = config.TLSCertName
-	return v
+	return defValues
 }

@@ -15,6 +15,7 @@ limitations under the License.
 package dependencies
 
 import (
+	"github.com/OpenNMS/opennms-operator/internal/handlers"
 	helmclient "github.com/mittwald/go-helm-client"
 	"helm.sh/helm/v3/pkg/repo"
 )
@@ -31,6 +32,10 @@ var repositories = []repo.Entry{
 	{
 		Name: "mittwald",
 		URL:  "https://helm.mittwald.de",
+	},
+	{
+		Name: "opennms",
+		URL:  "https://opennms.github.io/horizon-stream/charts/packaged",
 	},
 }
 
@@ -58,4 +63,18 @@ var charts = []helmclient.ChartSpec{
 		ReleaseName: "kubernetes-replicator",
 		Namespace:   "kubernetes-replicator",
 	},
+	{
+		ChartName:   "opennms/onms-kafka",
+		ReleaseName: "kafka",
+		Namespace:   "kafka",
+	},
+	{
+		ChartName:   "opennms/onms-keycloak",
+		ReleaseName: "keycloak",
+		Namespace:   "keycloak",
+	},
+}
+
+var handlerslist = []handlers.ServiceHandler{
+	&handlers.CertHandler{},
 }

@@ -26,14 +26,8 @@ type OpenNMSSpec struct {
 	// K8s namespace to use
 	Namespace string `json:"namespace"`
 
-	// Users allowed login via tokens
-	AllowedUsers []string `json:"allowedUsers,omitempty"` //TODO I don't think this is needed anymore
-
 	// Deploy an instance in a nonoperative testing mode
 	TestDeploy bool `json:"testDeploy,omitempty"` //TODO I don't think this is needed anymore
-
-	// Defines what plugin for timeseries to use
-	Timeseries Timeseries `json:"timeseries,omitempty"` //TODO I don't think this is needed anymore
 
 	// Defines service values for Core service
 	Core BaseServiceResources `json:"core,omitempty"`

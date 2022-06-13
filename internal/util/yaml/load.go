@@ -22,6 +22,7 @@ import (
 	"log"
 	"strings"
 )
+
 // LoadYaml - loads a yaml from the given filename and templates the given values into it
 func LoadYaml(filename string, values values.TemplateValues, decodeInto interface{}) {
 	cache := Cache()
@@ -38,11 +39,16 @@ func LoadYaml(filename string, values values.TemplateValues, decodeInto interfac
 	if err != nil {
 		log.Fatalf("%s: failed to template config: %v", filename, err)
 	}
-	reader := strings.NewReader(templatedConfig)
-	err = yaml.NewYAMLOrJSONDecoder(reader, 4096).Decode(decodeInto)
+	err = decodeIntoObject(templatedConfig, decodeInto)
 	if err != nil {
 		log.Fatalf("%s: failed to unmarshal config: %v", filename, err)
 	}
+}
+
+// decodeIntoObject - decode a given yaml string into a give interface
+func decodeIntoObject(yamlStr string, decodeInto interface{}) error {
+	reader := strings.NewReader(yamlStr)
+	return yaml.NewYAMLOrJSONDecoder(reader, 4096).Decode(decodeInto)
 }
 
 // loadFromFile - loads a given filename

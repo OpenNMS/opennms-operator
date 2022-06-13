@@ -1,3 +1,4 @@
+//go:build unit
 // +build unit
 
 /*
@@ -26,22 +27,30 @@ import (
 func TestLoadValues(t *testing.T) {
 	writeTestFiles(t)
 
-	values := LoadValues(TestFilename)
-	assert.NotNil(t, values)
-	assert.Equal(t, "testNamespace", values.Values.Namespace, "should load the yaml file correctly")
+	v := LoadValues(TestFilename1, TestFilename2)
+	assert.NotNil(t, v)
+	assert.Equal(t, "testNamespace", v.Namespace, "should load the first yaml file correctly")
+	assert.Equal(t, "testHost", v.Host, "should load the second yaml file correctly")
+
 }
 
-var TestFilename = "./testtmp/test1.yaml"
+var TestFilename1 = "./testtmp/test1.yaml"
+var TestFilename2 = "./testtmp/test2.yaml"
 
-var TestFileContents = `Namespace: testNamespace`
+var TestFileContents1 = `Namespace: testNamespace`
+var TestFileContents2 = `Host: testHost`
 
 func writeTestFiles(t *testing.T) {
-	file1 := []byte(TestFileContents)
+	file1 := []byte(TestFileContents1)
+	file2 := []byte(TestFileContents2)
 
 	newpath := filepath.Join(".", "testtmp")
 	err := os.MkdirAll(newpath, os.ModePerm)
 	assert.Nil(t, err)
 
-	err = os.WriteFile(TestFilename, file1, 0644)
+	err = os.WriteFile(TestFilename1, file1, 0644)
+	assert.Nil(t, err)
+
+	err = os.WriteFile(TestFilename2, file2, 0644)
 	assert.Nil(t, err)
 }

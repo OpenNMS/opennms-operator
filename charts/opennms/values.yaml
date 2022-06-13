@@ -12,11 +12,6 @@ OpenNMS:
       Requests:
         Cpu: 100m
         Memory: 1Gi
-#    Timeseries:
-#      Mode: default
-#      Host: postgres
-#      Port: 5432
-#      ApiKey: placeholder
   API:
     ServiceName: opennms-rest-server
     Image: opennms/horizon-stream-rest-server
@@ -37,15 +32,6 @@ OpenNMS:
       Requests:
         Cpu: 100m
         Memory: 1Gi
-TLS:
-  Enabled: false
-  CertSecret: placeholder
-Auth:
-  Image: placeholder
-  Port: 5000
-  AdminPass: notset
-  MinionPass: notset
-  AllowedUsers: test@email.com
 Postgres:
   ServiceName: postgres
   Image: postgres:13.3-alpine
@@ -63,10 +49,5 @@ Ingress:
   ControllerImage: k8s.gcr.io/ingress-nginx/controller:v1.1.0
   SecretJobImage: k8s.gcr.io/ingress-nginx/kube-webhook-certgen:v1.1.1@sha256:64d8c73dca984af206adf9d6d7e46aa550362b1d7a01f3a0a91b20cc67868660
   WebhookPatchJobImage: k8s.gcr.io/ingress-nginx/kube-webhook-certgen:v1.1.1@sha256:64d8c73dca984af206adf9d6d7e46aa550362b1d7a01f3a0a91b20cc67868660
-Stunnel:
-  Image: dweomer/stunnel:latest
-NodeRestrictions: # will be applied to every pod in the instance
-  Enabled: false #todo reenable
-  Key: kubernetes.azure.com/scalesetpriority
-  Value: spot
+
 

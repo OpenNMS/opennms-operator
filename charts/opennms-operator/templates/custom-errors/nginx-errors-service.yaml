@@ -2,14 +2,14 @@ apiVersion: v1
 kind: Service
 metadata:
   name: opennms-nginx-errors
-  namespace: {{ .Values.operator.namespace }}
+  namespace: {{ .Values.Operator.Namespace }}
   labels:
     app.kubernetes.io/name: opennms-nginx-errors
-    app.kubernetes.io/part-of: {{ .Values.operator.namespace }}
+    app.kubernetes.io/part-of: {{ .Values.Operator.Namespace }}
 spec:
   selector:
     app.kubernetes.io/name: opennms-nginx-errors
-    app.kubernetes.io/part-of: {{ .Values.operator.namespace }}
+    app.kubernetes.io/part-of: {{ .Values.Operator.Namespace }}
   ports:
     - port: 80
       targetPort: 8080

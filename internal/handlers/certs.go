@@ -16,28 +16,26 @@ package handlers
 
 import (
 	"github.com/OpenNMS/opennms-operator/internal/model/values"
+	"github.com/OpenNMS/opennms-operator/internal/util/yaml"
+	v1 "github.com/cert-manager/cert-manager/pkg/apis/certmanager/v1"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
-var ConfigFilePath = "./charts/opennms/templates/"
-var OperatorFilePath = "./charts/opennms-operator/templates"
-
-type ServiceHandler interface {
-	//ProvideConfig - provide k8s config for the service
-	ProvideConfig(values values.TemplateValues) []client.Object
-
-	//HandleUpdate - handle the update process for the service ???
-	//HandleUpdate(values values.TemplateValues) ???
+type CertHandler struct {
+	ServiceHandlerObject
 }
 
-type ServiceHandlerObject struct {
-	Config []client.Object
-}
+func (h *CertHandler) ProvideConfig(values values.TemplateValues) []client.Object {
+	var ci v1.ClusterIssuer
+	var cert v1.Certificate
 
-func filepath(filename string) string {
-	return ConfigFilePath + filename
-}
+	yaml.LoadYaml(opfilepath("cert-manager/cert-cluster-issuer.yaml"), values, &ci)
+	yaml.LoadYaml(opfilepath("cert-manager/cert-primary.yaml"), values, &cert)
 
-func opfilepath(filename string) string {
-	return OperatorFilePath + filename
+	h.Config = []client.Object{
+		&ci,
+		&cert,
+	}
+
+	return h.Config
 }

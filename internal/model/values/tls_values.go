@@ -15,6 +15,18 @@ limitations under the License.
 package values
 
 type TLSValues struct {
-	Enabled    bool   `yaml:"Enabled"`
-	CertSecret string `yaml:"CertSecret"`
+	Enabled bool         `yaml:"Enabled"`
+	Issuer  IssuerValues `yaml:"Issuer"`
+	Cert    CertValues   `yaml:"Cert"`
+	Solver  string       `yaml:"Solver"`
+}
+
+type IssuerValues struct {
+	IssuerServer    string `yaml:"IssuerServer"`
+	IssuerUserEmail string `yaml:"IssuerUserEmail"`
+}
+
+type CertValues struct {
+	Name     string `yaml:"Name"`
+	Hostname string `yaml:"Hostname"`
 }
