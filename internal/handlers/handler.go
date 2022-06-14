@@ -20,7 +20,7 @@ import (
 )
 
 var ConfigFilePath = "./charts/opennms/templates/"
-var OperatorFilePath = "./charts/opennms-operator/templates/"
+var OperatorFilePath = "./charts/dependencies/config/"
 
 type ServiceHandler interface {
 	//ProvideConfig - provide k8s config for the service
