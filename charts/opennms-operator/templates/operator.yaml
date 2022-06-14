@@ -19,12 +19,6 @@ spec:
           name: {{ .Values.Operator.serviceName }}
           imagePullPolicy: {{ .Values.Operator.imagePullPolicy }}
           env:
-            - name: SERVICE_IMAGE_GRAFANA
-              value: "{{ .Values.serviceImages.grafana }}"
-            - name: NODE_RESTRICTION_KEY
-              value: "{{ .Values.nodeRestrictions.key }}"
-            - name: NODE_RESTRICTION_VALUE
-              value: "{{ .Values.nodeRestrictions.value }}"
             - name: DEV_MODE
               value: "{{ .Values.Operator.devMode }}"
             - name: IMAGE_UPDATE_FREQUENCY

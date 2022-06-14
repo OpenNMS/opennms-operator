@@ -94,8 +94,7 @@ func TestCheckForExistingCoreCreds(t *testing.T) {
 	assert.Nil(t, err)
 
 	res, resbool := testRecon.CheckForExistingCoreCreds(ctx, testValues, "")
-	assert.True(t, resbool,
-		"should return that there are existing creds")
+	assert.True(t, resbool, "should return that there are existing creds")
 	//TODO update for keycloak
 	//assert.Equal(t, adminPwd, res.Values.Auth.AdminPass, "should return the expected admin password values")
 	//assert.Equal(t, minionPwd, res.Values.Auth.MinionPass, "should return the expected admin password values")
