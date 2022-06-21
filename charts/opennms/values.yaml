@@ -1,5 +1,5 @@
 Namespace: opennms-instance
-Host: local
+Host: localhost
 TestDeploy: false
 OpenNMS:
   Core:
@@ -42,7 +42,7 @@ Postgres:
   KeycloakPassword: notset
   VolumeSize: 10Gi
 Keycloak:
-  Path: /keycloak
+  Path: /auth
   ServiceName: keycloak
   Password: notset
 Grafana:

@@ -1,12 +1,3 @@
-apiVersion: operators.coreos.com/v1
-kind: OperatorGroup
-metadata:
-  name: operatorgroup
-  namespace: {{ .Values.Namespace }}
-spec:
-  targetNamespaces:
-    - {{ .Values.Namespace }}
----
 apiVersion: operators.coreos.com/v1alpha1
 kind: Subscription
 metadata:
@@ -17,3 +8,4 @@ spec:
   name: keycloak-operator
   source: operatorhubio-catalog
   sourceNamespace: olm
+  startingCSV: keycloak-operator.v18.0.0
