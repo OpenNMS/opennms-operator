@@ -41,8 +41,6 @@ Postgres:
 Keycloak:
   ServiceName: keycloak
   Password: notset
-Kafka: #TODO
-  some: value
 Grafana:
   Image: placeholder
 Ingress:

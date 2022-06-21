@@ -1,0 +1,19 @@
+apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata:
+  name: operatorgroup
+  namespace: {{ .Values.Namespace }}
+spec:
+  targetNamespaces:
+    - {{ .Values.Namespace }}
+---
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: keycloak-operator
+  namespace: {{ .Values.Namespace }}
+spec:
+  channel: alpha
+  name: keycloak-operator
+  source: operatorhubio-catalog
+  sourceNamespace: olm

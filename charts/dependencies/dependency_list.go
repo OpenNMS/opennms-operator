@@ -41,37 +41,9 @@ var repositories = []repo.Entry{
 
 var charts = []helmclient.ChartSpec{
 	{
-		ChartName:   "elastic/eck-operator",
-		ReleaseName: "elastic-system",
-		Namespace:   "elastic-system",
-
-		CreateNamespace: true,
-	},
-	{
-		ChartName:   "jetstack/cert-manager",
-		ReleaseName: "cert-manager",
-		Namespace:   "cert-manager",
-
-		//--set installCRDs=true
-		ValuesYaml: "installCRDs: true",
-
-		Version:         "v1.7.0",
-		CreateNamespace: true,
-	},
-	{
 		ChartName:   "mittwald/kubernetes-replicator",
 		ReleaseName: "kubernetes-replicator",
 		Namespace:   "kubernetes-replicator",
-	},
-	{
-		ChartName:   "opennms/onms-kafka",
-		ReleaseName: "kafka",
-		Namespace:   "kafka",
-	},
-	{
-		ChartName:   "opennms/onms-keycloak",
-		ReleaseName: "keycloak",
-		Namespace:   "keycloak",
 	},
 }
 

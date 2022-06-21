@@ -32,6 +32,11 @@ TLS:
       serviceAccountSecretRef:
         name: prod-clouddns-svc-acct-secret
         key: service-account.json
+Kafka:
+  Namespace: kafka
+  ServiceName: opennms
+  VolumeSize: 10Gi
+  URL: opennms-kafka-bootstrap.kafka:9092
 NodeRestrictions: # will be applied to every pod in the instance
   Enabled: false
   Key: kubernetes.azure.com/scalesetpriority

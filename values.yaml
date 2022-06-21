@@ -1,1 +1,16 @@
 # your helm chart values here
+Operator:
+  image: opennms/operator:local-build
+  resources:
+    limits:
+      cpu: 1
+      memory: 500Mi
+    requests:
+      cpu: 1
+      memory: 500Mi
+customErrors:
+  image: cloudops.azurecr.io/docker-builds-ingress-nginx-custom-error-pages:1.0.116
+ServiceImages:
+  Grafana: cloudops.azurecr.io/docker-builds-grafana-extend:1.0.256
+TLS:
+  Enabled: false
