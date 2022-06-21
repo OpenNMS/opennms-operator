@@ -36,7 +36,7 @@ Kafka:
   Namespace: kafka
   ServiceName: opennms
   VolumeSize: 10Gi
-  URL: opennms-kafka-bootstrap.kafka:9092
+  URL: opennms-kafka-bootstrap.kafka
 NodeRestrictions: # will be applied to every pod in the instance
   Enabled: false
   Key: kubernetes.azure.com/scalesetpriority
