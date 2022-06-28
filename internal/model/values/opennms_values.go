@@ -21,6 +21,7 @@ type OpenNMSValues struct {
 }
 
 type ServiceValues struct {
+	Path               string         `yaml:"Path"`
 	ServiceName        string         `yaml:"ServiceName"`
 	Image              string         `yaml:"Image"`
 	VolumeSize         string         `yaml:"VolumeSize"`

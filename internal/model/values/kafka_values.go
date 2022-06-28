@@ -18,4 +18,5 @@ type KafkaValues struct {
 	Namespace   string `yaml:"Namespace"`
 	ServiceName string `yaml:"ServiceName"`
 	VolumeSize  string `yaml:"VolumeSize"`
+	URL         string `yaml:"URL"`
 }

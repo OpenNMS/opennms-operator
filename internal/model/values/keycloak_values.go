@@ -15,6 +15,7 @@ limitations under the License.
 package values
 
 type KeycloakValues struct {
+	Path        string `yaml:"Path"`
 	ServiceName string `yaml:"ServiceName"`
 	Password    string `yaml:"Password"`
 }
