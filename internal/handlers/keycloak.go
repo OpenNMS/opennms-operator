@@ -17,9 +17,6 @@ package handlers
 import (
 	"github.com/OpenNMS/opennms-operator/internal/model/values"
 	"github.com/OpenNMS/opennms-operator/internal/util/yaml"
-	keycloakv1 "github.com/keycloak/keycloak-operator/pkg/apis/keycloak/v1alpha1"
-	"github.com/operator-framework/api/pkg/operators"
-	olmv1 "github.com/operator-framework/api/pkg/operators/v1"
 	corev1 "k8s.io/api/core/v1"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
@@ -30,23 +27,11 @@ type KeycloakHandler struct {
 
 func (h *KeycloakHandler) ProvideConfig(values values.TemplateValues) []client.Object {
 	var credSecret corev1.Secret
-	var opGroup olmv1.OperatorGroup
-	var sub operators.Subscription
-	var keycloak keycloakv1.Keycloak
-	var ri keycloakv1.KeycloakRealm
 
 	yaml.LoadYaml(filepath("keycloak/keycloak-cred-secret.yaml"), values, &credSecret)
-	yaml.LoadYaml(filepath("keycloak/keycloak-operator-group.yaml"), values, &opGroup)
-	yaml.LoadYaml(filepath("keycloak/keycloak-operator-sub.yaml"), values, &sub)
-	yaml.LoadYaml(filepath("keycloak/keycloak.yaml"), values, &keycloak)
-	yaml.LoadYaml(filepath("keycloak/keycloak-realm.yaml"), values, &ri)
 
 	h.Config = []client.Object{
 		&credSecret,
-		&opGroup,
-		&sub,
-		&keycloak,
-		&ri,
 	}
 
 	return h.Config

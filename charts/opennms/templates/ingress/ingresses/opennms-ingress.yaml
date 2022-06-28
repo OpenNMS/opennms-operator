@@ -16,13 +16,13 @@ spec:
                 name: {{ .Values.OpenNMS.UI.ServiceName }}
                 port:
                   number: 3000
-          - path: {{ .Values.Keycloak.Path }}
-            pathType: Prefix
-            backend:
-              service:
-                name: {{ .Values.Keycloak.ServiceName }}-discovery
-                port:
-                  number: 8080
+{{/*          - path: {{ .Values.Keycloak.Path }}*/}}
+{{/*            pathType: Prefix*/}}
+{{/*            backend:*/}}
+{{/*              service:*/}}
+{{/*                name: {{ .Values.Keycloak.ServiceName }}-discovery*/}}
+{{/*                port:*/}}
+{{/*                  number: 8080*/}}
           - path: /karaf
             pathType: Prefix
             backend:
