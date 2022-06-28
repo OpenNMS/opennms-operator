@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: {{ .Values.OpenNMS.API.ServiceName }}
+  name: {{ .Values.OpenNMS.API.ServiceName }}
+  namespace: {{ .Values.Namespace }}
+spec:
+  ports:
+    - port: 9090
+      protocol: TCP
+      name: http
+  selector:
+    app: {{ .Values.OpenNMS.API.ServiceName }}
+  type: NodePort

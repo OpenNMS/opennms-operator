@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-keycloak
+spec:
+  selector:
+    matchLabels:
+      run: my-keycloak
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        run: my-keycloak
+    spec:
+      containers:
+        - name: keycloak
+          image: quay.io/keycloak/keycloak:17.0.1 #After testing, version 18 and 17.0.1 works on M1 MacBook, for more information https://github.com/keycloak/keycloak/issues/8825
+          args: [ "start-dev" ]
+          env:
+            - name: KEYCLOAK_CREATE_ADMIN_USER
+              value: "true"
+            - name: KEYCLOAK_ADMIN
+              value: "keycloak-admin"
+            - name: KEYCLOAK_ADMIN_PASSWORD
+              value: "admin"
+            - name: KEYCLOAK_DATABASE_HOST
+              value: "postgres"
+            - name: KEYCLOAK_DATABASE_USER
+              value: "postgres"
+            - name: KEYCLOAK_DATABASE_PASSWORD
+              value: "unused"
+            - name: KC_DB
+              value: postgres
+            - name: KC_DB_URL
+              value: jdbc:postgresql://postgres/keycloak
+            #
+            # TODO: use keycloak user (and password) instead of the admin "postgres" user
+            #
+            - name: KC_DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-admin-secret
+                  key: username
+            - name: KC_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-admin-secret
+                  key: password
+          ports:
+            - containerPort: 8080
+            - containerPort: 8443
+

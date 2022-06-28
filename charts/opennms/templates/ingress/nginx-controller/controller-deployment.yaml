@@ -53,16 +53,15 @@ spec:
                   - /wait-shutdown
           args:
             - /nginx-ingress-controller
-            - --default-backend-service=opennms/opennms-nginx-errors
-            - --publish-service={{ .Values.Namespace }}/ingress-nginx-controller
             - --election-id=ingress-controller-leader
-            #- --ingress-class=ingress-nginx-{{ .Values.Namespace }}
             - --controller-class=k8s.io/ingress-nginx-{{ .Values.Namespace }}
+            - --ingress-class=k8s.io/ingress-nginx-{{ .Values.Namespace }}
             - --configmap={{ .Values.Namespace }}/ingress-nginx-controller
-            #- --validating-webhook=:8443
-            #- --validating-webhook-certificate=/usr/local/certificates/cert
-            #- --validating-webhook-key=/usr/local/certificates/key
-            - --tcp-services-configmap={{ .Values.Namespace }}/tcp-services
+            - --validating-webhook=:8443
+            - --validating-webhook-certificate=/usr/local/certificates/cert
+            - --validating-webhook-key=/usr/local/certificates/key
+            - --watch-ingress-without-class=true
+            - --publish-status-address=localhost
           {{ end }}
           securityContext:
             capabilities:
@@ -116,10 +115,10 @@ spec:
               containerPort: 8443
               protocol: TCP
           {{ if not .Values.TestDeploy }}
-{{/*          volumeMounts:*/}}
-{{/*            - name: webhook-cert*/}}
-{{/*              mountPath: /usr/local/certificates/*/}}
-{{/*              readOnly: true*/}}
+          volumeMounts:
+            - name: webhook-cert
+              mountPath: /usr/local/certificates/
+              readOnly: true
           {{ end }}
           resources:
             requests:

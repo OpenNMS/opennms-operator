@@ -15,16 +15,23 @@ limitations under the License.
 package values
 
 type OpenNMSValues struct {
-	Image              string           `yaml:"Image"`
-	VolumeSize         string           `yaml:"VolumeSize"`
-	InitContainerImage string           `yaml:"InitContainerImage"`
-	Resources          ResourceValues   `yaml:"Resources"`
-	Timeseries         TimeseriesValues `yaml:"Timeseries"`
+	Core ServiceValues `yaml:"Core"`
+	API  ServiceValues `yaml:"API"`
+	UI   ServiceValues `yaml:"UI"`
+}
+
+type ServiceValues struct {
+	Path               string         `yaml:"Path"`
+	ServiceName        string         `yaml:"ServiceName"`
+	Image              string         `yaml:"Image"`
+	VolumeSize         string         `yaml:"VolumeSize"`
+	InitContainerImage string         `yaml:"InitContainerImage"`
+	Resources          ResourceValues `yaml:"Resources"`
 }
 
 type ResourceValues struct {
-	Limits  ResourceDefinition `yaml:"Limits"`
-	Request ResourceDefinition `yaml:"Request"`
+	Limits   ResourceDefinition `yaml:"Limits"`
+	Requests ResourceDefinition `yaml:"Requests"`
 }
 
 type ResourceDefinition struct {
@@ -33,7 +40,7 @@ type ResourceDefinition struct {
 }
 
 type TimeseriesValues struct {
-	Mode   string `yaml:"mode"`
+	Mode   string `yaml:"Mode"`
 	Host   string `yaml:"Host"`
 	Port   string `yaml:"Port"`
 	ApiKey string `yaml:"ApiKey"`

@@ -80,10 +80,7 @@ spec:
             - name: GF_SECURITY_ADMIN_USER
               value: "admin"
             - name: GF_SECURITY_ADMIN_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: onms-initial-creds
-                  key: admin
+              value: "testpass" #todo update
           ports:
             - containerPort: 3000
               name: http-grafana

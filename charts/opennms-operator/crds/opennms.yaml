@@ -35,12 +35,35 @@ spec:
                       type: string
                     mem:
                       type: string
-                host:
-                  description: Domain name used for ingress into the instance
-                  type: string
-                namespace:
-                  description: k8s namespace to host resources
-                  type: string
+                    version:
+                      description: Docker Image tag for the service
+                      type: string
+                api:
+                  description: Defines cpu,mem and disk size for api
+                  type: object
+                  properties:
+                    cpu:
+                      type: integer
+                    disk:
+                      type: string
+                    mem:
+                      type: string
+                    version:
+                      description: Docker Image tag for the service
+                      type: string
+                ui:
+                  description: Defines cpu,mem and disk size for ui
+                  type: object
+                  properties:
+                    cpu:
+                      type: integer
+                    disk:
+                      type: string
+                    mem:
+                      type: string
+                    version:
+                      description: Docker Image tag for the service
+                      type: string
                 postgres:
                   description: Resource definitions for Postgres
                   type: object
@@ -51,6 +74,15 @@ spec:
                       type: string
                     mem:
                       type: string
+                    version:
+                      description: Docker Image tag for the service
+                      type: string
+                host:
+                  description: Domain name used for ingress into the instance
+                  type: string
+                namespace:
+                  description: k8s namespace to host resources
+                  type: string
                 timeseries:
                   description: Defines what plugin for timeseries to use
                   type: object
@@ -76,9 +108,6 @@ spec:
                       description: Strategy for updating the running image
                       type: string
                       enum: [ now, none ]
-                version:
-                  description: Image tag version of OpenNMS to be deployed
-                  type: string
                 testDeploy:
                   description: Deploy the instance in a nonoperative testing mode
                   type: boolean

@@ -20,28 +20,25 @@ import (
 
 // OpenNMSSpec defines the desired state of OpenNMS
 type OpenNMSSpec struct {
-	// Image tag version of OpenNMS.
-	Version string `json:"version,omitempty"`
-
 	// Domain name used in ingress rule
 	Host string `json:"host,omitempty"`
 
 	// K8s namespace to use
 	Namespace string `json:"namespace"`
 
-	// Users allowed login via tokens
-	AllowedUsers []string `json:"allowedUsers,omitempty"`
-
 	// Deploy an instance in a nonoperative testing mode
-	TestDeploy bool `json:"testDeploy,omitempty"`
+	TestDeploy bool `json:"testDeploy,omitempty"` //TODO I don't think this is needed anymore
 
-	// Defines what plugin for timeseries to use
-	Timeseries Timeseries `json:"timeseries,omitempty"`
-
-	// Defines cpu,mem and disk size for core
+	// Defines service values for Core service
 	Core BaseServiceResources `json:"core,omitempty"`
 
-	// Defines cpu,mem and disk size for postgres
+	// Defines service values for API service
+	API BaseServiceResources `json:"api,omitempty"`
+
+	// Defines service values for UI service
+	UI BaseServiceResources `json:"ui,omitempty"`
+
+	// Defines service values for Postgres
 	Postgres BaseServiceResources `json:"postgres,omitempty"`
 
 	// Defines the logic of ONMS image update
@@ -58,9 +55,11 @@ type Timeseries struct {
 
 //BaseServiceResources - defines basic resource needs of a service
 type BaseServiceResources struct {
-	MEM  string `json:"mem,omitempty"`
-	Disk string `json:"disk,omitempty"`
-	CPU  string `json:"cpu,omitempty"`
+	// Image tag version of OpenNMS.
+	Version string `json:"version,omitempty"`
+	MEM     string `json:"mem,omitempty"`
+	Disk    string `json:"disk,omitempty"`
+	CPU     string `json:"cpu,omitempty"`
 }
 
 // OpenNMSStatus - defines the observed state of OpenNMS

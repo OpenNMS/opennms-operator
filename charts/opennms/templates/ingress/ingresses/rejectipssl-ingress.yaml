@@ -13,8 +13,8 @@ spec:
       paths:
       - backend:
           service:
-            name: opennms
+            name: {{ .Values.OpenNMS.Core.ServiceName }}
             port:
-              number: 8980
+              number: 8181
         path: /
         pathType: Prefix

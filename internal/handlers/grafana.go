@@ -40,6 +40,6 @@ func (h *GrafanaHandler) ProvideConfig(values values.TemplateValues) []client.Ob
 		&service,
 		&deployment,
 	}
-	
+
 	return h.Config
 }

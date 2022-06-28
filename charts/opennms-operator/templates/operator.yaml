@@ -1,47 +1,33 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Values.operator.serviceName }}
-  namespace: {{ .Values.operator.namespace }}
+  name: {{ .Values.Operator.serviceName }}
+  namespace: {{ .Values.Operator.Namespace }}
 spec:
   selector:
     matchLabels:
-      name: {{ .Values.operator.serviceName }}
+      name: {{ .Values.Operator.serviceName }}
   replicas: 1
   template:
     metadata:
       labels:
-        name: {{ .Values.operator.serviceName }}
+        name: {{ .Values.Operator.serviceName }}
     spec:
-      serviceAccountName: {{ .Values.operator.serviceName }}
+      serviceAccountName: {{ .Values.Operator.serviceName }}
       containers:
-        - image:  {{ .Values.operator.image }}
-          name: {{ .Values.operator.serviceName }}
-          imagePullPolicy: {{ .Values.operator.imagePullPolicy }}
+        - image:  {{ .Values.Operator.image }}
+          name: {{ .Values.Operator.serviceName }}
+          imagePullPolicy: {{ .Values.Operator.imagePullPolicy }}
           env:
-            - name: SERVICE_IMAGE_AUTH
-              value: "{{ .Values.serviceImages.auth }}"
-            - name: SERVICE_IMAGE_GRAFANA
-              value: "{{ .Values.serviceImages.grafana }}"
-            - name: SERVICE_IMAGE_INIT
-              value: "{{ .Values.serviceImages.initContainer }}"
-            - name: NODE_RESTRICTION_KEY
-              value: "{{ .Values.nodeRestrictions.key }}"
-            - name: NODE_RESTRICTION_VALUE
-              value: "{{ .Values.nodeRestrictions.value }}"
-            - name: TLS_ENABLED
-              value: "{{ .Values.tls.enabled }}"
-            - name: TLS_CERT_NAME
-              value: "{{ .Values.tls.cert.name }}"
             - name: DEV_MODE
-              value: "{{ .Values.operator.devMode }}"
+              value: "{{ .Values.Operator.devMode }}"
             - name: IMAGE_UPDATE_FREQUENCY
-              value: {{ .Values.operator.imageUpdateFreq }}
+              value: "{{ .Values.Operator.imageUpdateFreq }}"
           resources:
             limits:
-              cpu: {{ .Values.operator.resources.limits.cpu }}
-              memory: {{ .Values.operator.resources.limits.memory }}
+              cpu: {{ .Values.Operator.resources.limits.cpu }}
+              memory: {{ .Values.Operator.resources.limits.memory }}
             requests:
-              cpu: {{ .Values.operator.resources.requests.cpu }}
-              memory: {{ .Values.operator.resources.requests.memory }}
+              cpu: {{ .Values.Operator.resources.requests.cpu }}
+              memory: {{ .Values.Operator.resources.requests.memory }}
       terminationGracePeriodSeconds: 10

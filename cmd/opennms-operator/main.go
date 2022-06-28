@@ -39,18 +39,12 @@ func main() {
 	operatorConfig := config.LoadConfig()
 
 	loggerOptions := zap.Options{
-		Development: operatorConfig.DevMode,
+		Development: operatorConfig.DevMode, //TODO make this configurable
 		TimeEncoder: zapcore.ISO8601TimeEncoder,
 	}
 
 	ctrl.SetLogger(zap.New(zap.UseFlagOptions(&loggerOptions)))
 	logger := ctrl.Log.WithName("reconciler").WithName("OpenNMS")
-
-	err := dependencies.ApplyHelmDependencies()
-	if err != nil {
-		setupLog.Error(err, "Error applying Helm dependencies")
-		os.Exit(1)
-	}
 
 	mgr, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{
 		Scheme:             K8sScheme,
@@ -65,6 +59,15 @@ func main() {
 		os.Exit(1)
 	}
 	k8sClient := mgr.GetClient()
+
+	defaultValues := values.GetDefaultValues(operatorConfig)
+
+	err = dependencies.ApplyDependencies(setupLog, defaultValues, k8sClient)
+	if err != nil {
+		setupLog.Error(err, "Error applying Helm dependencies")
+		os.Exit(1)
+	}
+
 	imageChecker := image.NewImageUpdater(k8sClient, operatorConfig.ImageUpdateFreq)
 	if err = (&reconciler.OpenNMSReconciler{
 		Client:        mgr.GetClient(),
@@ -72,7 +75,7 @@ func main() {
 		Scheme:        mgr.GetScheme(),
 		CodecFactory:  serializer.NewCodecFactory(mgr.GetScheme()),
 		Config:        operatorConfig,
-		DefaultValues: values.GetDefaultValues(operatorConfig),
+		DefaultValues: defaultValues,
 		ImageChecker:  imageChecker,
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create OpenNMS controller", "controller", "OpenNMS")

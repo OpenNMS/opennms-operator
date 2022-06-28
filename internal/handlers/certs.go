@@ -17,31 +17,24 @@ package handlers
 import (
 	"github.com/OpenNMS/opennms-operator/internal/model/values"
 	"github.com/OpenNMS/opennms-operator/internal/util/yaml"
-	appsv1 "k8s.io/api/apps/v1"
-	corev1 "k8s.io/api/core/v1"
+	v1 "github.com/cert-manager/cert-manager/pkg/apis/certmanager/v1"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
-type AuthHandler struct {
+type CertHandler struct {
 	ServiceHandlerObject
 }
 
-func (h *AuthHandler) ProvideConfig(values values.TemplateValues) []client.Object {
-	var initCredsSecret corev1.Secret
-	var allowedUsersSecret corev1.Secret
-	var service corev1.Service
-	var deployment appsv1.Deployment
+func (h *CertHandler) ProvideConfig(values values.TemplateValues) []client.Object {
+	var ci v1.ClusterIssuer
+	var cert v1.Certificate
 
-	yaml.LoadYaml(filepath("auth/secrets/auth-initial-creds.yaml"), values, &initCredsSecret)
-	yaml.LoadYaml(filepath("auth/secrets/auth-allowed-users.yaml"), values, &allowedUsersSecret)
-	yaml.LoadYaml(filepath("auth/auth-service.yaml"), values, &service)
-	yaml.LoadYaml(filepath("auth/auth-deployment.yaml"), values, &deployment)
+	yaml.LoadYaml(opfilepath("cert-manager/cert-cluster-issuer.yaml"), values, &ci)
+	yaml.LoadYaml(opfilepath("cert-manager/cert-primary.yaml"), values, &cert)
 
 	h.Config = []client.Object{
-		&initCredsSecret,
-		&allowedUsersSecret,
-		&service,
-		&deployment,
+		&ci,
+		&cert,
 	}
 
 	return h.Config

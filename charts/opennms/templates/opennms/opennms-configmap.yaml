@@ -1,60 +1,10 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: init-scripts
+  name: opennms-config
   namespace: {{ .Values.Namespace }}
 data:
-  onms-core-init.sh: |
-    #!/bin/bash
-    umask 002
-    command -v rsync >/dev/null 2>&1 || { echo >&2 "rsync is required but it's not installed. Aborting."; exit 1; }
-
-    OPENNMS_HOME=/usr/share/opennms
-    CONFIG_DIR=/opennms-etc
-    BACKUP_ETC=/opt/opennms/etc
-
-    # Show permissions (debug purposes)
-    ls -ld ${CONFIG_DIR}
-
-    # Initialize configuration directory
-    if [ ! -f ${CONFIG_DIR}/configured ]; then
-      echo "Initializing configuration directory for the first time ..."
-      rsync -arO --no-perms ${BACKUP_ETC}/ ${CONFIG_DIR}/
-
-      echo "Disabling data choices"
-      cat <<EOF > ${CONFIG_DIR}/org.opennms.features.datachoices.cfg
-    enabled=false
-    acknowledged-by=admin
-    acknowledged-at=Mon Jan 01 00\:00\:00 EDT 2018
-    EOF
-    echo 'opennms.web.base-url = https://%x%c/' > ${CONFIG_DIR}/opennms.properties.d/ssl.properties
-    else
-      echo "Previous configuration found. Not synchronizing files..."
-    fi
-
-    # Enable activemq
-    sed -E '/0.0.0.0:61616/s/<!--//' ${CONFIG_DIR}/opennms-activemq.xml | sed -E '/0.0.0.0:61616/s/-->//' > /tmp/opennms-activemq.xml
-    cp /tmp/opennms-activemq.xml ${CONFIG_DIR}/opennms-activemq.xml
-
-    # Enable Elasticsearch Flows
-    cat <<EOF > ${CONFIG_DIR}/org.opennms.features.flows.persistence.elastic.cfg
-    elasticUrl = http://elasticsearch-es-http.{{ .Values.Namespace }}.svc.cluster.local:9200
-    EOF
-
-    # Enable Elasticsearch events
-    cat <<EOF > ${CONFIG_DIR}/org.opennms.plugin.elasticsearch.rest.forwarder.cfg
-    elasticUrl = http://elasticsearch-es-http.{{ .Values.Namespace }}.svc.cluster.local:9200
-    EOF
-
-    # Enable ES REST
-    echo 'opennms-es-rest' > ${CONFIG_DIR}/featuresBoot.d/events-to-es.boot
-
-    # Force to execute runjava and the install script
-    touch ${CONFIG_DIR}/do-upgrade
-
-    # Fix permissions when executing the script as root
-    if [[ "$(id -u)" == "0" ]]; then
-      chown -R opennms:opennms ${CONFIG_DIR}
-    fi
-    # Get the OIA version from the filesystem and drop into the metadata
-    ls /opt/opennms/system/org/opennms/integration/api/api/ | awk -F '-' '{print $1}' > /metadata/OIA
+  useKafka: |
+    useSeda=false
+    useKafka=true
+    useActiveMq=false

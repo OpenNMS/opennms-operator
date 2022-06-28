@@ -48,7 +48,7 @@ func TestIntegration(t *testing.T) {
 
 	helmOptions := &helmclient.RestConfClientOptions{
 		RestConfig: cfg,
-		Options: &helmclient.Options{},
+		Options:    &helmclient.Options{},
 	}
 	helmClient, err := helmclient.NewClientFromRestConf(helmOptions)
 	assert.Nil(t, err, "init helm client")

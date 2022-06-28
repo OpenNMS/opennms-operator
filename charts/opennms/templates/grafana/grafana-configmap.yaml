@@ -28,11 +28,10 @@ data:
     provisioning = /etc/grafana/provisioning
     [database]
     type = postgres
-    host = postgresql
+    host = {{ .Values.Postgres.ServiceName }}
     name = postgres
     user = postgres
-    # TODO; template this password in the new operator
-    password = {{ .Values.Postgres.Password }}
+    password = {{ .Values.Postgres.AdminPassword }}
     # COMMENT OUT WHEN DONE DEBUGGING
     #[log]
     #level = debug
@@ -40,12 +39,12 @@ data:
     #################################### SECURITY ####################################
     [security]
     disable_initial_admin_creation = false
-    
+
     # Only available in Grafana v6.5+.
-    
+
     # Disable creation of admin user on first start of Grafana. Default is false.
     admin_user = place_holder_for_k8s_secret
-    
+
     # The name of the default Grafana Admin user, who has full permissions. Default is admin.
     admin_password = place_holder_for_k8s_secret
 
@@ -53,52 +52,52 @@ data:
     [server]
     # Protocol (http, https, h2, socket)
     protocol = http
-    
+
     # The ip address to bind to, empty will bind to all interfaces
     http_addr =
-    
+
     # The http port to use
     http_port = 3000
-    
+
     # The public facing domain name used to access grafana from a browser
     domain = localhost
-    
+
     # Redirect to correct domain if host header does not match domain
     # Prevents DNS rebinding attacks
     enforce_domain = false
-    
+
     # The full public facing url
     root_url = %(protocol)s://%(domain)s:%(http_port)s/grafana
-    
+
     # Serve Grafana from subpath specified in `root_url` setting. By default it is set to `false` for compatibility reasons.
     serve_from_sub_path = true
-    
+
     # Log web requests
     router_logging = false
-    
+
     # the path relative working path
     static_root_path = public
-    
+
     # enable gzip
     enable_gzip = false
-    
+
     # https certs & key file
     cert_file =
     cert_key =
-    
+
     # Unix socket path
     socket = /tmp/grafana.sock
-    
+
     # CDN Url
     cdn_url =
-    
+
     # Sets the maximum time in minutes before timing out read of an incoming request and closing idle connections.
     # `0` means there is no timeout for reading the request.
     read_timeout = 0
   opennms-helm-app.yaml: |
     # # config file version
     apiVersion: 1
-    
+
     apps:
       - type: opennms-helm-app
         disabled: false
@@ -110,7 +109,7 @@ data:
   admin.yaml: |
     # config file version
     apiVersion: 1
-    
+
     # list of default built-in role assignments that should be removed
     #removeDefaultAssignments:
     #  # <string>, must be one of the Organization roles (`Viewer`, `Editor`, `Admin`) or `Grafana Admin`
@@ -120,7 +119,7 @@ data:
   opennms-performance.yaml: |
     # config file version
     apiVersion: 1
-    
+
     # list of datasources to insert/update depending
     # on what's available in the database
     datasources:
@@ -135,7 +134,7 @@ data:
        # <string> url
        url: https://{{ .Values.Namespace }}.devtenant.oaaslite.opennms.com/opennms
        isDefault: false
-    
+
        # IMPORTANT: Use the secure json data object below instead of basic auth fields above.
        # <map> fields that will be converted to json and stored in json_data
        jsonData:
@@ -149,7 +148,7 @@ data:
   opennms-flow.yaml: |
     # config file version
     apiVersion: 1
-    
+
     # list of datasources to insert/update depending
     # on what's available in the database
     datasources:
@@ -164,7 +163,7 @@ data:
        # <string> url
        url: https://{{ .Values.Namespace }}.devtenant.oaaslite.opennms.com/opennms
        isDefault: false
-    
+
        # IMPORTANT: Use the secure json data object below instead of basic auth fields above.
        # <map> fields that will be converted to json and stored in json_data
        jsonData:
@@ -178,7 +177,7 @@ data:
   opennms-entities.yaml: |
     # config file version
     apiVersion: 1
-    
+
     # list of datasources to insert/update depending
     # on what's available in the database
     datasources:
@@ -193,7 +192,7 @@ data:
        # <string> url
        url: https://{{ .Values.Namespace }}.devtenant.oaaslite.opennms.com/opennms
        isDefault: true
-    
+
        # IMPORTANT: Use the secure json data object below instead of basic auth fields above.
        # <map> fields that will be converted to json and stored in json_data
        jsonData:
@@ -207,7 +206,7 @@ data:
   datasource-cortex.yaml: |
     # config file version
     apiVersion: 1
-    
+
     # list of datasources to insert/update depending
     # on what's available in the database
     datasources:
@@ -222,7 +221,7 @@ data:
        # <string> url
        url: http://cortex.cortex/prometheus
        isDefault: false
-    
+
        # IMPORTANT: Use the secure json data object below instead of basic auth fields above.
        # <map> fields that will be converted to json and stored in json_data
        jsonData:
@@ -236,7 +235,7 @@ data:
   opennms.yaml: |
     # config file version
     apiVersion: 1
-    
+
     providers:
      - name: 'OpenNMS'
        orgId: 1

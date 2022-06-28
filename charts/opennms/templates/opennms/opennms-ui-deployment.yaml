@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.OpenNMS.UI.ServiceName }}
+  namespace: {{ .Values.Namespace }}
+  labels:
+    app: {{ .Values.OpenNMS.UI.ServiceName }}
+    app.kubernetes.io/name: {{ .Values.OpenNMS.UI.ServiceName }}
+  annotations:
+    autoupdate: "true"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.OpenNMS.UI.ServiceName }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.OpenNMS.UI.ServiceName }}
+    spec:
+      {{ if .Values.NodeRestrictions.Enabled }}
+      tolerations:
+        - effect: "NoSchedule"
+          key: "{{ .Values.NodeRestrictions.Key }}"
+          operator: "Equal"
+          value: {{ .Values.NodeRestrictions.Value }}
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 1
+              preference:
+                matchExpressions:
+                  - key: "{{ .Values.NodeRestrictions.Key }}"
+                    operator: In
+                    values:
+                      - {{ .Values.NodeRestrictions.Value }}
+      {{ end }}
+      terminationGracePeriodSeconds: 120
+      containers:
+        - name: {{ .Values.OpenNMS.UI.ServiceName }}
+          image: {{ .Values.OpenNMS.UI.Image }}
+          ports:
+            - containerPort: 3000
+          env:
+            - name: DOMAIN_API
+              value: "{{ .Values.Host }}{{ .Values.OpenNMS.API.Path }}"
+            - name: DOMAIN_KEYCLOAK
+              value: "{{ .Values.Host }}{{ .Values.Keycloak.Path }}"
+          command: [ "/app/dev/entrypoint.sh" ]
+          args: [ "$(DOMAIN_KEYCLOAK)","$(DOMAIN_API)" ]
+          resources:
+            limits:
+              cpu: "{{ .Values.OpenNMS.UI.Resources.Limits.Cpu }}"
+              memory: "{{ .Values.OpenNMS.UI.Resources.Limits.Memory }}"
+            requests:
+              cpu: "{{ .Values.OpenNMS.UI.Resources.Requests.Cpu }}"
+              memory: "{{ .Values.OpenNMS.UI.Resources.Requests.Memory }}"
+          {{ if not .Values.TestDeploy }}
+          {{/*  TODO    livenessProbe:*/}}
+          {{/*          readinessProbe:*/}}
+          {{/*          startupProbe:*/}}
+          {{ end }}

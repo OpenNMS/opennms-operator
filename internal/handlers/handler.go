@@ -20,6 +20,7 @@ import (
 )
 
 var ConfigFilePath = "./charts/opennms/templates/"
+var OperatorFilePath = "./charts/dependencies/config/"
 
 type ServiceHandler interface {
 	//ProvideConfig - provide k8s config for the service
@@ -35,4 +36,8 @@ type ServiceHandlerObject struct {
 
 func filepath(filename string) string {
 	return ConfigFilePath + filename
+}
+
+func opfilepath(filename string) string {
+	return OperatorFilePath + filename
 }

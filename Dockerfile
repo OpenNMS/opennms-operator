@@ -8,13 +8,14 @@ COPY Makefile Makefile
 COPY go.mod go.mod
 COPY go.sum go.sum
 
+RUN make dependencies
+
 COPY cmd/ cmd/
 COPY charts/dependencies charts/dependencies
 COPY api/ api/
 COPY config/ config/
 COPY internal/ internal/
 
-RUN make dependencies
 RUN make alpine-build
 
 #Runner

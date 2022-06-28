@@ -2,45 +2,54 @@ Namespace: opennms-instance
 Host: localhost
 TestDeploy: false
 OpenNMS:
-  Image: opennms/horizon:bleeding
-  VolumeSize: 500Mi
-  SecurityGroup: 10001
-  Resources:
-    Limits:
-      Cpu: 2
-      Memory: 2Gi
-    Requests:
-      Cpu: 100m
-      Memory: 1Gi
-  InitContainerImage: placeholder
-  Timeseries:
-    Mode: default
-    Host: postgresql
-    Port: 5432
-    ApiKey: placeholder
-TLS:
-  Enabled: false
-  CertSecret: placeholder
-Auth:
-  Image: placeholder
-  Port: 5000
-  AdminPass: notset
-  MinionPass: notset
-  AllowedUsers: test@email.com
+  Core:
+    Path: /core
+    ServiceName: opennms-core
+    Image: opennms/horizon-stream-core
+    Resources:
+      Limits:
+        Cpu: 2
+        Memory: 2Gi
+      Requests:
+        Cpu: 100m
+        Memory: 1Gi
+  API:
+    Path: /api
+    ServiceName: opennms-rest-server
+    Image: opennms/horizon-stream-rest-server
+    Resources:
+      Limits:
+        Cpu: 100m
+        Memory: 1Gi
+      Requests:
+        Cpu: 100m
+        Memory: 1Gi
+  UI:
+    Path: /
+    ServiceName: opennms-ui
+    Image: opennms/horizon-stream-ui
+    Resources:
+      Limits:
+        Cpu: 1
+        Memory: 1Gi
+      Requests:
+        Cpu: 100m
+        Memory: 1Gi
 Postgres:
-  Image: timescale/timescaledb:latest-pg12
-  Password: notset
+  ServiceName: postgres
+  Image: postgres:13.3-alpine
+  AdminPassword: notset
+  KeycloakPassword: notset
   VolumeSize: 10Gi
+Keycloak:
+  Path: /auth
+  ServiceName: keycloak
+  Password: notset
 Grafana:
   Image: placeholder
 Ingress:
   ControllerImage: k8s.gcr.io/ingress-nginx/controller:v1.1.0
   SecretJobImage: k8s.gcr.io/ingress-nginx/kube-webhook-certgen:v1.1.1@sha256:64d8c73dca984af206adf9d6d7e46aa550362b1d7a01f3a0a91b20cc67868660
   WebhookPatchJobImage: k8s.gcr.io/ingress-nginx/kube-webhook-certgen:v1.1.1@sha256:64d8c73dca984af206adf9d6d7e46aa550362b1d7a01f3a0a91b20cc67868660
-Stunnel:
-  Image: dweomer/stunnel:latest
-NodeRestrictions: # will be applied to every pod in the instance
-  Enabled: true
-  Key: kubernetes.azure.com/scalesetpriority
-  Value: spot
+
 

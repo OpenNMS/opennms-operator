@@ -14,6 +14,6 @@ limitations under the License.
 
 package values
 
-type StunnelValues struct {
-	Image string `yaml:"Image"`
+type OperatorValues struct {
+	Namespace string `yaml:"Namespace"`
 }

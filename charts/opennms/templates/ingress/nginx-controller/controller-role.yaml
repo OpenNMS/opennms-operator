@@ -10,13 +10,13 @@ metadata:
   namespace: {{ .Values.Namespace }}
 rules:
   - apiGroups:
-      - ''
+      - ""
     resources:
       - namespaces
     verbs:
       - get
   - apiGroups:
-      - ''
+      - ""
     resources:
       - configmaps
       - pods
@@ -24,12 +24,10 @@ rules:
       - endpoints
     verbs:
       - get
-      - create
       - list
       - watch
-      - update
   - apiGroups:
-      - ''
+      - ""
     resources:
       - services
     verbs:
@@ -37,8 +35,7 @@ rules:
       - list
       - watch
   - apiGroups:
-      - extensions
-      - networking.k8s.io   # k8s 1.14+
+      - networking.k8s.io
     resources:
       - ingresses
     verbs:
@@ -46,14 +43,13 @@ rules:
       - list
       - watch
   - apiGroups:
-      - extensions
-      - networking.k8s.io   # k8s 1.14+
+      - networking.k8s.io
     resources:
       - ingresses/status
     verbs:
       - update
   - apiGroups:
-      - networking.k8s.io   # k8s 1.14+
+      - networking.k8s.io
     resources:
       - ingressclasses
     verbs:
@@ -61,7 +57,22 @@ rules:
       - list
       - watch
   - apiGroups:
-      - ''
+      - ""
+    resourceNames:
+      - ingress-controller-leader
+    resources:
+      - configmaps
+    verbs:
+      - get
+      - update
+  - apiGroups:
+      - ""
+    resources:
+      - configmaps
+    verbs:
+      - create
+  - apiGroups:
+      - ""
     resources:
       - events
     verbs:

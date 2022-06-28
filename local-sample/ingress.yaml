@@ -1,0 +1,72 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-hs-ui
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: localhostui
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: hs-ui
+            port:
+              number: 3000
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-hs-karaf
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: localhostkaraf
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: opennms-core
+            port:
+              number: 8101
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-hs-core
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: localhostcore
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: opennms-core       
+            port:
+              number: 8181
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-hs-api
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: localhostapi
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: opennms-rest-server
+            port:
+              number: 9090

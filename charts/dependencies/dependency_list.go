@@ -15,6 +15,7 @@ limitations under the License.
 package dependencies
 
 import (
+	"github.com/OpenNMS/opennms-operator/internal/handlers"
 	helmclient "github.com/mittwald/go-helm-client"
 	"helm.sh/helm/v3/pkg/repo"
 )
@@ -32,30 +33,20 @@ var repositories = []repo.Entry{
 		Name: "mittwald",
 		URL:  "https://helm.mittwald.de",
 	},
+	{
+		Name: "opennms",
+		URL:  "https://opennms.github.io/horizon-stream/charts/packaged",
+	},
 }
 
 var charts = []helmclient.ChartSpec{
-	{
-		ChartName:   "elastic/eck-operator",
-		ReleaseName: "elastic-system",
-		Namespace:   "elastic-system",
-
-		CreateNamespace: true,
-	},
-	{
-		ChartName:   "jetstack/cert-manager",
-		ReleaseName: "cert-manager",
-		Namespace:   "cert-manager",
-
-		//--set installCRDs=true
-		ValuesYaml: "installCRDs: true",
-
-		Version:         "v1.7.0",
-		CreateNamespace: true,
-	},
 	{
 		ChartName:   "mittwald/kubernetes-replicator",
 		ReleaseName: "kubernetes-replicator",
 		Namespace:   "kubernetes-replicator",
 	},
+}
+
+var handlerslist = []handlers.ServiceHandler{
+	&handlers.CertHandler{},
 }

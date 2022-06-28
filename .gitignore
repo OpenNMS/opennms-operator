@@ -2,7 +2,6 @@
 .idea
 
 # Local test files
-local.yaml
 testtmp/
 
 # Build

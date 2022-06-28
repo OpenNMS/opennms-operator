@@ -18,16 +18,18 @@ type TemplateValues struct {
 	Values Values
 }
 
+//Values - Helm values for a complete OpenNMS Horizon Stream instance
 type Values struct {
 	Namespace        string                 `yaml:"Namespace"`
 	Host             string                 `yaml:"Host"`
 	TestDeploy       bool                   `yaml:"TestDeploy"`
 	OpenNMS          OpenNMSValues          `yaml:"OpenNMS"`
 	TLS              TLSValues              `yaml:"TLS"`
-	Auth             AuthValues             `yaml:"Auth"`
 	Postgres         PostgresValues         `yaml:"Postgres"`
 	Grafana          GrafanaValues          `yaml:"Grafana"`
 	Ingress          IngressValues          `yaml:"Ingress"`
-	Stunnel          StunnelValues          `yaml:"Stunnel"`
+	Keycloak         KeycloakValues         `yaml:"Keycloak"`
+	Kafka            KafkaValues            `yaml:"Kafka"`
 	NodeRestrictions NodeRestrictionsValues `yaml:"NodeRestrictions"`
+	Operator         OperatorValues         `yaml:"Operator"`
 }

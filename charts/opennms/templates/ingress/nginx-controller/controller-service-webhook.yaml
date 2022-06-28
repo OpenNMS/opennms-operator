@@ -11,7 +11,8 @@ metadata:
 spec:
   type: ClusterIP
   ports:
-    - name: https-webhook
+    - appProtocol: https
+      name: https-webhook
       port: 443
       targetPort: webhook
   selector:

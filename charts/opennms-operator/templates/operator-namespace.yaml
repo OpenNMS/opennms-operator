@@ -1,6 +1,6 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: {{ .Values.operator.namespace }}
+  name: {{ .Values.Operator.Namespace }}
   labels:
-    name: {{ .Values.operator.namespace }}
+    name: {{ .Values.Operator.Namespace }}

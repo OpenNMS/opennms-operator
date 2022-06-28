@@ -22,6 +22,9 @@ helm-package: helm-dep
 dependencies:
 	go mod download
 
+local-docker:
+	docker build -t opennms/operator:local-build .
+
 build:
 	go build -a -o operator cmd/opennms-operator/main.go
 

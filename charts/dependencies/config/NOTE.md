@@ -1,0 +1,1 @@
+Match all values of the values in config files found in this directory to the Operator's chart values.

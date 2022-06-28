@@ -16,22 +16,31 @@ package dependencies
 
 import (
 	"context"
+	"github.com/OpenNMS/opennms-operator/internal/model/values"
+	"github.com/go-logr/logr"
 	helmclient "github.com/mittwald/go-helm-client"
+	"sigs.k8s.io/controller-runtime/pkg/client"
 	"strings"
 )
 
-//ApplyHelmDependencies - applies the list of helm dependencies to the cluster
-func ApplyHelmDependencies() error {
+//ApplyDependencies - applies the list of helm dependencies to the cluster
+func ApplyDependencies(setupLog logr.Logger, values values.TemplateValues, k8sClient client.Client) error {
 	helmClient, err := helmclient.New(&helmclient.Options{})
 	if err != nil {
 		return err
 	}
 	ctx := context.Background()
+	setupLog.Info("Registering Helm repositories")
 	err = registerRepositories(helmClient)
 	if err != nil {
 		return err
 	}
-	err = applyCharts(ctx, helmClient)
+	setupLog.Info("Applying Helm charts")
+	err = applyCharts(ctx, setupLog, helmClient)
+	if err != nil {
+		return err
+	}
+	err = applyConfigs(ctx, setupLog, values, k8sClient)
 	if err != nil {
 		return err
 	}
@@ -50,15 +59,29 @@ func registerRepositories(helmClient helmclient.Client) error {
 }
 
 //applyCharts - apply a given helm dependency
-func applyCharts(ctx context.Context, helmClient helmclient.Client) error {
+func applyCharts(ctx context.Context, logger logr.Logger, helmClient helmclient.Client) error {
 	for _, chart := range charts {
+		logger.Info("Applying chart", "chart", chart.ChartName)
 		_, err := helmClient.InstallOrUpgradeChart(ctx, &chart)
 		if err != nil {
 			//same helm chart may have already been installed by someone else in this cluster
 			if strings.Contains(err.Error(), "rendered manifests contain a resource that already exists") {
+				logger.Info("Resources for chart already exist, skipping", "chart", chart.ChartName)
 				continue //not a real error, defer to the existing resources
 			}
 			return err
+		}
+	}
+	return nil
+}
+
+func applyConfigs(ctx context.Context, logger logr.Logger, v values.TemplateValues, k8sClient client.Client) error {
+	for _, handler := range handlerslist {
+		for _, resource := range handler.ProvideConfig(v) {
+			err := k8sClient.Create(ctx, resource)
+			if err != nil {
+				logger.Error(err, "Error creating resource", "namespace", resource.GetNamespace(), "name", resource.GetName())
+			}
 		}
 	}
 	return nil

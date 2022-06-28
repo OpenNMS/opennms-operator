@@ -1,8 +1,8 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: {{ .Values.operator.serviceName }}
-  namespace: {{ .Values.operator.namespace }}
+  name: {{ .Values.Operator.serviceName }}
+  namespace: {{ .Values.Operator.Namespace }}
 rules:
   - apiGroups:
       - rbac.authorization.k8s.io
@@ -127,3 +127,15 @@ rules:
       - get
       - patch
       - update
+  - apiGroups:
+      - apiextensions.k8s.io
+    resources:
+      - customresourcedefinitions
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
