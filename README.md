@@ -10,11 +10,11 @@ This repository follows [Semantic Versioning](https://semver.org/)
 
 ### Quick install
 
-Have some sort of local Kubernetes cluster running, i.e. [Docker Desktop](https://docs.docker.com/desktop/kubernetes/), [minikube](https://minikube.sigs.k8s.io/docs/start/), [kind](https://kind.sigs.k8s.io/docs/user/quick-start/), etc.  
+Have some sort of local Kubernetes cluster running on your machine, i.e. [Docker Desktop](https://docs.docker.com/desktop/kubernetes/), [minikube](https://minikube.sigs.k8s.io/docs/start/), [kind](https://kind.sigs.k8s.io/docs/user/quick-start/), etc.  
 
 [Install the OperatorSDK](https://sdk.operatorframework.io/docs/installation/)
 
-Run the local install script
+Run the local installation script
 ```
 bash deploy-horizon-stream.yaml
 ```

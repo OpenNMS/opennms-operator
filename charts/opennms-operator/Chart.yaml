@@ -7,7 +7,3 @@ maintainers:
   - name: Jeffrey-David Kapp
     email: jkapp@opennms.com
 icon: https://www.opennms.com/wp-content/uploads/2021/04/OpenNMS_Horizontal-Logo_Light-BG-retina-website.png
-#dependencies:
- # - name: opennms-operator-dependencies
- #   version: 0.1.0
-  #  repository: "https://opennms.github.io/horizon-stream/charts/packaged"

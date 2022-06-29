@@ -44,7 +44,7 @@ spec:
           args: [ "-f" ]
           {{ end }}
           env:
-            - name: JAVA_TOOL_OPTIONS # Let `skaffold debug` see that this is a jvm container
+            - name: JAVA_TOOL_OPTIONS # Let `skaffold debug` see that this is a jvm container TODO still needed?
               value: "-Djava.security.egd=file:/dev/./urandom"
             - name: PGSQL_SERVICE_NAME
               value: {{ .Values.Postgres.ServiceName }}
@@ -65,7 +65,6 @@ spec:
             - name: ACTIVEMQ_BROKER_URL
               value: "tcp://localhost:61616"
             - name: KEYCLOAK_BASE_URL
-              #value: "http://{{ .Values.Keycloak.ServiceName }}:8080"
               value: "http://{{ .Values.Keycloak.ServiceName }}:8080"
             - name: KEYCLOAK_ADMIN_USERNAME
               value: "keycloak-admin"
